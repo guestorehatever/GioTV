@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GioTV – Channel Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red: #e8192c;
+      --dark-red: #a50e1c;
+      --black: #080a0f;
+      --off-black: #10141c;
+      --card-bg: #12161f;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f2f7;
+      --muted: #7a8299;
+      --gold: #f5c842;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(8,10,15,0.97), transparent);
+      backdrop-filter: blur(2px);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--text); }
+
+    .nav-cta {
+      background: var(--red);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 3px;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--dark-red) !important; }
+
+    .page-header {
+      padding: 140px 48px 72px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(232,25,44,0.02) 3px,
+          rgba(232,25,44,0.02) 4px
+        ),
+        radial-gradient(ellipse 70% 80% at 50% 0%, rgba(232,25,44,0.13) 0%, transparent 70%),
+        linear-gradient(180deg, #0d0f18 0%, var(--black) 100%);
+      z-index: 0;
+    }
+
+    .page-header-inner {
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-tag {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: rgba(232,25,44,0.1);
+      border: 1px solid rgba(232,25,44,0.3);
+      padding: 5px 16px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.8s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+      animation: fadeUp 0.8s 0.25s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .page-title em { color: var(--red); font-style: normal; }
+
+    .page-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-key {
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .guide-key summary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .guide-key summary::-webkit-details-marker { display: none; }
+    .guide-key summary::before { content: '▸'; font-size: 0.7rem; transition: transform 0.2s; }
+    .guide-key[open] summary::before { transform: rotate(90deg); }
+    .guide-key summary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    .key-content {
+      margin-top: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .key-content p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .key-content strong { color: var(--text); }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .dot-online { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .dot-offline { background: var(--muted); }
+
+    .ticker-wrap {
+      width: 100%;
+      background: var(--red);
+      overflow: hidden;
+      padding: 10px 0;
+    }
+
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      padding: 0 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .ticker-dot {
+      width: 5px;
+      height: 5px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 30px;
+      border-radius: 3px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 4px 28px rgba(232,25,44,0.45);
+    }
+
+    .btn-primary:hover {
+      background: #f02035;
+      box-shadow: 0 8px 40px rgba(232,25,44,0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: #0a0800;
+      box-shadow: 0 4px 28px rgba(245,200,66,0.3);
+    }
+
+    .btn-gold:hover {
+      background: #f7d155;
+      box-shadow: 0 8px 40px rgba(245,200,66,0.5);
+    }
+
+    .btn-arrow::after { content: '→'; font-size: 1.1em; }
+
+    .main-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 96px;
+    }
+
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1;
+      margin-bottom: 40px;
+    }
+
+    .featured-section {
+      margin-bottom: 80px;
+    }
+
+    .featured-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      transition: border-color 0.25s;
+      position: relative;
+    }
+
+    .featured-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+    }
+
+    .featured-card:hover { border-color: rgba(232,25,44,0.4); }
+
+    .featured-banner-wrap {
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+      background: var(--off-black);
+    }
+
+    .featured-banner-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .featured-card:hover .featured-banner-wrap img { transform: scale(1.03); }
+
+    .featured-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 60%, var(--card-bg) 100%);
+    }
+
+    .featured-info {
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .featured-badge {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: rgba(232,25,44,0.1);
+      border: 1px solid rgba(232,25,44,0.3);
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+
+    .featured-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: 0.03em;
+    }
+
+    .featured-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 32px;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .watch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--red);
+      color: #fff;
+      padding: 13px 28px;
+      border-radius: 3px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-decoration: none;
+      width: fit-content;
+      box-shadow: 0 4px 24px rgba(232,25,44,0.4);
+      transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .watch-btn:hover {
+      background: #f02035;
+      box-shadow: 0 8px 36px rgba(232,25,44,0.55);
+      transform: translateY(-2px);
+    }
+
+    .play-icon {
+      font-size: 0.75rem;
+    }
+
+    .status-dot {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--muted);
+      border: 2px solid rgba(0,0,0,0.4);
+      z-index: 10;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .status-dot.online {
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(232,25,44,0.8);
+    }
+
+    .status-dot.offline {
+      background: var(--muted);
+      box-shadow: none;
+    }
+
+    .cta-banner {
+      background: var(--off-black);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .cta-banner-text .cta-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .cta-banner-text h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .cta-banner-text p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .channel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--text);
+      display: block;
+      transition: border-color 0.25s, transform 0.25s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .channel-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .channel-card:hover {
+      border-color: rgba(232,25,44,0.4);
+      transform: translateY(-4px);
+    }
+
+    .channel-card:hover::after { opacity: 1; }
+
+    .channel-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--off-black);
+      overflow: hidden;
+    }
+
+    .channel-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .channel-card:hover .channel-thumb img { transform: scale(1.06); }
+
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8,10,15,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .channel-card:hover .thumb-overlay { opacity: 1; }
+
+    .thumb-play {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: #fff;
+      box-shadow: 0 0 24px rgba(232,25,44,0.6);
+      transform: scale(0.8);
+      transition: transform 0.25s;
+    }
+
+    .channel-card:hover .thumb-play { transform: scale(1); }
+
+    .channel-info {
+      padding: 14px 16px 16px;
+    }
+
+    .channel-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .channel-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    .star-badge {
+      color: var(--gold);
+      font-size: 0.85em;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .footer-logo span { color: var(--red); }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .player-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    .modal-content {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(232,25,44,0.15), 0 0 50px rgba(0,0,0,0.5);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      color: #fff;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2001;
+      transition: color 0.3s;
+      line-height: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-modal:hover { color: var(--red); }
+
+    #player-iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .page-header { padding: 100px 24px 56px; }
+      .main-content { padding: 0 20px 72px; }
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-overlay { background: linear-gradient(to top, var(--card-bg) 0%, transparent 60%); }
+      .featured-banner-wrap { min-height: 220px; }
+      .featured-info { padding: 28px 24px; }
+      .cta-banner { flex-direction: column; align-items: flex-start; }
+      footer { padding: 32px 24px; flex-direction: column; }
+    }
+      img {
+      -webkit-user-drag: none;
+      user-drag: none;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+  </style>
+  <script>
+    document.addEventListener('contextmenu', event => {
+      if (event.target.tagName === 'IMG') {
+        event.preventDefault();
+      }
+    });
+  </script>
+</head>
+<body>
+
+  <nav>
+    <ul class="nav-links">
+      <li><a href="guide.html" class="active">TV Guide</a></li>
+      <li><a href="index.html#plus">GioTV+</a></li>
+      <li><a href="giotv+.html" class="nav-cta">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-tag">Now Broadcasting</div>
+      <h1 class="page-title">Channel <em>Guide</em></h1>
+      <p class="page-sub">All your channels in one place. Check live status, browse programming, and tune in instantly.</p>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-outline">← Back to Home</a>
+        <details class="guide-key">
+          <summary>Guide Key</summary>
+          <div class="key-content">
+            <p><span class="dot dot-online"></span> Red dot — channel is online</p>
+            <p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
+            <p>★ — Official channel with FCC proofing or major cable presence</p>
+            <p><strong>Tip:</strong> Refresh to update live status.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker">
+      <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Sports<span class="ticker-dot"></span></div>
+      <div class="ticker-item">News<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Entertainment<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Movies<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Reality TV<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Kids<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Lifestyle<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Science<span class="ticker-dot"></span></div>
+      <div class="ticker-item">International<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Music<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Sports<span class="ticker-dot"></span></div>
+      <div class="ticker-item">News<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Entertainment<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Movies<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Reality TV<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Kids<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Lifestyle<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Science<span class="ticker-dot"></span></div>
+      <div class="ticker-item">International<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Music<span class="ticker-dot"></span></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <section class="featured-section reveal" style="margin-top: 64px;">
+      <p class="section-label">Featured Channel</p>
+      <h2 class="section-heading"> Your #1 Go To</h2>
+      <div class="featured-card">
+        <div class="featured-banner-wrap" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
+          <img src="1.png" alt="Gio Network Banner" />
+          <div class="status-dot"></div>
+          <div class="featured-overlay"></div>
+        </div>
+        <div class="featured-info">
+          <div class="featured-badge">● Featured</div>
+          <h3 class="featured-name">Gio Network</h3>
+          <p class="featured-desc">
+            Welcome to Gio Network, your ultimate destination for non-stop entertainment! Dive into a curated world where you can catch all your favorite movies, from timeless classics to modern blockbusters. Stay updated with the latest headlines through our comprehensive news coverage, and never miss out on the most popular shows that everyone is talking about.
+          </p>
+          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
+            <span class="play-icon">▶</span>
+            Watch Live
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-banner reveal">
+      <div class="cta-banner-text">
+        <p class="cta-label">✦ Broadcast on GioTV</p>
+        <h3>Want Your Own Channel?</h3>
+        <p>Join the platform and start broadcasting to your audience today.</p>
+      </div>
+      <a href="survey.html" class="btn btn-gold btn-arrow">Get Started</a>
+    </div>
+
+    <section class="channels-section reveal">
+      <p class="section-label">All Channels</p>
+      <h2 class="section-heading">Browse the Lineup</h2>
+
+      <div class="channels-grid">
+
+        <!-- Fight TV -->
+        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
+              <img src="fight_tv.jpeg" alt="Fight TV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Fight TV</div>
+            <div class="channel-tag">Boxing/Fighting</div>
+          </div>
+        </div>
+
+        <!-- Geej -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8">
+              <img src="geej.png" alt="Geej" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Geej</div>
+            <div class="channel-tag">Gaming</div>
+          </div>
+        </div>
+
+        <!-- 24/7 Weatherscan -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8">
+              <img src="2.png" alt="24/7 Weatherscan" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">24/7 Weatherscan</div>
+          </div>
+        </div>
+
+        <!-- GALAXY TV -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
+              <img src="galaxy_tv.png" alt="GALAXY TV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">GALAXY TV</div>
+            <div class="channel-tag">Entertainment</div>
+          </div>
+        </div>
+
+        <!-- Cubo TV -->
+        <div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
+              <img src="cubo_tv.png" alt="Cubo TV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Cubo TV</div>
+            <div class="channel-tag">Anime (アニメ)</div>
+          </div>
+        </div>
+
+        <!-- Gusto TV -->
+        <div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
+              <img src="gusto_tv.png" alt="Gusto TV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Gusto TV <span class="star-badge">★</span></div>
+            <div class="channel-tag">Cooking</div>
+          </div>
+        </div>
+
+
+
+        <!-- Throwback Television Network -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
+              <img src="throwback_tv.jpeg" alt="Throwback Television Network" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Throwback TV Network</div>
+            <div class="channel-tag">Comedy</div>
+          </div>
+        </div>
+
+        <!-- Hard Rock TV -->
+        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
+              <img src="IMG_5344.jpeg" alt="Hard Rock TV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Hard Rock TV</div>
+            <div class="channel-tag">Music</div>
+          </div>
+        </div>
+
+        <!-- Young Hollywood -->
+        <div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
+              <img src="young_hollywood.jpg" alt="Young Hollywood" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">Young Hollywood <span class="star-badge">★</span></div>
+            <div class="channel-tag">Lifestyle</div>
+          </div>
+        </div>
+
+        <!-- GigabyteTV -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
+              <img src="gigabyte_tv.png" alt="GigabyteTV" />
+              <div class="status-dot"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">GigabyteTV</div>
+            <div class="channel-tag">Variety</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="offline-section reveal" id="offlineSection" style="display: none; margin-top: 80px;">
+      <p class="section-label">Offline Channels</p>
+      <h2 class="section-heading">Nothing to see here</h2>
+      <div class="channels-grid" id="offlineGrid"></div>
+    </section>
+
+  </div>
+
+  <div id="playerModal" class="player-modal">
+    <div class="modal-wrapper">
+      <span class="close-modal">&times; Close</span>
+      <div class="modal-content">
+        <iframe id="player-iframe" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Gio<span>TV</span></div>
+    <p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="giotv+.html">GioTV+</a></li>
+      <li><a href="guide+.html">Plus Guide</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    function reorderGrid() {
+      const mainGrid = document.querySelector('.channels-section .channels-grid');
+      const offlineGrid = document.getElementById('offlineGrid');
+      const offlineSection = document.getElementById('offlineSection');
+      if (!mainGrid || !offlineGrid) return;
+
+      const allCards = Array.from(document.querySelectorAll('.channel-card'));
+      let hasOffline = false;
+
+      allCards.forEach(card => {
+        const isOnline = card.querySelector('.status-dot.online');
+        if (isOnline) {
+          mainGrid.appendChild(card);
+        } else {
+          offlineGrid.appendChild(card);
+          hasOffline = true;
+        }
+      });
+
+      offlineSection.style.display = hasOffline ? 'block' : 'none';
+      if (hasOffline && !offlineSection.classList.contains('visible')) {
+        offlineSection.classList.add('visible');
+        offlineSection.style.opacity = '1';
+        offlineSection.style.transform = 'translateY(0)';
+      }
+    }
+
+    async function checkStatus() {
+      const channels = document.querySelectorAll('[data-stream]');
+      for (const channel of channels) {
+        const url = channel.getAttribute('data-stream');
+        const dot = channel.querySelector('.status-dot');
+        if (!dot) continue;
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+          try {
+            const response = await fetch(url, { method: 'HEAD', cache: 'no-cache', signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (response.ok) { dot.classList.remove('offline'); dot.classList.add('online'); }
+            else { dot.classList.remove('online'); dot.classList.add('offline'); }
+          } catch (corsError) {
+            await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache', signal: controller.signal });
+            clearTimeout(timeoutId);
+            dot.classList.remove('offline'); dot.classList.add('online');
+          }
+        } catch (error) {
+          dot.classList.remove('online'); dot.classList.add('offline');
+        }
+      }
+      reorderGrid();
+    }
+    setInterval(checkStatus, 10000);
+    checkStatus();
+
+    const modal = document.getElementById("playerModal");
+    const iframe = document.getElementById("player-iframe");
+    const closeBtn = document.querySelector(".close-modal");
+
+    function openPlayer(src) {
+      iframe.src = `player.html?src=${encodeURIComponent(src)}`;
+      modal.style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
+
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+      iframe.src = "";
+      document.body.style.overflow = "auto";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) closeBtn.onclick();
+    }
+
+    document.querySelectorAll('.watch-link').forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        const src = this.getAttribute('data-href') || this.getAttribute('href');
+        if (src) openPlayer(src);
+      });
+    });
+  </script>
+</body>
+</html>
