@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GioTV – Stream Your Passion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red: #e8192c;
+      --dark-red: #a50e1c;
+      --black: #080a0f;
+      --off-black: #10141c;
+      --card-bg: #12161f;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f2f7;
+      --muted: #7a8299;
+      --gold: #f5c842;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(8,10,15,0.97), transparent);
+      backdrop-filter: blur(2px);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--red);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 3px;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--dark-red) !important; color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated scan-line background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(232,25,44,0.025) 3px,
+          rgba(232,25,44,0.025) 4px
+        ),
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(232,25,44,0.18) 0%, transparent 70%),
+        linear-gradient(160deg, #0d0f18 0%, #080a0f 100%);
+      z-index: 0;
+    }
+
+    /* Floating signal rings */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      border: 1px solid rgba(232,25,44,0.1);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      box-shadow:
+        0 0 0 80px rgba(232,25,44,0.04),
+        0 0 0 160px rgba(232,25,44,0.025),
+        0 0 0 260px rgba(232,25,44,0.012);
+      animation: pulse 6s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%,-50%) scale(1.04); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 860px;
+    }
+
+    .hero-logo {
+      height: 110px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 28px;
+      filter: drop-shadow(0 0 40px rgba(232,25,44,0.55));
+      animation: logoIn 1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes logoIn {
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: rgba(232,25,44,0.1);
+      border: 1px solid rgba(232,25,44,0.3);
+      padding: 5px 16px;
+      border-radius: 2px;
+      margin-bottom: 22px;
+      animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.8rem, 9vw, 8rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 28px;
+      animation: fadeUp 0.8s 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .hero-headline em {
+      color: var(--red);
+      font-style: normal;
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .hero-sub strong { color: var(--text); font-weight: 600; }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.65s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 16px 36px;
+      border-radius: 3px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 4px 28px rgba(232,25,44,0.45);
+    }
+
+    .btn-primary:hover {
+      background: #f02035;
+      box-shadow: 0 8px 40px rgba(232,25,44,0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: #0a0800;
+      box-shadow: 0 4px 28px rgba(245,200,66,0.3);
+    }
+
+    .btn-gold:hover {
+      background: #f7d155;
+      box-shadow: 0 8px 40px rgba(245,200,66,0.5);
+    }
+
+    /* Arrow icon */
+    .btn-arrow::after {
+      content: '→';
+      font-size: 1.1em;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      width: 100%;
+      background: var(--red);
+      overflow: hidden;
+      padding: 10px 0;
+    }
+
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      padding: 0 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .ticker-dot {
+      width: 5px;
+      height: 5px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      flex: 1;
+      min-width: 160px;
+      max-width: 280px;
+      padding: 48px 32px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* ── FEATURES ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 40px;
+    }
+
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .feature-card:hover { border-color: rgba(232,25,44,0.35); transform: translateY(-4px); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      display: block;
+    }
+
+    .feature-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── PLUS SECTION ── */
+    .plus-section {
+      background: var(--off-black);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plus-section::before {
+      content: 'PLUS';
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22rem;
+      color: rgba(245,200,66,0.025);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .plus-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .plus-inner { grid-template-columns: 1fr; gap: 48px; }
+      .plus-section::before { display: none; }
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+    }
+
+    .plus-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,200,66,0.12);
+      border: 1px solid rgba(245,200,66,0.3);
+      border-radius: 2px;
+      padding: 5px 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .plus-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      line-height: 0.95;
+      margin-bottom: 22px;
+    }
+
+    .plus-title .plus-word {
+      color: var(--gold);
+    }
+
+    .plus-desc {
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    .plus-perks {
+      list-style: none;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .plus-perks li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .plus-perks li::before {
+      content: '✦';
+      color: var(--gold);
+      font-size: 0.7rem;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .plus-perks li strong { color: var(--text); font-weight: 600; }
+
+    .plus-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .already-signed {
+      font-size: 0.83rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .already-signed a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(245,200,66,0.3);
+      padding-bottom: 1px;
+      transition: border-color 0.2s;
+    }
+
+    .already-signed a:hover { border-color: var(--gold); }
+
+    /* Plus visual card */
+    .plus-visual {
+      position: relative;
+    }
+
+    .plus-card {
+      background: linear-gradient(135deg, #1a1608, #120e02);
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 12px;
+      padding: 44px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(245,200,66,0.06);
+    }
+
+    .plus-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .plus-card-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .plus-card-logo span { color: rgba(255,255,255,0.7); }
+
+    .plus-card-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,200,66,0.5);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      margin-bottom: 36px;
+    }
+
+    .channel-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem;
+      color: var(--gold);
+      line-height: 1;
+      text-shadow: 0 0 60px rgba(245,200,66,0.4);
+    }
+
+    .channel-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      margin-top: 4px;
+      margin-bottom: 32px;
+    }
+
+    .network-logos {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .network-chip {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 2px;
+      padding: 5px 12px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .footer-logo span { color: var(--red); }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Player Modal Styles */
+    .player-modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+        position: relative;
+        margin: auto;
+        width: 90%;
+        max-width: 1200px;
+        height: 80vh;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 2001;
+        transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+        color: var(--red);
+    }
+
+    #player-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+      img {
+      -webkit-user-drag: none;
+      user-drag: none;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+  </style>
+  <script>
+    document.addEventListener('contextmenu', event => {
+      if (event.target.tagName === 'IMG') {
+        event.preventDefault();
+      }
+    });
+  </script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <ul class="nav-links">
+      <li><a href="guide.html">TV Guide</a></li>
+      <li><a href="#plus">GioTV+</a></li>
+      <li><a href="giotv+.html" class="nav-cta">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Now Broadcasting</div>
+      <img src="TV.png" alt="GioTV" class="hero-logo" />
+      <h1 class="hero-headline">Your Passion.<br/><em>Your Channel.</em></h1>
+      <p class="hero-sub">
+        GioTV is where <strong>regular streamers become broadcasters</strong>. Whether you're building an audience or watching from the couch — endless content from endless networks, all in one place.
+      </p>
+      <div class="hero-actions">
+        <a href="guide.html" class="btn btn-primary btn-arrow">Go to Guide</a>
+        <a href="#plus" class="btn btn-outline">Explore GioTV+</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker">
+      <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Sports<span class="ticker-dot"></span></div>
+      <div class="ticker-item">News<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Entertainment<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Movies<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Reality TV<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Kids<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Lifestyle<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Science<span class="ticker-dot"></span></div>
+      <div class="ticker-item">International<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Music<span class="ticker-dot"></span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Sports<span class="ticker-dot"></span></div>
+      <div class="ticker-item">News<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Entertainment<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Movies<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Reality TV<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Kids<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Lifestyle<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Science<span class="ticker-dot"></span></div>
+      <div class="ticker-item">International<span class="ticker-dot"></span></div>
+      <div class="ticker-item">Music<span class="ticker-dot"></span></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats reveal">
+    <div class="stat">
+      <div class="stat-num">Live</div>
+      <div class="stat-label">Select Channels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Multi</div>
+      <div class="stat-label">Cable Networks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Channels to Explore</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Free</div>
+      <div class="stat-label">To Get Started</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section reveal">
+    <p class="section-label">Why GioTV</p>
+    <h2 class="section-title">Built for Broadcasters.<br/>Loved by Viewers.</h2>
+    <p class="section-sub">Whether you're on-screen or on the couch, GioTV is the platform that gets cable streaming right.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">📡</span>
+        <div class="feature-title">Stream Your Way</div>
+        <p class="feature-desc">Launch your own cable stream with professional-grade tools. Your passion, your channel, your audience — starting today.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📺</span>
+        <div class="feature-title">Endless Networks</div>
+        <p class="feature-desc">Access content from a variety of cable networks all under one roof. Never run out of something to watch — ever.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔴</span>
+        <div class="feature-title">Live Channels</div>
+        <p class="feature-desc">Tune into live programming on select channels. Sports, news, entertainment, and more — streaming in real time when it matters.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌐</span>
+        <div class="feature-title">Watch Anywhere</div>
+        <p class="feature-desc">At home, on the go, or at your desk. GioTV works across all your devices so the signal never drops.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🗂️</span>
+        <div class="feature-title">Smart TV Guide</div>
+        <p class="feature-desc">Navigate a full interactive programming guide updated in real time. Find your shows, mark your favorites, never miss a moment.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⭐</span>
+        <div class="feature-title">GioTV+ Premium</div>
+        <p class="feature-desc">Want even more? Upgrade to GioTV+ and unlock a massive selection of channels from top cable providers around the world.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GIOTV+ -->
+  <section class="plus-section" id="plus">
+    <div class="plus-inner">
+      <!-- Left: Copy -->
+      <div class="reveal">
+        <div class="plus-badge">✦ Premium Tier</div>
+        <h2 class="plus-title">Upgrade to<br/>GioTV <span class="plus-word">Plus</span></h2>
+        <p class="plus-desc">
+          The world's largest cable streaming package — up to <strong>9,000 channels</strong> from the biggest names in cable, all in one subscription.
+        </p>
+        <ul class="plus-perks">
+          <li><strong>Up to 9,000 channels</strong> from various cable companies worldwide</li>
+          <li><strong>Premium sports, movies, and news</strong> packages included</li>
+          <li><strong>International network access</strong> across dozens of countries</li>
+          <li><strong>Dedicated Plus guide</strong> with advanced filtering and scheduling</li>
+          <li><strong>Zero ads</strong> on select premium channels</li>
+        </ul>
+        <div class="plus-actions">
+          <a href="giotv+.html" class="btn btn-gold btn-arrow">Sign Up for GioTV+</a>
+          <div class="already-signed">
+            Already signed up?
+            <a href="guide+.html">Go to the Plus Guide →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visual -->
+      <div class="plus-visual reveal">
+        <div class="plus-card">
+          <div class="plus-card-logo">GioTV<span>+</span></div>
+          <div class="plus-card-tagline">Premium Cable Access</div>
+          <div class="channel-count">9,000</div>
+          <div class="channel-label">Channels &amp; Counting</div>
+          <div class="network-logos">
+            <span class="network-chip">Sports</span>
+            <span class="network-chip">News</span>
+            <span class="network-chip">Movies</span>
+            <span class="network-chip">Kids</span>
+            <span class="network-chip">Reality</span>
+            <span class="network-chip">Intl.</span>
+            <span class="network-chip">Music</span>
+            <span class="network-chip">Science</span>
+            <span class="network-chip">Lifestyle</span>
+            <span class="network-chip">+ More</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYER MODAL -->
+  <div id="playerModal" class="player-modal">
+      <span class="close-modal">&times;</span>
+      <div class="modal-content">
+          <iframe id="player-iframe" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+      </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Gio<span>TV</span></div>
+    <p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="giotv+.html">GioTV+</a></li>
+      <li><a href="guide+.html">Plus Guide</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Player Modal Logic
+    const modal = document.getElementById("playerModal");
+    const iframe = document.getElementById("player-iframe");
+    const closeBtn = document.getElementsByClassName("close-modal")[0];
+
+    function openPlayer(src) {
+        iframe.src = `player.html?src=${encodeURIComponent(src)}`;
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden"; // Prevent scrolling
+    }
+
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = "";
+        document.body.style.overflow = "auto";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeBtn.onclick();
+        }
+    }
+
+    // Intercept watch links (optional, if you want home page links to also open in modal)
+    document.querySelectorAll('a[href*=".m3u8"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPlayer(this.href);
+        });
+    });
+  </script>
+</body>
+</html>
