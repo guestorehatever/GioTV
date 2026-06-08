@@ -800,7 +800,7 @@
       <div class="featured-card">
         <div class="featured-banner-wrap" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
           <img src="1.png" alt="Gio Network Banner" />
-          <div class="status-dot"></div>
+          <div class="status-dot offline"></div>
           <div class="featured-overlay"></div>
         </div>
           <div class="featured-info">
@@ -838,7 +838,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
               <img src="fight_tv.jpeg" alt="Fight TV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -856,7 +856,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8">
               <img src="geej.png" alt="Geej" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -874,7 +874,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8">
               <img src="2.png" alt="24/7 Weatherscan" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -891,7 +891,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
               <img src="galaxy_tv.png" alt="GALAXY TV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -909,7 +909,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
               <img src="cubo_tv.png" alt="Cubo TV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -927,7 +927,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
               <img src="gusto_tv.png" alt="Gusto TV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -947,7 +947,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
               <img src="throwback_tv.jpeg" alt="Throwback Television Network" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -965,7 +965,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
               <img src="IMG_5344.jpeg" alt="Hard Rock TV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -983,7 +983,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
               <img src="young_hollywood.jpg" alt="Young Hollywood" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1001,7 +1001,7 @@
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
               <img src="gigabyte_tv.png" alt="GigabyteTV" />
-              <div class="status-dot"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1089,6 +1089,28 @@
       return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
     }
 
+    // Initialize last seen text from storage on load
+    function initLastSeen() {
+      const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
+      const channels = document.querySelectorAll('[data-stream]');
+      channels.forEach(channel => {
+        const url = channel.getAttribute('data-stream');
+        const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
+        if (card && lastSeenData[url]) {
+          const lastSeenEl = card.querySelector('.last-seen');
+          if (lastSeenEl) {
+            lastSeenEl.textContent = lastSeenData[url];
+            // Only show if the dot is already marked offline (default)
+            const dot = channel.querySelector('.status-dot');
+            if (dot && dot.classList.contains('offline')) {
+                lastSeenEl.style.display = 'block';
+            }
+          }
+        }
+      });
+    }
+    initLastSeen();
+
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
@@ -1122,10 +1144,14 @@
         } else {
           dot.classList.remove('online');
           dot.classList.add('offline');
+          // If we don't have a last seen time yet, we can set a default one for first-time users
+          if (!lastSeenData[url]) {
+            lastSeenData[url] = formatLastSeen();
+          }
         }
 
         // Update last seen text
-        const card = channel.closest('.channel-card') || channel.closest('.featured-card');
+        const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
         if (card) {
           const lastSeenEl = card.querySelector('.last-seen');
           if (lastSeenEl) {
