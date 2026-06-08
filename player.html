@@ -203,6 +203,30 @@
     .vol-group { display: flex; align-items: center; gap: 4px; }
     .spacer { flex: 1; }
 
+    /* FULLSCREEN STYLES */
+    .player:fullscreen,
+    .player:-webkit-full-screen,
+    .player:-moz-full-screen,
+    .player:-ms-fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      aspect-ratio: auto !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 999999 !important;
+    }
+
+    .player:fullscreen .video-wrap,
+    .player:-webkit-full-screen .video-wrap,
+    .player:-moz-full-screen .video-wrap,
+    .player:-ms-fullscreen .video-wrap {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     /* AirPlay button — shown only on Safari */
     #airplayBtn { display: none; }
 
@@ -577,11 +601,11 @@
   const fsBtnIcon = document.querySelector("#fsBtn svg path");
   function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement); }
   function enterFullscreen() {
-    const el = document.documentElement;
     try {
-      if      (el.requestFullscreen)       el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.mozRequestFullScreen)    el.mozRequestFullScreen();
+      if      (player.requestFullscreen)       player.requestFullscreen();
+      else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
+      else if (player.mozRequestFullScreen)    player.mozRequestFullScreen();
+      else if (player.msRequestFullscreen)     player.msRequestFullscreen();
     } catch(e) { console.warn("FS:", e); }
   }
   function exitFullscreen() {
@@ -592,6 +616,10 @@
     } catch(e) { console.warn("FS:", e); }
   }
   fsBtn.addEventListener("click", e => { e.stopPropagation(); isFullscreen() ? exitFullscreen() : enterFullscreen(); });
+  player.addEventListener("fullscreenchange", onFsChange);
+  player.addEventListener("webkitfullscreenchange", onFsChange);
+  player.addEventListener("mozfullscreenchange", onFsChange);
+  player.addEventListener("msfullscreenchange", onFsChange);
   function onFsChange() { if (fsBtnIcon) fsBtnIcon.setAttribute("d", isFullscreen() ? FS_SHRINK : FS_EXPAND); }
   document.addEventListener("fullscreenchange", onFsChange);
   document.addEventListener("webkitfullscreenchange", onFsChange);
