@@ -638,7 +638,7 @@
     }
 
     .last-seen {
-      display: block;
+      display: none;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.6rem;
       letter-spacing: 0.1em;
@@ -1076,13 +1076,13 @@
       }
     }
 
-    function formatLastSeen() {
-      const now = new Date();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const yy = String(now.getFullYear()).slice(-2);
-      let hh = now.getHours();
-      const min = String(now.getMinutes()).padStart(2, '0');
+    function formatLastSeen(timestamp = null) {
+      const date = timestamp ? new Date(timestamp) : new Date();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      const yy = String(date.getFullYear()).slice(-2);
+      let hh = date.getHours();
+      const min = String(date.getMinutes()).padStart(2, '0');
       const ampm = hh >= 12 ? 'PM' : 'AM';
       hh = hh % 12;
       hh = hh ? hh : 12;
@@ -1096,14 +1096,21 @@
       channels.forEach(channel => {
         const url = channel.getAttribute('data-stream');
         const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
-        if (card && lastSeenData[url]) {
+        if (card) {
           const lastSeenEl = card.querySelector('.last-seen');
           if (lastSeenEl) {
-            lastSeenEl.textContent = lastSeenData[url];
-            // Only show if the dot is already marked offline (default)
+            // Check if the dot is marked offline (default state)
             const dot = channel.querySelector('.status-dot');
             if (dot && dot.classList.contains('offline')) {
-                lastSeenEl.style.display = 'block';
+              // Display last seen if available, otherwise show current time
+              if (lastSeenData[url]) {
+                lastSeenEl.textContent = lastSeenData[url];
+              } else {
+                lastSeenEl.textContent = formatLastSeen();
+              }
+              lastSeenEl.style.display = 'block';
+            } else {
+              lastSeenEl.style.display = 'none';
             }
           }
         }
@@ -1114,6 +1121,8 @@
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
+      const now = new Date();
+      const currentTime = now.getTime();
 
       for (const channel of channels) {
         const url = channel.getAttribute('data-stream');
@@ -1140,25 +1149,28 @@
         if (isOnline) {
           dot.classList.remove('offline');
           dot.classList.add('online');
+          // Update last seen time when channel comes online
           lastSeenData[url] = formatLastSeen();
         } else {
           dot.classList.remove('online');
           dot.classList.add('offline');
-          // If we don't have a last seen time yet, we can set a default one for first-time users
+          // If we don't have a last seen time yet, set it now
           if (!lastSeenData[url]) {
             lastSeenData[url] = formatLastSeen();
           }
         }
 
-        // Update last seen text
+        // Update last seen text in the UI
         const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
         if (card) {
           const lastSeenEl = card.querySelector('.last-seen');
           if (lastSeenEl) {
-            if (!isOnline && lastSeenData[url]) {
-              lastSeenEl.textContent = lastSeenData[url];
+            if (!isOnline) {
+              // Show last seen timestamp when offline
+              lastSeenEl.textContent = lastSeenData[url] || formatLastSeen();
               lastSeenEl.style.display = 'block';
             } else {
+              // Hide last seen timestamp when online
               lastSeenEl.textContent = '';
               lastSeenEl.style.display = 'none';
             }
