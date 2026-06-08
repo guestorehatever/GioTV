@@ -637,6 +637,17 @@
       display: inline-block;
     }
 
+    .last-seen {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
     .star-badge {
       color: var(--gold);
       font-size: 0.85em;
@@ -792,9 +803,10 @@
           <div class="status-dot"></div>
           <div class="featured-overlay"></div>
         </div>
-        <div class="featured-info">
+          <div class="featured-info">
           <div class="featured-badge">● Featured</div>
           <h3 class="featured-name">Gio Network</h3>
+          <div class="last-seen" id="last-seen-featured"></div>
           <p class="featured-desc">
             Welcome to Gio Network, your ultimate destination for non-stop entertainment! Dive into a curated world where you can catch all your favorite movies, from timeless classics to modern blockbusters. Stay updated with the latest headlines through our comprehensive news coverage, and never miss out on the most popular shows that everyone is talking about.
           </p>
@@ -835,6 +847,7 @@
           <div class="channel-info">
             <div class="channel-name">Fight TV</div>
             <div class="channel-tag">Boxing/Fighting</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -852,6 +865,7 @@
           <div class="channel-info">
             <div class="channel-name">Geej</div>
             <div class="channel-tag">Gaming</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -868,6 +882,7 @@
           </div>
           <div class="channel-info">
             <div class="channel-name">24/7 Weatherscan</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -885,6 +900,7 @@
           <div class="channel-info">
             <div class="channel-name">GALAXY TV</div>
             <div class="channel-tag">Entertainment</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -902,6 +918,7 @@
           <div class="channel-info">
             <div class="channel-name">Cubo TV</div>
             <div class="channel-tag">Anime (アニメ)</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -919,6 +936,7 @@
           <div class="channel-info">
             <div class="channel-name">Gusto TV <span class="star-badge">★</span></div>
             <div class="channel-tag">Cooking</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -938,6 +956,7 @@
           <div class="channel-info">
             <div class="channel-name">Throwback TV Network</div>
             <div class="channel-tag">Comedy</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -955,6 +974,7 @@
           <div class="channel-info">
             <div class="channel-name">Hard Rock TV</div>
             <div class="channel-tag">Music</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -972,6 +992,7 @@
           <div class="channel-info">
             <div class="channel-name">Young Hollywood <span class="star-badge">★</span></div>
             <div class="channel-tag">Lifestyle</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -989,6 +1010,7 @@
           <div class="channel-info">
             <div class="channel-name">GigabyteTV</div>
             <div class="channel-tag">Variety</div>
+            <div class="last-seen"></div>
           </div>
         </div>
 
@@ -1054,29 +1076,70 @@
       }
     }
 
+    function formatLastSeen() {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const yy = String(now.getFullYear()).slice(-2);
+      let hh = now.getHours();
+      const min = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hh >= 12 ? 'PM' : 'AM';
+      hh = hh % 12;
+      hh = hh ? hh : 12;
+      return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
+    }
+
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
+      const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
+
       for (const channel of channels) {
         const url = channel.getAttribute('data-stream');
         const dot = channel.querySelector('.status-dot');
         if (!dot) continue;
+
+        let isOnline = false;
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 8000);
           try {
             const response = await fetch(url, { method: 'HEAD', cache: 'no-cache', signal: controller.signal });
             clearTimeout(timeoutId);
-            if (response.ok) { dot.classList.remove('offline'); dot.classList.add('online'); }
-            else { dot.classList.remove('online'); dot.classList.add('offline'); }
+            isOnline = response.ok;
           } catch (corsError) {
             await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache', signal: controller.signal });
             clearTimeout(timeoutId);
-            dot.classList.remove('offline'); dot.classList.add('online');
+            isOnline = true;
           }
         } catch (error) {
-          dot.classList.remove('online'); dot.classList.add('offline');
+          isOnline = false;
+        }
+
+        if (isOnline) {
+          dot.classList.remove('offline');
+          dot.classList.add('online');
+          lastSeenData[url] = formatLastSeen();
+        } else {
+          dot.classList.remove('online');
+          dot.classList.add('offline');
+        }
+
+        // Update last seen text
+        const card = channel.closest('.channel-card') || channel.closest('.featured-card');
+        if (card) {
+          const lastSeenEl = card.querySelector('.last-seen');
+          if (lastSeenEl) {
+            if (!isOnline && lastSeenData[url]) {
+              lastSeenEl.textContent = lastSeenData[url];
+              lastSeenEl.style.display = 'block';
+            } else {
+              lastSeenEl.textContent = '';
+              lastSeenEl.style.display = 'none';
+            }
+          }
         }
       }
+      localStorage.setItem('giotv_last_seen', JSON.stringify(lastSeenData));
       reorderGrid();
     }
     setInterval(checkStatus, 10000);
