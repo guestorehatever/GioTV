@@ -966,15 +966,26 @@
         document.body.style.overflow = "hidden"; // Prevent scrolling
     }
 
-    closeBtn.onclick = function() {
+    function closePlayerModal() {
         modal.style.display = "none";
         iframe.src = "";
         document.body.style.overflow = "auto";
     }
 
+    closeBtn.onclick = function() {
+        closePlayerModal();
+    }
+
+    // Listen for close messages from iframe
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.action === 'closePlayer') {
+        closePlayerModal();
+      }
+    });
+
     window.onclick = function(event) {
         if (event.target == modal) {
-            closeBtn.onclick();
+            closePlayerModal();
         }
     }
 
