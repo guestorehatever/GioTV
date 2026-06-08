@@ -694,62 +694,7 @@
 
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    .player-modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.95);
-      backdrop-filter: blur(10px);
-    }
 
-    .modal-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      max-width: 1200px;
-    }
-
-    .modal-content {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 80px rgba(232,25,44,0.15), 0 0 50px rgba(0,0,0,0.5);
-    }
-
-    .close-modal {
-      position: absolute;
-      top: -44px;
-      right: 0;
-      color: #fff;
-      font-size: 32px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 2001;
-      transition: color 0.3s;
-      line-height: 1;
-      font-family: 'Barlow Condensed', sans-serif;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .close-modal:hover { color: var(--red); }
-
-    #player-iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%; height: 100%;
-      border: none;
-    }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -1058,14 +1003,7 @@
 
   </div>
 
-  <div id="playerModal" class="player-modal">
-    <div class="modal-wrapper">
-      <span class="close-modal">&times; Close</span>
-      <div class="modal-content">
-        <iframe id="player-iframe" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture"></iframe>
-      </div>
-    </div>
-  </div>
+
 
   <footer>
     <div class="footer-logo">Gio<span>TV</span></div>
@@ -1144,38 +1082,13 @@
     setInterval(checkStatus, 10000);
     checkStatus();
 
-    const modal = document.getElementById("playerModal");
-    const iframe = document.getElementById("player-iframe");
-    const closeBtn = document.querySelector(".close-modal");
-
+    // Player Navigation Logic
     function openPlayer(src) {
-      iframe.src = `player.html?src=${encodeURIComponent(src)}`;
-      modal.style.display = "block";
-      document.body.style.overflow = "hidden";
+      // Navigate to player page with stream URL as query parameter
+      window.location.href = `player.html?src=${encodeURIComponent(src)}`;
     }
 
-    function closePlayerModal() {
-      modal.style.display = "none";
-      iframe.src = "";
-      document.body.style.overflow = "auto";
-    }
-
-    closeBtn.onclick = function() {
-      closePlayerModal();
-    }
-
-    // Listen for close messages from iframe
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.action === 'closePlayer') {
-        closePlayerModal();
-      }
-    });
-
-    window.onclick = function(event) {
-      if (event.target == modal) closePlayerModal();
-    }
-
-    document.querySelectorAll('.watch-link').forEach(el => {
+    document.querySelectorAll('.watch-link, .watch-btn').forEach(el => {
       el.addEventListener('click', function(e) {
         e.preventDefault();
         const src = this.getAttribute('data-href') || this.getAttribute('href');

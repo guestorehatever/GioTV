@@ -923,13 +923,7 @@
     </div>
   </section>
 
-  <!-- PLAYER MODAL -->
-  <div id="playerModal" class="player-modal">
-      <span class="close-modal">&times;</span>
-      <div class="modal-content">
-          <iframe id="player-iframe" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture"></iframe>
-      </div>
-  </div>
+
 
   <!-- FOOTER -->
   <footer>
@@ -955,45 +949,26 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Player Modal Logic
-    const modal = document.getElementById("playerModal");
-    const iframe = document.getElementById("player-iframe");
-    const closeBtn = document.getElementsByClassName("close-modal")[0];
-
+    // Player Navigation Logic
     function openPlayer(src) {
-        iframe.src = `player.html?src=${encodeURIComponent(src)}`;
-        modal.style.display = "block";
-        document.body.style.overflow = "hidden"; // Prevent scrolling
+        // Navigate to player page with stream URL as query parameter
+        window.location.href = `player.html?src=${encodeURIComponent(src)}`;
     }
 
-    function closePlayerModal() {
-        modal.style.display = "none";
-        iframe.src = "";
-        document.body.style.overflow = "auto";
-    }
-
-    closeBtn.onclick = function() {
-        closePlayerModal();
-    }
-
-    // Listen for close messages from iframe
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.action === 'closePlayer') {
-        closePlayerModal();
-      }
-    });
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            closePlayerModal();
-        }
-    }
-
-    // Intercept watch links (optional, if you want home page links to also open in modal)
+    // Intercept watch links to open in player
     document.querySelectorAll('a[href*=".m3u8"]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             openPlayer(this.href);
+        });
+    });
+
+    // Handle watch buttons
+    document.querySelectorAll('.watch-btn, .watch-link').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const src = this.getAttribute('data-href') || this.getAttribute('href');
+            if (src) openPlayer(src);
         });
     });
   </script>

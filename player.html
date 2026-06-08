@@ -662,29 +662,17 @@
 
   // ── CLOSE BUTTON ──
   scheduleCloseBtn.addEventListener("click", () => {
-    // Close the modal by calling parent window's close function
-    if (window.parent && window.parent !== window) {
-      // If in an iframe, try to close the modal in the parent
-      if (window.parent.closePlayerModal) {
-        window.parent.closePlayerModal();
-      } else {
-        // Fallback: try to close via postMessage
-        window.parent.postMessage({ action: 'closePlayer' }, '*');
-      }
-    }
-  });
-
-  // Listen for close messages from parent
-  window.addEventListener('message', (event) => {
-    if (event.data && event.data.action === 'closePlayer') {
-      // Handle close if needed
-    }
+    // Go back to the previous page
+    window.history.back();
   });
 
   // ── START ──
   buildSchedule("today");
   showControls();
   initHls();
+
+  // Show controls on load
+  showControls();
 </script>
 
 <!-- Chromecast SDK — loads async, calls __onGCastApiAvailable when ready -->
