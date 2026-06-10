@@ -438,9 +438,36 @@
 </div><!-- .shell -->
 
 <script>
+  // Channel mapping with IDs
+  const CHANNEL_MAP = {
+    'fighttv1': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+    'geej1': { name: 'Geej', src: 'https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8' },
+    'weatherscan1': { name: '24/7 Weatherscan', src: 'https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8' },
+    'galaxytv1': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+    'cubotv1': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
+    'gustotv1': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+    'throwbacktv1': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+    'hardrocktv1': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+    'younghollywood1': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+    'gigabytetv1': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+    'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
+  };
+
   // Get the stream URL from query parameter
   const urlParams = new URLSearchParams(window.location.search);
-  const SRC = urlParams.get('src') || "https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8";
+  let SRC = "https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8";
+  
+  // Check if channel parameter is provided
+  const channelId = urlParams.get('channel');
+  if (channelId && CHANNEL_MAP[channelId]) {
+    SRC = CHANNEL_MAP[channelId].src;
+  } else {
+    // Fallback: check for legacy 'src' parameter
+    const legacySrc = urlParams.get('src');
+    if (legacySrc) {
+      SRC = legacySrc;
+    }
+  }
 
   const video         = document.getElementById("video");
   const videoWrap     = document.getElementById("videoWrap");
