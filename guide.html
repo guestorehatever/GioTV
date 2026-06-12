@@ -705,7 +705,273 @@
 
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    .notification-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(8, 10, 15, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
 
+    .notification-popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popup-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 420px;
+      text-align: center;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .notification-popup.show .popup-content {
+      transform: translateY(0);
+    }
+
+    .popup-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .popup-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .popup-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .popup-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .popup-btn {
+      padding: 12px 28px;
+      border-radius: 3px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+    .popup-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .popup-btn-yes {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);
+    }
+
+    .popup-btn-yes:hover {
+      background: #f02035;
+      box-shadow: 0 6px 28px rgba(232, 25, 44, 0.55);
+    }
+
+    .popup-btn-no {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .popup-btn-no:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .popup-btn-choose {
+      background: var(--gold);
+      color: #0a0800;
+      box-shadow: 0 4px 20px rgba(245, 200, 66, 0.3);
+    }
+
+    .popup-btn-choose:hover {
+      background: #f7d155;
+      box-shadow: 0 6px 28px rgba(245, 200, 66, 0.5);
+    }
+
+    .channel-selection-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(8, 10, 15, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .channel-selection-popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .channel-selection-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .channel-selection-popup.show .channel-selection-content {
+      transform: translateY(0);
+    }
+
+    .selection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .selection-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+      color: var(--text);
+    }
+
+    .selection-info {
+      padding: 16px 28px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .channels-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .channel-item:hover {
+      border-color: rgba(232, 25, 44, 0.3);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .channel-item-thumb {
+      width: 80px;
+      height: 45px;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--off-black);
+    }
+
+    .channel-item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .channel-item-info {
+      flex: 1;
+    }
+
+    .channel-item-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .channel-checkboxes {
+      display: flex;
+      gap: 20px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    .selection-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -736,6 +1002,33 @@
   </script>
 </head>
 <body>
+
+  <div class="notification-popup" id="notificationPopup">
+    <div class="popup-content">
+      <div class="popup-icon">🔔</div>
+      <h3 class="popup-title">Stay Updated</h3>
+      <p class="popup-text">Get notified when channels go live or offline</p>
+      <div class="popup-buttons">
+        <button class="popup-btn popup-btn-yes" id="popupAllowAll">Allow All</button>
+        <button class="popup-btn popup-btn-choose" id="popupChoose">Choose</button>
+        <button class="popup-btn popup-btn-no" id="popupNo">No Thanks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="channel-selection-popup" id="channelSelectionPopup">
+    <div class="channel-selection-content">
+      <div class="selection-header">
+        <h3 class="selection-title">Select Channels</h3>
+        <button class="close-btn" id="closeSelection">✕</button>
+      </div>
+      <div class="selection-info">Choose which channels to notify and when</div>
+      <div class="channels-list" id="channelsList"></div>
+      <div class="selection-footer">
+        <button class="popup-btn popup-btn-yes" id="saveSelection">Save Preferences</button>
+      </div>
+    </div>
+  </div>
 
   <nav>
     <ul class="nav-links">
@@ -1118,6 +1411,9 @@
     }
     initLastSeen();
 
+    // Track previous channel states for notifications
+    let previousChannelStates = {};
+
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
@@ -1145,6 +1441,50 @@
         } catch (error) {
           isOnline = false;
         }
+
+        // Check if channel state changed
+        const previousState = previousChannelStates[url];
+        const wasOffline = previousState === false;
+        const wasOnline = previousState === true;
+        const stateChanged = previousState !== undefined && previousState !== isOnline;
+
+        if (stateChanged) {
+          // Get channel name
+          const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
+          let channelName = 'A channel';
+          if (card) {
+            const nameEl = card.querySelector('.channel-name, .featured-name');
+            if (nameEl) {
+              channelName = nameEl.textContent.trim();
+            }
+          }
+
+          // Get channel preferences
+          const prefs = getChannelPreferences();
+          const channelPrefs = prefs[url] || { online: false, offline: false };
+
+          // Check if user opted in for notifications
+          const notificationChoice = getCookie('notification_choice');
+          if (notificationChoice === 'yes' && 'Notification' in window && Notification.permission === 'granted') {
+            // Channel went from offline to online
+            if (wasOffline && isOnline && channelPrefs.online) {
+              new Notification('🔔 Channel Live!', {
+                body: `${channelName} is now live!`,
+                icon: '📺'
+              });
+            }
+            // Channel went from online to offline
+            else if (wasOnline && !isOnline && channelPrefs.offline) {
+              new Notification('📴 Channel Offline', {
+                body: `${channelName} has gone offline`,
+                icon: '📺'
+              });
+            }
+          }
+        }
+
+        // Update previous state
+        previousChannelStates[url] = isOnline;
 
         if (isOnline) {
           dot.classList.remove('offline');
@@ -1223,6 +1563,204 @@
         }
       });
     });
+
+    // Notification Popup Logic
+    function setCookie(name, value, days) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + '=';
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function showNotificationPopup() {
+      const popup = document.getElementById('notificationPopup');
+      if (popup) {
+        popup.classList.add('show');
+      }
+    }
+
+    function hideNotificationPopup() {
+      const popup = document.getElementById('notificationPopup');
+      if (popup) {
+        popup.classList.remove('show');
+      }
+    }
+
+    function showChannelSelection() {
+      const popup = document.getElementById('channelSelectionPopup');
+      if (popup) {
+        popup.classList.add('show');
+        populateChannelList();
+      }
+    }
+
+    function hideChannelSelection() {
+      const popup = document.getElementById('channelSelectionPopup');
+      if (popup) {
+        popup.classList.remove('show');
+      }
+    }
+
+    // Get channel notification preferences
+    function getChannelPreferences() {
+      const prefs = localStorage.getItem('channel_notification_prefs');
+      return prefs ? JSON.parse(prefs) : {};
+    }
+
+    // Save channel notification preferences
+    function saveChannelPreferences(prefs) {
+      localStorage.setItem('channel_notification_prefs', JSON.stringify(prefs));
+    }
+
+    // Populate channel selection modal
+    function populateChannelList() {
+      const channelsList = document.getElementById('channelsList');
+      if (!channelsList) return;
+
+      const prefs = getChannelPreferences();
+      channelsList.innerHTML = '';
+
+      // Get all channels from the page
+      const channelCards = document.querySelectorAll('.channel-card, .featured-card');
+      
+      channelCards.forEach(card => {
+        const nameEl = card.querySelector('.channel-name, .featured-name');
+        const imgEl = card.querySelector('img');
+        const streamEl = card.querySelector('[data-stream]');
+        
+        if (!nameEl || !streamEl) return;
+
+        const channelName = nameEl.textContent.trim();
+        const channelImg = imgEl ? imgEl.src : '';
+        const streamUrl = streamEl.getAttribute('data-stream');
+
+        const item = document.createElement('div');
+        item.className = 'channel-item';
+        item.innerHTML = `
+          <div class="channel-item-thumb">
+            <img src="${channelImg}" alt="${channelName}">
+          </div>
+          <div class="channel-item-info">
+            <div class="channel-item-name">${channelName}</div>
+            <div class="channel-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" class="notify-online" data-url="${streamUrl}" ${prefs[streamUrl]?.online ? 'checked' : ''}>
+                Notify when online
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="notify-offline" data-url="${streamUrl}" ${prefs[streamUrl]?.offline ? 'checked' : ''}>
+                Notify when offline
+              </label>
+            </div>
+          </div>
+        `;
+        channelsList.appendChild(item);
+      });
+    }
+
+    // Check if user has already made a choice
+    const notificationChoice = getCookie('notification_choice');
+    if (!notificationChoice) {
+      // Show popup after 2 seconds
+      setTimeout(showNotificationPopup, 2000);
+    }
+
+    // Handle Allow All button
+    const allowAllBtn = document.getElementById('popupAllowAll');
+    if (allowAllBtn) {
+      allowAllBtn.addEventListener('click', function() {
+        hideNotificationPopup();
+        setCookie('notification_choice', 'yes', 365);
+        
+        // Request notification permission
+        if ('Notification' in window) {
+          Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+              // Enable all notifications for all channels
+              const prefs = {};
+              const channels = document.querySelectorAll('[data-stream]');
+              channels.forEach(channel => {
+                const url = channel.getAttribute('data-stream');
+                prefs[url] = { online: true, offline: true };
+              });
+              saveChannelPreferences(prefs);
+              console.log('All notifications enabled');
+            }
+          });
+        }
+      });
+    }
+
+    // Handle Choose button
+    const chooseBtn = document.getElementById('popupChoose');
+    if (chooseBtn) {
+      chooseBtn.addEventListener('click', function() {
+        hideNotificationPopup();
+        setCookie('notification_choice', 'yes', 365);
+        
+        // Request notification permission
+        if ('Notification' in window) {
+          Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+              showChannelSelection();
+            }
+          });
+        } else {
+          showChannelSelection();
+        }
+      });
+    }
+
+    // Handle No Thanks button
+    const noBtn = document.getElementById('popupNo');
+    if (noBtn) {
+      noBtn.addEventListener('click', function() {
+        hideNotificationPopup();
+        setCookie('notification_choice', 'no', 365);
+      });
+    }
+
+    // Handle close selection button
+    const closeSelectionBtn = document.getElementById('closeSelection');
+    if (closeSelectionBtn) {
+      closeSelectionBtn.addEventListener('click', hideChannelSelection);
+    }
+
+    // Handle save selection button
+    const saveSelectionBtn = document.getElementById('saveSelection');
+    if (saveSelectionBtn) {
+      saveSelectionBtn.addEventListener('click', function() {
+        const prefs = {};
+        const onlineCheckboxes = document.querySelectorAll('.notify-online');
+        const offlineCheckboxes = document.querySelectorAll('.notify-offline');
+
+        onlineCheckboxes.forEach(cb => {
+          const url = cb.getAttribute('data-url');
+          if (!prefs[url]) prefs[url] = {};
+          prefs[url].online = cb.checked;
+        });
+
+        offlineCheckboxes.forEach(cb => {
+          const url = cb.getAttribute('data-url');
+          if (!prefs[url]) prefs[url] = {};
+          prefs[url].offline = cb.checked;
+        });
+
+        saveChannelPreferences(prefs);
+        hideChannelSelection();
+        console.log('Channel preferences saved');
+      });
+    }
   </script>
 </body>
 </html>

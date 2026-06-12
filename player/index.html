@@ -352,6 +352,54 @@
       margin-left: 6px;
       vertical-align: middle;
     }
+
+    /* Recording indicator */
+    .recording-indicator {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 6px 12px;
+      border-radius: 4px;
+      z-index: 25;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .recording-indicator.show {
+      opacity: 1;
+    }
+    .recording-dot {
+      width: 10px;
+      height: 10px;
+      background: #ff0000;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    .recording-timer {
+      font-size: 11px;
+      color: #fff;
+      letter-spacing: 0.05em;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .btn.recording {
+      color: #ff0000 !important;
+    }
+    .btn.recording svg {
+      animation: pulse-record 1s infinite;
+    }
+    @keyframes pulse-record {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
   </style>
 </head>
 <body>
@@ -370,6 +418,10 @@
         <div class="spinner" id="spinner"></div>
         <div class="offline-screen" id="offlineScreen">
           <img src="../offline.png" alt="Channel Offline"/>
+        </div>
+        <div class="recording-indicator" id="recordingIndicator">
+          <div class="recording-dot"></div>
+          <span class="recording-timer" id="recordingTimer">00:00</span>
         </div>
       </div>
 
@@ -406,6 +458,12 @@
           <button class="btn" id="pipBtn" title="Picture-in-Picture">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 7H5c-1.1 0-2 .9-2 2v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm0 11H5V9h14v9zm-8-7h6v5h-6z"/>
+            </svg>
+          </button>
+
+          <button class="btn" id="recordBtn" title="Record">
+            <svg id="recordIcon" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="6"/>
             </svg>
           </button>
 
@@ -480,6 +538,7 @@
   const pipBtn        = document.getElementById("pipBtn");
   const airplayBtn    = document.getElementById("airplayBtn");
   const castBtn       = document.getElementById("castBtn");
+  const recordBtn     = document.getElementById("recordBtn");
   const spinner       = document.getElementById("spinner");
   const offlineScreen = document.getElementById("offlineScreen");
   const centerFlash   = document.getElementById("centerFlash");
@@ -487,6 +546,8 @@
   const player        = document.getElementById("player");
   const controlsWrap  = document.getElementById("controlsWrap");
   const scheduleCloseBtn = document.getElementById("scheduleCloseBtn");
+  const recordingIndicator = document.getElementById("recordingIndicator");
+  const recordingTimer = document.getElementById("recordingTimer");
 
   const PLAY_PATH  = "M8 5v14l11-7z";
   const PAUSE_PATH = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
@@ -496,6 +557,16 @@
   const OFFLINE_DETAILS = ["manifestLoadError","manifestParsingError","manifestLoadTimeOut","levelLoadError","levelLoadTimeOut"];
 
   let hls = null, flashTimer = null, hideTimer = null;
+
+  // Recording variables
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordingStartTime = null;
+  let recordingTimerInterval = null;
+  let isRecording = false;
+  let canvas = null;
+  let canvasCtx = null;
+  let animationFrame = null;
 
   // ── AUTOHIDE ──
   function showControls() {
@@ -715,8 +786,140 @@
     buildSchedule("tomorrow");
   });
 
+  // ── RECORDING ──
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateRecordingTimer() {
+    if (recordingStartTime) {
+      const elapsed = (Date.now() - recordingStartTime) / 1000;
+      recordingTimer.textContent = formatTime(elapsed);
+    }
+  }
+
+  function drawVideoToCanvas() {
+    if (!isRecording || !canvas || !canvasCtx || !video.videoWidth) return;
+    canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    animationFrame = requestAnimationFrame(drawVideoToCanvas);
+  }
+
+  function startRecording() {
+    if (!video.videoWidth) {
+      alert("Please wait for the video to load before recording.");
+      return;
+    }
+
+    // Create canvas for capturing video frames
+    canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvasCtx = canvas.getContext('2d');
+
+    // Capture canvas stream
+    const stream = canvas.captureStream(30); // 30 FPS
+
+    // Initialize MediaRecorder
+    try {
+      mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    } catch (e) {
+      try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      } catch (e2) {
+        alert("MediaRecorder is not supported in your browser.");
+        return;
+      }
+    }
+
+    recordedChunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      // Generate filename with channel name and timestamp
+      const channelName = channelId && CHANNEL_MAP[channelId] ? CHANNEL_MAP[channelId].name : 'recording';
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      a.download = `${channelName}-${timestamp}.webm`;
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // Start recording
+    mediaRecorder.start(100); // Collect data every 100ms
+    isRecording = true;
+    recordingStartTime = Date.now();
+    
+    // Start drawing video to canvas
+    drawVideoToCanvas();
+    
+    // Update UI
+    recordBtn.classList.add('recording');
+    recordingIndicator.classList.add('show');
+    recordingTimer.textContent = '00:00';
+    
+    // Start timer
+    recordingTimerInterval = setInterval(updateRecordingTimer, 1000);
+  }
+
+  function stopRecording() {
+    if (!mediaRecorder || !isRecording) return;
+
+    // Stop MediaRecorder
+    mediaRecorder.stop();
+    isRecording = false;
+    
+    // Stop drawing to canvas
+    if (animationFrame) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+    
+    // Stop timer
+    if (recordingTimerInterval) {
+      clearInterval(recordingTimerInterval);
+      recordingTimerInterval = null;
+    }
+    
+    // Update UI
+    recordBtn.classList.remove('recording');
+    recordingIndicator.classList.remove('show');
+    
+    // Clean up canvas
+    if (canvas) {
+      canvas = null;
+      canvasCtx = null;
+    }
+  }
+
+  recordBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  });
+
   // ── CLOSE BUTTON ──
   scheduleCloseBtn.addEventListener("click", () => {
+    // Stop recording if active
+    if (isRecording) {
+      stopRecording();
+    }
     // Go back to the previous page
     window.history.back();
   });
