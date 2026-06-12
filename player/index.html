@@ -567,6 +567,9 @@
   let canvas = null;
   let canvasCtx = null;
   let animationFrame = null;
+  let audioContext = null;
+  let audioDestination = null;
+  let audioSource = null;
 
   // ── AUTOHIDE ──
   function showControls() {
@@ -818,18 +821,34 @@
     canvas.height = video.videoHeight;
     canvasCtx = canvas.getContext('2d');
 
-    // Capture canvas stream
-    const stream = canvas.captureStream(30); // 30 FPS
+    // Capture canvas stream (video only)
+    const canvasStream = canvas.captureStream(30); // 30 FPS
+
+    // Set up Web Audio API for audio capture
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioDestination = audioContext.createMediaStreamDestination();
+    audioSource = audioContext.createMediaElementSource(video);
+    audioSource.connect(audioDestination);
+    audioSource.connect(audioContext.destination); // Also connect to speakers so user can hear
+
+    // Combine video and audio streams
+    const combinedStream = canvasStream;
+    const audioTracks = audioDestination.stream.getAudioTracks();
+    audioTracks.forEach(track => combinedStream.addTrack(track));
 
     // Initialize MediaRecorder
     try {
-      mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm;codecs=vp9,opus' });
     } catch (e) {
       try {
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm;codecs=vp8,opus' });
       } catch (e2) {
-        alert("MediaRecorder is not supported in your browser.");
-        return;
+        try {
+          mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+        } catch (e3) {
+          alert("MediaRecorder is not supported in your browser.");
+          return;
+        }
       }
     }
 
@@ -892,6 +911,20 @@
     if (recordingTimerInterval) {
       clearInterval(recordingTimerInterval);
       recordingTimerInterval = null;
+    }
+    
+    // Clean up audio context
+    if (audioSource) {
+      audioSource.disconnect();
+      audioSource = null;
+    }
+    if (audioDestination) {
+      audioDestination.disconnect();
+      audioDestination = null;
+    }
+    if (audioContext) {
+      audioContext.close();
+      audioContext = null;
     }
     
     // Update UI
