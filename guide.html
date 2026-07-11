@@ -488,7 +488,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      margin-bottom: 80px;
+      margin-bottom: 32px;
       position: relative;
       overflow: hidden;
     }
@@ -521,6 +521,10 @@
     .cta-banner-text p {
       font-size: 0.85rem;
       color: var(--muted);
+    }
+
+    .cta-banner-last {
+      margin-bottom: 80px;
     }
 
     .channels-grid {
@@ -1120,6 +1124,15 @@
       <a href="survey.html" class="btn btn-gold btn-arrow">Get Started</a>
     </div>
 
+    <div class="cta-banner cta-banner-last reveal">
+      <div class="cta-banner-text">
+        <p class="cta-label">✦ Support</p>
+        <h3>Have a Problem?</h3>
+        <p>Our team is ready to help — give us a call anytime.</p>
+      </div>
+      <a href="tel:+15732220801" class="btn btn-gold btn-arrow">Call Us!</a>
+    </div>
+
     <section class="channels-section reveal">
       <p class="section-label">All Channels</p>
       <h2 class="section-heading">Browse the Lineup</h2>
@@ -1233,8 +1246,6 @@
           </div>
         </div>
 
-
-
         <!-- Throwback Television Network -->
         <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
           <div class="channel-thumb">
@@ -1318,8 +1329,6 @@
 
   </div>
 
-
-
   <footer>
     <div class="footer-logo">Gio<span>TV</span></div>
     <p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
@@ -1382,7 +1391,6 @@
       return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
     }
 
-    // Initialize last seen text from storage on load
     function initLastSeen() {
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
       const channels = document.querySelectorAll('[data-stream]');
@@ -1392,10 +1400,8 @@
         if (card) {
           const lastSeenEl = card.querySelector('.last-seen');
           if (lastSeenEl) {
-            // Check if the dot is marked offline (default state)
             const dot = channel.querySelector('.status-dot');
             if (dot && dot.classList.contains('offline')) {
-              // Display last seen if available, otherwise show current time
               if (lastSeenData[url]) {
                 lastSeenEl.textContent = lastSeenData[url];
               } else {
@@ -1411,14 +1417,12 @@
     }
     initLastSeen();
 
-    // Track previous channel states for notifications
     let previousChannelStates = {};
 
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
       const now = new Date();
-      const currentTime = now.getTime();
 
       for (const channel of channels) {
         const url = channel.getAttribute('data-stream');
@@ -1442,75 +1446,52 @@
           isOnline = false;
         }
 
-        // Check if channel state changed
         const previousState = previousChannelStates[url];
         const wasOffline = previousState === false;
         const wasOnline = previousState === true;
         const stateChanged = previousState !== undefined && previousState !== isOnline;
 
         if (stateChanged) {
-          // Get channel name
           const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
           let channelName = 'A channel';
           if (card) {
             const nameEl = card.querySelector('.channel-name, .featured-name');
-            if (nameEl) {
-              channelName = nameEl.textContent.trim();
-            }
+            if (nameEl) channelName = nameEl.textContent.trim();
           }
 
-          // Get channel preferences
           const prefs = getChannelPreferences();
           const channelPrefs = prefs[url] || { online: false, offline: false };
-
-          // Check if user opted in for notifications
           const notificationChoice = getCookie('notification_choice');
+
           if (notificationChoice === 'yes' && 'Notification' in window && Notification.permission === 'granted') {
-            // Channel went from offline to online
             if (wasOffline && isOnline && channelPrefs.online) {
-              new Notification('🔔 Channel Live!', {
-                body: `${channelName} is now live!`,
-                icon: '📺'
-              });
-            }
-            // Channel went from online to offline
-            else if (wasOnline && !isOnline && channelPrefs.offline) {
-              new Notification('📴 Channel Offline', {
-                body: `${channelName} has gone offline`,
-                icon: '📺'
-              });
+              new Notification('🔔 Channel Live!', { body: `${channelName} is now live!`, icon: '📺' });
+            } else if (wasOnline && !isOnline && channelPrefs.offline) {
+              new Notification('📴 Channel Offline', { body: `${channelName} has gone offline`, icon: '📺' });
             }
           }
         }
 
-        // Update previous state
         previousChannelStates[url] = isOnline;
 
         if (isOnline) {
           dot.classList.remove('offline');
           dot.classList.add('online');
-          // Update last seen time when channel comes online
           lastSeenData[url] = formatLastSeen();
         } else {
           dot.classList.remove('online');
           dot.classList.add('offline');
-          // If we don't have a last seen time yet, set it now
-          if (!lastSeenData[url]) {
-            lastSeenData[url] = formatLastSeen();
-          }
+          if (!lastSeenData[url]) lastSeenData[url] = formatLastSeen();
         }
 
-        // Update last seen text in the UI
         const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
         if (card) {
           const lastSeenEl = card.querySelector('.last-seen');
           if (lastSeenEl) {
             if (!isOnline) {
-              // Show last seen timestamp when offline
               lastSeenEl.textContent = lastSeenData[url] || formatLastSeen();
               lastSeenEl.style.display = 'block';
             } else {
-              // Hide last seen timestamp when online
               lastSeenEl.textContent = '';
               lastSeenEl.style.display = 'none';
             }
@@ -1523,7 +1504,6 @@
     setInterval(checkStatus, 10000);
     checkStatus();
 
-    // Channel mapping with IDs
     const CHANNEL_MAP = {
       'fighttv1': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
       'geej1': { name: 'Geej', src: 'https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8' },
@@ -1538,9 +1518,7 @@
       'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
 
-    // Player Navigation Logic
     function openPlayer(channelId) {
-      // Navigate to player page with custom channel URL
       window.location.href = `player/?channel=${encodeURIComponent(channelId)}`;
     }
 
@@ -1549,7 +1527,6 @@
         e.preventDefault();
         const src = this.getAttribute('data-href') || this.getAttribute('href');
         if (src) {
-          // Find the channel ID by matching the src URL
           let channelId = null;
           for (const [id, channel] of Object.entries(CHANNEL_MAP)) {
             if (channel.src === src) {
@@ -1557,14 +1534,11 @@
               break;
             }
           }
-          if (channelId) {
-            openPlayer(channelId);
-          }
+          if (channelId) openPlayer(channelId);
         }
       });
     });
 
-    // Notification Popup Logic
     function setCookie(name, value, days) {
       const expires = new Date();
       expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -1584,183 +1558,115 @@
 
     function showNotificationPopup() {
       const popup = document.getElementById('notificationPopup');
-      if (popup) {
-        popup.classList.add('show');
-      }
+      if (popup) popup.classList.add('show');
     }
 
     function hideNotificationPopup() {
       const popup = document.getElementById('notificationPopup');
-      if (popup) {
-        popup.classList.remove('show');
-      }
+      if (popup) popup.classList.remove('show');
     }
 
     function showChannelSelection() {
       const popup = document.getElementById('channelSelectionPopup');
-      if (popup) {
-        popup.classList.add('show');
-        populateChannelList();
-      }
+      if (popup) { popup.classList.add('show'); populateChannelList(); }
     }
 
     function hideChannelSelection() {
       const popup = document.getElementById('channelSelectionPopup');
-      if (popup) {
-        popup.classList.remove('show');
-      }
+      if (popup) popup.classList.remove('show');
     }
 
-    // Get channel notification preferences
     function getChannelPreferences() {
       const prefs = localStorage.getItem('channel_notification_prefs');
       return prefs ? JSON.parse(prefs) : {};
     }
 
-    // Save channel notification preferences
     function saveChannelPreferences(prefs) {
       localStorage.setItem('channel_notification_prefs', JSON.stringify(prefs));
     }
 
-    // Populate channel selection modal
     function populateChannelList() {
       const channelsList = document.getElementById('channelsList');
       if (!channelsList) return;
-
       const prefs = getChannelPreferences();
       channelsList.innerHTML = '';
-
-      // Get all channels from the page
       const channelCards = document.querySelectorAll('.channel-card, .featured-card');
-      
       channelCards.forEach(card => {
         const nameEl = card.querySelector('.channel-name, .featured-name');
         const imgEl = card.querySelector('img');
         const streamEl = card.querySelector('[data-stream]');
-        
         if (!nameEl || !streamEl) return;
-
         const channelName = nameEl.textContent.trim();
         const channelImg = imgEl ? imgEl.src : '';
         const streamUrl = streamEl.getAttribute('data-stream');
-
         const item = document.createElement('div');
         item.className = 'channel-item';
         item.innerHTML = `
-          <div class="channel-item-thumb">
-            <img src="${channelImg}" alt="${channelName}">
-          </div>
+          <div class="channel-item-thumb"><img src="${channelImg}" alt="${channelName}"></div>
           <div class="channel-item-info">
             <div class="channel-item-name">${channelName}</div>
             <div class="channel-checkboxes">
-              <label class="checkbox-label">
-                <input type="checkbox" class="notify-online" data-url="${streamUrl}" ${prefs[streamUrl]?.online ? 'checked' : ''}>
-                Notify when online
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" class="notify-offline" data-url="${streamUrl}" ${prefs[streamUrl]?.offline ? 'checked' : ''}>
-                Notify when offline
-              </label>
+              <label class="checkbox-label"><input type="checkbox" class="notify-online" data-url="${streamUrl}" ${prefs[streamUrl]?.online ? 'checked' : ''}> Notify when online</label>
+              <label class="checkbox-label"><input type="checkbox" class="notify-offline" data-url="${streamUrl}" ${prefs[streamUrl]?.offline ? 'checked' : ''}> Notify when offline</label>
             </div>
-          </div>
-        `;
+          </div>`;
         channelsList.appendChild(item);
       });
     }
 
-    // Check if user has already made a choice
     const notificationChoice = getCookie('notification_choice');
-    if (!notificationChoice) {
-      // Show popup after 2 seconds
-      setTimeout(showNotificationPopup, 2000);
-    }
+    if (!notificationChoice) setTimeout(showNotificationPopup, 2000);
 
-    // Handle Allow All button
-    const allowAllBtn = document.getElementById('popupAllowAll');
-    if (allowAllBtn) {
-      allowAllBtn.addEventListener('click', function() {
-        hideNotificationPopup();
-        setCookie('notification_choice', 'yes', 365);
-        
-        // Request notification permission
-        if ('Notification' in window) {
-          Notification.requestPermission().then(function(permission) {
-            if (permission === 'granted') {
-              // Enable all notifications for all channels
-              const prefs = {};
-              const channels = document.querySelectorAll('[data-stream]');
-              channels.forEach(channel => {
-                const url = channel.getAttribute('data-stream');
-                prefs[url] = { online: true, offline: true };
-              });
-              saveChannelPreferences(prefs);
-              console.log('All notifications enabled');
-            }
-          });
-        }
-      });
-    }
-
-    // Handle Choose button
-    const chooseBtn = document.getElementById('popupChoose');
-    if (chooseBtn) {
-      chooseBtn.addEventListener('click', function() {
-        hideNotificationPopup();
-        setCookie('notification_choice', 'yes', 365);
-        
-        // Request notification permission
-        if ('Notification' in window) {
-          Notification.requestPermission().then(function(permission) {
-            if (permission === 'granted') {
-              showChannelSelection();
-            }
-          });
-        } else {
-          showChannelSelection();
-        }
-      });
-    }
-
-    // Handle No Thanks button
-    const noBtn = document.getElementById('popupNo');
-    if (noBtn) {
-      noBtn.addEventListener('click', function() {
-        hideNotificationPopup();
-        setCookie('notification_choice', 'no', 365);
-      });
-    }
-
-    // Handle close selection button
-    const closeSelectionBtn = document.getElementById('closeSelection');
-    if (closeSelectionBtn) {
-      closeSelectionBtn.addEventListener('click', hideChannelSelection);
-    }
-
-    // Handle save selection button
-    const saveSelectionBtn = document.getElementById('saveSelection');
-    if (saveSelectionBtn) {
-      saveSelectionBtn.addEventListener('click', function() {
-        const prefs = {};
-        const onlineCheckboxes = document.querySelectorAll('.notify-online');
-        const offlineCheckboxes = document.querySelectorAll('.notify-offline');
-
-        onlineCheckboxes.forEach(cb => {
-          const url = cb.getAttribute('data-url');
-          if (!prefs[url]) prefs[url] = {};
-          prefs[url].online = cb.checked;
+    document.getElementById('popupAllowAll')?.addEventListener('click', function() {
+      hideNotificationPopup();
+      setCookie('notification_choice', 'yes', 365);
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            const prefs = {};
+            document.querySelectorAll('[data-stream]').forEach(channel => {
+              prefs[channel.getAttribute('data-stream')] = { online: true, offline: true };
+            });
+            saveChannelPreferences(prefs);
+          }
         });
+      }
+    });
 
-        offlineCheckboxes.forEach(cb => {
-          const url = cb.getAttribute('data-url');
-          if (!prefs[url]) prefs[url] = {};
-          prefs[url].offline = cb.checked;
+    document.getElementById('popupChoose')?.addEventListener('click', function() {
+      hideNotificationPopup();
+      setCookie('notification_choice', 'yes', 365);
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') showChannelSelection();
         });
+      } else {
+        showChannelSelection();
+      }
+    });
 
-        saveChannelPreferences(prefs);
-        hideChannelSelection();
-        console.log('Channel preferences saved');
+    document.getElementById('popupNo')?.addEventListener('click', function() {
+      hideNotificationPopup();
+      setCookie('notification_choice', 'no', 365);
+    });
+
+    document.getElementById('closeSelection')?.addEventListener('click', hideChannelSelection);
+
+    document.getElementById('saveSelection')?.addEventListener('click', function() {
+      const prefs = {};
+      document.querySelectorAll('.notify-online').forEach(cb => {
+        const url = cb.getAttribute('data-url');
+        if (!prefs[url]) prefs[url] = {};
+        prefs[url].online = cb.checked;
       });
-    }
+      document.querySelectorAll('.notify-offline').forEach(cb => {
+        const url = cb.getAttribute('data-url');
+        if (!prefs[url]) prefs[url] = {};
+        prefs[url].offline = cb.checked;
+      });
+      saveChannelPreferences(prefs);
+      hideChannelSelection();
+    });
   </script>
 </body>
 </html>
