@@ -425,6 +425,113 @@
       overflow: hidden;
     }
 
+    /* ── MINI PLAYER ── */
+    .mini-player-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,5,8,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .mini-player-overlay.active {
+      display: flex;
+    }
+
+    .mini-player-box {
+      width: 100%;
+      max-width: 960px;
+      background: var(--off-black);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+    }
+
+    .mini-player-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mini-player-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .mini-player-close {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 3px;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s;
+    }
+
+    .mini-player-close:hover {
+      background: var(--dark-red);
+    }
+
+    .mini-player-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .mini-player-video-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .mini-player-status {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+      background: #000;
+    }
+
+    .mini-player-status img {
+      max-width: 70%;
+      max-height: 60%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .mini-player-status.offline img {
+      display: block;
+    }
+
+    .mini-player-status.offline .mini-player-status-text {
+      display: none;
+    }
+
     .watch-btn {
       display: inline-flex;
       align-items: center;
@@ -1004,6 +1111,7 @@
       }
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
 </head>
 <body>
 
@@ -1339,6 +1447,23 @@
     </ul>
   </footer>
 
+  <!-- MINI PLAYER -->
+  <div class="mini-player-overlay" id="miniPlayerOverlay">
+    <div class="mini-player-box">
+      <div class="mini-player-header">
+        <div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
+        <button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
+      </div>
+      <div class="mini-player-video-wrap">
+        <video id="miniPlayerVideo" controls autoplay playsinline></video>
+        <div class="mini-player-status" id="miniPlayerStatus">
+          <img src="offline.png" alt="Channel offline" id="miniPlayerOfflineImg" />
+          <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -1518,23 +1643,105 @@
       'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
 
-    function openPlayer(channelId) {
-      window.location.href = `player/?channel=${encodeURIComponent(channelId)}`;
+    // ── MINI PLAYER ──
+    const miniPlayerOverlay = document.getElementById('miniPlayerOverlay');
+    const miniPlayerVideo = document.getElementById('miniPlayerVideo');
+    const miniPlayerTitle = document.getElementById('miniPlayerTitle');
+    const miniPlayerClose = document.getElementById('miniPlayerClose');
+    const miniPlayerStatus = document.getElementById('miniPlayerStatus');
+    const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
+    let hlsInstance = null;
+
+    function showMiniPlayerLoading() {
+      miniPlayerStatus.classList.remove('offline');
+      miniPlayerStatus.style.display = 'flex';
+      miniPlayerStatusText.textContent = 'Loading stream…';
     }
+
+    function showMiniPlayerOffline() {
+      miniPlayerStatus.style.display = 'flex';
+      miniPlayerStatus.classList.add('offline');
+    }
+
+    function hideMiniPlayerStatus() {
+      miniPlayerStatus.classList.remove('offline');
+      miniPlayerStatus.style.display = 'none';
+    }
+
+    function closeMiniPlayer() {
+      miniPlayerOverlay.classList.remove('active');
+      miniPlayerVideo.pause();
+      miniPlayerVideo.removeAttribute('src');
+      miniPlayerVideo.load();
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
+    }
+
+    function openMiniPlayer(src, name) {
+      miniPlayerTitle.textContent = name || 'Now Playing';
+      showMiniPlayerLoading();
+      miniPlayerOverlay.classList.add('active');
+
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
+
+      if (miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS support (Safari)
+        miniPlayerVideo.src = src;
+        miniPlayerVideo.addEventListener('loadedmetadata', function onLoaded() {
+          hideMiniPlayerStatus();
+          miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
+        });
+        miniPlayerVideo.addEventListener('error', function onError() {
+          showMiniPlayerOffline();
+          miniPlayerVideo.removeEventListener('error', onError);
+        });
+        miniPlayerVideo.play().catch(() => {});
+      } else if (window.Hls && window.Hls.isSupported()) {
+        hlsInstance = new Hls();
+        hlsInstance.loadSource(src);
+        hlsInstance.attachMedia(miniPlayerVideo);
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+          hideMiniPlayerStatus();
+          miniPlayerVideo.play().catch(() => {});
+        });
+        hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+          if (data.fatal) {
+            showMiniPlayerOffline();
+          }
+        });
+      } else {
+        showMiniPlayerOffline();
+      }
+    }
+
+    function openPlayer(channelId) {
+      const channel = CHANNEL_MAP[channelId];
+      if (channel) openMiniPlayer(channel.src, channel.name);
+    }
+
+    miniPlayerClose.addEventListener('click', closeMiniPlayer);
+    miniPlayerOverlay.addEventListener('click', function(e) {
+      if (e.target === miniPlayerOverlay) closeMiniPlayer();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && miniPlayerOverlay.classList.contains('active')) closeMiniPlayer();
+    });
 
     document.querySelectorAll('.watch-link, .watch-btn').forEach(el => {
       el.addEventListener('click', function(e) {
         e.preventDefault();
         const src = this.getAttribute('data-href') || this.getAttribute('href');
         if (src) {
-          let channelId = null;
-          for (const [id, channel] of Object.entries(CHANNEL_MAP)) {
-            if (channel.src === src) {
-              channelId = id;
-              break;
-            }
+          let matched = null;
+          for (const channel of Object.values(CHANNEL_MAP)) {
+            if (channel.src === src) { matched = channel; break; }
           }
-          if (channelId) openPlayer(channelId);
+          openMiniPlayer(src, matched ? matched.name : null);
         }
       });
     });
