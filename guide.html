@@ -591,6 +591,39 @@
       box-shadow: 0 0 8px rgba(155,79,220,0.8) !important;
     }
 
+    .share-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 4px 9px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .share-link:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .share-link.copied {
+      color: var(--gold);
+      border-color: rgba(245,200,66,0.4);
+    }
+
+    .featured-info .share-link {
+      margin-top: 14px;
+    }
+
     .manager-note {
       background: rgba(245,200,66,0.1);
       border: 1px solid rgba(245,200,66,0.35);
@@ -1378,10 +1411,11 @@
             <div class="manager-note-label">✦ Note from Channel Manager</div>
             <p class="manager-note-text">We recently made the unfortunate decision to close down Gio Network on July 19, 2026. Between the stress and everything else on our plate, we simply couldn't keep up. Thank you for being with us for nine months as we went through adventures like movie showcases and even a SpongeBob Day recently. Thank you!</p>
           </div>
-          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-name="TapeTime Radio">
+          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-name="TapeTime Radio" data-channel="tapetime">
             <span class="play-icon">▶</span>
             Watch Live
           </button>
+          <button class="share-link" data-channel="tapetime">🔗 Share Channel</button>
         </div>
       </div>
     </section>
@@ -1411,7 +1445,7 @@
       <div class="channels-grid">
 
         <!-- Fight TV -->
-        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
+        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8" data-channel="fighttv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
               <img src="fight_tv.jpeg" alt="Fight TV" />
@@ -1425,6 +1459,7 @@
             <div class="channel-name">Fight TV</div>
             <div class="channel-tag">Boxing/Fighting</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="fighttv">🔗 Share</button>
           </div>
         </div>
 
@@ -1444,7 +1479,7 @@
         </div>
 
         <!-- 24/7 Weatherscan -->
-        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8" data-channel="weatherscan">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8">
               <img src="2.png" alt="24/7 Weatherscan" />
@@ -1457,11 +1492,12 @@
           <div class="channel-info">
             <div class="channel-name">24/7 Weatherscan</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="weatherscan">🔗 Share</button>
           </div>
         </div>
 
         <!-- GALAXY TV -->
-        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8" data-channel="galaxytv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
               <img src="galaxy_tv.png" alt="GALAXY TV" />
@@ -1475,11 +1511,12 @@
             <div class="channel-name">GALAXY TV</div>
             <div class="channel-tag">Entertainment</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="galaxytv">🔗 Share</button>
           </div>
         </div>
 
         <!-- Cubo TV -->
-        <div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
+        <div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8" data-channel="cubotv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
               <img src="cubo_tv.png" alt="Cubo TV" />
@@ -1493,11 +1530,12 @@
             <div class="channel-name">Cubo TV</div>
             <div class="channel-tag">Anime (アニメ)</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="cubotv">🔗 Share</button>
           </div>
         </div>
 
         <!-- Gusto TV -->
-        <div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8" data-channel="gustotv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
               <img src="gusto_tv.png" alt="Gusto TV" />
@@ -1511,11 +1549,12 @@
             <div class="channel-name">Gusto TV <span class="star-badge">★</span></div>
             <div class="channel-tag">Cooking</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="gustotv">🔗 Share</button>
           </div>
         </div>
 
         <!-- Throwback Television Network -->
-        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8" data-channel="throwbacktv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
               <img src="throwback_tv.jpeg" alt="Throwback Television Network" />
@@ -1529,11 +1568,12 @@
             <div class="channel-name">Throwback TV Network</div>
             <div class="channel-tag">Comedy</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="throwbacktv">🔗 Share</button>
           </div>
         </div>
 
         <!-- Hard Rock TV -->
-        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
+        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8" data-channel="hardrocktv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
               <img src="IMG_5344.jpeg" alt="Hard Rock TV" />
@@ -1547,11 +1587,12 @@
             <div class="channel-name">Hard Rock TV</div>
             <div class="channel-tag">Music</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="hardrocktv">🔗 Share</button>
           </div>
         </div>
 
         <!-- Young Hollywood -->
-        <div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8" data-channel="younghollywood">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
               <img src="young_hollywood.jpg" alt="Young Hollywood" />
@@ -1565,11 +1606,12 @@
             <div class="channel-name">Young Hollywood <span class="star-badge">★</span></div>
             <div class="channel-tag">Lifestyle</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="younghollywood">🔗 Share</button>
           </div>
         </div>
 
         <!-- GigabyteTV -->
-        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8" data-channel="gigabytetv">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
               <img src="gigabyte_tv.png" alt="GigabyteTV" />
@@ -1583,6 +1625,7 @@
             <div class="channel-name">GigabyteTV</div>
             <div class="channel-tag">Variety</div>
             <div class="last-seen"></div>
+            <button class="share-link" data-channel="gigabytetv">🔗 Share</button>
           </div>
         </div>
 
@@ -1791,17 +1834,72 @@
     checkStatus();
 
     const CHANNEL_MAP = {
-      'fighttv1': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
-      'weatherscan1': { name: '24/7 Weatherscan', src: 'https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8' },
-      'galaxytv1': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
-      'cubotv1': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
-      'gustotv1': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
-      'throwbacktv1': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
-      'hardrocktv1': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
-      'younghollywood1': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
-      'gigabytetv1': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
-      'gionetwork1': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
+      'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+      'weatherscan': { name: '24/7 Weatherscan', src: 'https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8' },
+      'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+      'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
+      'gustotv': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+      'throwbacktv': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+      'hardrocktv': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+      'younghollywood': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+      'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+      'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
+
+    // ── SHAREABLE CHANNEL LINKS ──
+    function getChannelShareUrl(slug) {
+      return `${window.location.origin}${window.location.pathname}#${slug}`;
+    }
+
+    function openChannelBySlug(slug) {
+      const channel = CHANNEL_MAP[slug];
+      if (channel) openMiniPlayer(channel.src, channel.name);
+    }
+
+    async function copyShareLink(slug, btnEl) {
+      const url = getChannelShareUrl(slug);
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch (err) {
+        const temp = document.createElement('textarea');
+        temp.value = url;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+      if (btnEl) {
+        const original = btnEl.textContent;
+        btnEl.textContent = 'Copied!';
+        btnEl.classList.add('copied');
+        setTimeout(() => {
+          btnEl.textContent = original;
+          btnEl.classList.remove('copied');
+        }, 1500);
+      }
+    }
+
+    document.querySelectorAll('.share-link').forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const slug = this.getAttribute('data-channel');
+        if (slug) copyShareLink(slug, this);
+      });
+    });
+
+    // Open the channel from the URL hash on load, e.g. giotv-5o0.pages.dev/#tapetime
+    if (window.location.hash) {
+      const slug = window.location.hash.slice(1).toLowerCase();
+      if (CHANNEL_MAP[slug]) {
+        setTimeout(() => openChannelBySlug(slug), 300);
+      }
+    }
+
+    window.addEventListener('hashchange', function() {
+      const slug = window.location.hash.slice(1).toLowerCase();
+      if (CHANNEL_MAP[slug]) openChannelBySlug(slug);
+    });
 
     // ── PRIVATE STREAM PASSWORD GATE ──
     const PRIVATE_PASSWORD = '0509';
@@ -1951,9 +2049,13 @@
           return;
         }
 
+        const slug = this.getAttribute('data-channel') || this.closest('[data-channel]')?.getAttribute('data-channel');
         let matched = null;
         for (const channel of Object.values(CHANNEL_MAP)) {
           if (channel.src === src) { matched = channel; break; }
+        }
+        if (slug) {
+          history.replaceState(null, '', `#${slug}`);
         }
         openMiniPlayer(src, matched ? matched.name : null);
       });
