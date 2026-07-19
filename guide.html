@@ -224,12 +224,14 @@
     .dot-online { background: var(--red); box-shadow: 0 0 6px var(--red); }
     .dot-offline { background: var(--muted); }
     .dot-private { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+    .dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
 
     .ticker-wrap {
       width: 100%;
       background: var(--red);
       overflow: hidden;
       padding: 10px 0;
+      margin-bottom: 40px;
     }
 
     .ticker {
@@ -591,6 +593,115 @@
       box-shadow: 0 0 8px rgba(155,79,220,0.8) !important;
     }
 
+    .status-dot.gold {
+      background: var(--gold) !important;
+      box-shadow: 0 0 8px rgba(245,200,66,0.8) !important;
+    }
+
+    .note-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(245,200,66,0.5);
+      color: var(--gold);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 11;
+      transition: background 0.2s, transform 0.2s, border-color 0.2s;
+      padding: 0;
+    }
+
+    .note-badge:hover {
+      background: rgba(245,200,66,0.2);
+      border-color: var(--gold);
+      transform: scale(1.08);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid rgba(245,200,66,0.35);
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .modal-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 14px;
+      padding-right: 30px;
+    }
+
+    .modal-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
     .share-link {
       display: inline-flex;
       align-items: center;
@@ -709,6 +820,26 @@
       margin-bottom: 80px;
     }
 
+    .cta-banner-merged {
+      align-items: stretch;
+    }
+
+    .cta-banner-half {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .cta-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
     .channels-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -807,6 +938,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .pin-icon {
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-left: 8px;
     }
 
     .channel-tag {
@@ -1270,6 +1407,9 @@
       .featured-banner-wrap { min-height: 220px; }
       .featured-info { padding: 28px 24px; }
       .cta-banner { flex-direction: column; align-items: flex-start; }
+      .cta-banner-merged { flex-direction: column; }
+      .cta-banner-half { flex-direction: column; align-items: flex-start; width: 100%; gap: 16px; }
+      .cta-divider { width: 100%; height: 1px; margin: 8px 0; }
       footer { padding: 32px 24px; flex-direction: column; }
     }
       img {
@@ -1318,6 +1458,15 @@
     </div>
   </div>
 
+  <!-- NOTE MODAL -->
+  <div class="modal-overlay" id="noteModalOverlay">
+    <div class="modal-box">
+      <button class="modal-close" id="noteModalClose">✕</button>
+      <div class="modal-label" id="noteModalLabel">✦ Note from Channel Manager</div>
+      <p class="modal-text" id="noteModalText"></p>
+    </div>
+  </div>
+
   <!-- PASSWORD GATE -->
   <div class="password-overlay" id="passwordOverlay">
     <div class="password-box">
@@ -1352,6 +1501,7 @@
           <summary>Guide Key</summary>
           <div class="key-content">
             <p><span class="dot dot-online"></span> Red dot — channel is online</p>
+            <p><span class="dot dot-gold"></span> Gold dot — proven 24/7 live channel</p>
             <p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
             <p><span class="dot dot-private"></span> Purple dot — private stream, password required</p>
             <p>★ — Official channel with FCC proofing or major cable presence</p>
@@ -1391,51 +1541,24 @@
 
   <div class="main-content">
 
-    <section class="featured-section reveal" style="margin-top: 64px;">
-      <p class="section-label">Featured Channel</p>
-      <h2 class="section-heading"> Your #1 Go To</h2>
-      <div class="featured-card">
-        <div class="featured-banner-wrap" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
-          <img src="tapetime.jpg" alt="TapeTime Radio Banner" />
-          <div class="status-dot offline"></div>
-          <div class="featured-overlay"></div>
+    <div class="cta-banner cta-banner-last cta-banner-merged reveal">
+      <div class="cta-banner-half">
+        <div class="cta-banner-text">
+          <p class="cta-label">✦ Broadcast on GioTV</p>
+          <h3>Want Your Own Channel?</h3>
+          <p>Join the platform and start broadcasting to your audience today.</p>
         </div>
-          <div class="featured-info">
-          <div class="featured-badge">● Featured</div>
-          <h3 class="featured-name">TapeTime Radio</h3>
-          <div class="last-seen" id="last-seen-featured"></div>
-          <p class="featured-desc">
-            Rebranding in progress. There will be some issues.
-          </p>
-          <div class="manager-note reveal" style="margin-bottom: 24px;">
-            <div class="manager-note-label">✦ Note from Channel Manager</div>
-            <p class="manager-note-text">We recently made the unfortunate decision to close down Gio Network on July 19, 2026. Between the stress and everything else on our plate, we simply couldn't keep up. Thank you for being with us for nine months as we went through adventures like movie showcases and even a SpongeBob Day recently. Thank you!</p>
-          </div>
-          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-name="TapeTime Radio" data-channel="tapetime">
-            <span class="play-icon">▶</span>
-            Watch Live
-          </button>
-          <button class="share-link" data-channel="tapetime">🔗 Share Channel</button>
+        <a href="survey.html" class="btn btn-gold btn-arrow">Get Started</a>
+      </div>
+      <div class="cta-divider"></div>
+      <div class="cta-banner-half">
+        <div class="cta-banner-text">
+          <p class="cta-label">✦ Support</p>
+          <h3>Have a Problem?</h3>
+          <p>Our team is ready to help — give us a call anytime.</p>
         </div>
+        <a href="tel:+15732220801" class="btn btn-gold btn-arrow">Call Us!</a>
       </div>
-    </section>
-
-    <div class="cta-banner reveal">
-      <div class="cta-banner-text">
-        <p class="cta-label">✦ Broadcast on GioTV</p>
-        <h3>Want Your Own Channel?</h3>
-        <p>Join the platform and start broadcasting to your audience today.</p>
-      </div>
-      <a href="survey.html" class="btn btn-gold btn-arrow">Get Started</a>
-    </div>
-
-    <div class="cta-banner cta-banner-last reveal">
-      <div class="cta-banner-text">
-        <p class="cta-label">✦ Support</p>
-        <h3>Have a Problem?</h3>
-        <p>Our team is ready to help — give us a call anytime.</p>
-      </div>
-      <a href="tel:+15732220801" class="btn btn-gold btn-arrow">Call Us!</a>
     </div>
 
     <section class="channels-section reveal">
@@ -1444,12 +1567,31 @@
 
       <div class="channels-grid">
 
+        <!-- TapeTime Radio (pinned to top) -->
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-channel="tapetime" data-pinned="true">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
+              <img src="tapetime.jpg" alt="TapeTime Radio" />
+              <div class="status-dot offline"></div>
+              <button class="note-badge" data-note-target="tapetime-note" title="Note from Channel Manager" aria-label="Note from Channel Manager">📋</button>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">TapeTime Radio <span class="pin-icon" title="Pinned channel">📌</span></div>
+            <div class="last-seen"></div>
+            <button class="share-link" data-channel="tapetime">🔗 Share</button>
+          </div>
+        </div>
+
         <!-- Fight TV -->
-        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8" data-channel="fighttv">
+        <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8" data-channel="fighttv" data-gold="true">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
               <img src="fight_tv.jpeg" alt="Fight TV" />
-              <div class="status-dot offline"></div>
+              <div class="status-dot gold"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1517,11 +1659,11 @@
         </div>
 
         <!-- Gusto TV -->
-        <div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8" data-channel="gustotv">
+        <div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8" data-channel="gustotv" data-gold="true">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
               <img src="gusto_tv.png" alt="Gusto TV" />
-              <div class="status-dot offline"></div>
+              <div class="status-dot gold"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1536,11 +1678,11 @@
         </div>
 
         <!-- Throwback Television Network -->
-        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8" data-channel="throwbacktv">
+        <div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8" data-channel="throwbacktv" data-gold="true">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
               <img src="throwback_tv.jpeg" alt="Throwback Television Network" />
-              <div class="status-dot offline"></div>
+              <div class="status-dot gold"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1574,11 +1716,11 @@
         </div>
 
         <!-- Young Hollywood -->
-        <div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8" data-channel="younghollywood">
+        <div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8" data-channel="younghollywood" data-gold="true">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
               <img src="young_hollywood.jpg" alt="Young Hollywood" />
-              <div class="status-dot offline"></div>
+              <div class="status-dot gold"></div>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1669,9 +1811,10 @@
 
       const allCards = Array.from(document.querySelectorAll('.channel-card'));
       let hasOffline = false;
+      const pinnedCard = document.querySelector('.channel-card[data-pinned="true"]');
 
       allCards.forEach(card => {
-        const isOnline = card.querySelector('.status-dot.online');
+        const isOnline = card.querySelector('.status-dot.online, .status-dot.gold');
         if (isOnline) {
           mainGrid.appendChild(card);
         } else {
@@ -1679,6 +1822,10 @@
           hasOffline = true;
         }
       });
+
+      if (pinnedCard && pinnedCard.querySelector('.status-dot.online')) {
+        mainGrid.insertBefore(pinnedCard, mainGrid.firstChild);
+      }
 
       offlineSection.style.display = hasOffline ? 'block' : 'none';
       if (hasOffline && !offlineSection.classList.contains('visible')) {
@@ -1739,6 +1886,7 @@
         const dot = channel.querySelector('.status-dot');
         if (!dot) continue;
         if (dot.classList.contains('private')) continue;
+        if (dot.classList.contains('gold')) continue;
 
         let isOnline = false;
         try {
@@ -1826,6 +1974,46 @@
       'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
       'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
+
+    // ── CHANNEL MANAGER NOTES ──
+    const CHANNEL_NOTES = {
+      'tapetime-note': {
+        label: '✦ Note from Channel Manager',
+        text: "We recently made the unfortunate decision to close down Gio Network on July 19, 2026. Between the stress and everything else on our plate, we simply couldn't keep up. Thank you for being with us for nine months as we went through adventures like movie showcases and even a SpongeBob Day recently. Thank you!"
+      }
+    };
+
+    const noteModalOverlay = document.getElementById('noteModalOverlay');
+    const noteModalLabel = document.getElementById('noteModalLabel');
+    const noteModalText = document.getElementById('noteModalText');
+
+    function openNoteModal(noteKey) {
+      const note = CHANNEL_NOTES[noteKey];
+      if (!note) return;
+      noteModalLabel.textContent = note.label;
+      noteModalText.textContent = note.text;
+      noteModalOverlay.classList.add('active');
+    }
+
+    function closeNoteModal() {
+      noteModalOverlay.classList.remove('active');
+    }
+
+    document.querySelectorAll('.note-badge').forEach(badge => {
+      badge.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openNoteModal(this.getAttribute('data-note-target'));
+      });
+    });
+
+    document.getElementById('noteModalClose')?.addEventListener('click', closeNoteModal);
+    noteModalOverlay?.addEventListener('click', function(e) {
+      if (e.target === noteModalOverlay) closeNoteModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeNoteModal();
+    });
 
     // ── SHAREABLE CHANNEL LINKS ──
     function getChannelShareUrl(slug) {
