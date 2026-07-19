@@ -16,6 +16,7 @@
       --text: #f0f2f7;
       --muted: #7a8299;
       --gold: #f5c842;
+      --purple: #9b4fdc;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -222,6 +223,7 @@
 
     .dot-online { background: var(--red); box-shadow: 0 0 6px var(--red); }
     .dot-offline { background: var(--muted); }
+    .dot-private { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
 
     .ticker-wrap {
       width: 100%;
@@ -582,6 +584,11 @@
     .status-dot.offline {
       background: var(--muted);
       box-shadow: none;
+    }
+
+    .status-dot.private {
+      background: var(--purple) !important;
+      box-shadow: 0 0 8px rgba(155,79,220,0.8) !important;
     }
 
     .cta-banner {
@@ -1082,6 +1089,107 @@
       justify-content: flex-end;
     }
 
+    /* ── PASSWORD GATE ── */
+    .password-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,5,8,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10002;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .password-overlay.active { display: flex; }
+
+    .password-box {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card-bg);
+      border: 1px solid rgba(155,79,220,0.3);
+      border-radius: 8px;
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .password-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--purple), transparent);
+    }
+
+    .password-lock-icon {
+      font-size: 2.2rem;
+      margin-bottom: 14px;
+    }
+
+    .password-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .password-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .password-input {
+      width: 100%;
+      background: var(--off-black);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.3em;
+      text-align: center;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .password-input:focus { border-color: var(--purple); }
+
+    .password-error {
+      font-size: 0.78rem;
+      color: var(--red);
+      min-height: 16px;
+      margin-bottom: 14px;
+    }
+
+    .password-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .password-buttons .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 12px 20px;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(155,79,220,0.4);
+    }
+
+    .btn-purple:hover {
+      background: #ac66e6;
+      box-shadow: 0 8px 32px rgba(155,79,220,0.55);
+    }
+
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
       .nav-links { display: none; }
@@ -1140,6 +1248,21 @@
     </div>
   </div>
 
+  <!-- PASSWORD GATE -->
+  <div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+      <div class="password-lock-icon">🔒</div>
+      <h3 class="password-title" id="passwordTitle">Private Stream</h3>
+      <p class="password-sub">This channel is currently broadcasting a private stream. Enter the access code to watch.</p>
+      <input type="password" class="password-input" id="passwordInput" placeholder="••••" maxlength="12" inputmode="numeric" />
+      <div class="password-error" id="passwordError"></div>
+      <div class="password-buttons">
+        <button class="btn btn-outline" id="passwordCancel">Cancel</button>
+        <button class="btn btn-purple" id="passwordSubmit">Unlock</button>
+      </div>
+    </div>
+  </div>
+
   <nav>
     <ul class="nav-links">
       <li><a href="guide.html" class="active">TV Guide</a></li>
@@ -1160,6 +1283,7 @@
           <div class="key-content">
             <p><span class="dot dot-online"></span> Red dot — channel is online</p>
             <p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
+            <p><span class="dot dot-private"></span> Purple dot — private stream, password required</p>
             <p>★ — Official channel with FCC proofing or major cable presence</p>
             <p><strong>Tip:</strong> Refresh to update live status.</p>
           </div>
@@ -1203,7 +1327,7 @@
       <div class="featured-card">
         <div class="featured-banner-wrap" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
           <img src="1.png" alt="Gio Network Banner" />
-          <div class="status-dot offline"></div>
+          <div class="status-dot private"></div>
           <div class="featured-overlay"></div>
         </div>
           <div class="featured-info">
@@ -1213,7 +1337,7 @@
           <p class="featured-desc">
             Welcome to Gio Network, your ultimate destination for non-stop entertainment! Dive into a curated world where you can catch all your favorite movies, from timeless classics to modern blockbusters. Stay updated with the latest headlines through our comprehensive news coverage, and never miss out on the most popular shows that everyone is talking about.
           </p>
-          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
+          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-private="true" data-name="Gio Network">
             <span class="play-icon">▶</span>
             Watch Live
           </button>
@@ -1548,6 +1672,7 @@
         const url = channel.getAttribute('data-stream');
         const dot = channel.querySelector('.status-dot');
         if (!dot) continue;
+        if (dot.classList.contains('private')) continue;
 
         let isOnline = false;
         try {
@@ -1636,6 +1761,53 @@
       'gigabytetv1': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
       'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
+
+    // ── PRIVATE STREAM PASSWORD GATE ──
+    const PRIVATE_PASSWORD = '0509';
+    let pendingPrivateStream = null;
+    const passwordOverlay = document.getElementById('passwordOverlay');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordError = document.getElementById('passwordError');
+    const passwordTitle = document.getElementById('passwordTitle');
+    const passwordSubmit = document.getElementById('passwordSubmit');
+    const passwordCancel = document.getElementById('passwordCancel');
+
+    function openPasswordGate(src, name) {
+      pendingPrivateStream = { src, name };
+      passwordTitle.textContent = name ? `${name} — Private Stream` : 'Private Stream';
+      passwordInput.value = '';
+      passwordError.textContent = '';
+      passwordOverlay.classList.add('active');
+      setTimeout(() => passwordInput.focus(), 50);
+    }
+
+    function closePasswordGate() {
+      passwordOverlay.classList.remove('active');
+      pendingPrivateStream = null;
+    }
+
+    function submitPasswordGate() {
+      if (!pendingPrivateStream) return;
+      if (passwordInput.value === PRIVATE_PASSWORD) {
+        const { src, name } = pendingPrivateStream;
+        closePasswordGate();
+        openMiniPlayer(src, name);
+      } else {
+        passwordError.textContent = 'Incorrect password. Try again.';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+
+    passwordSubmit.addEventListener('click', submitPasswordGate);
+    passwordCancel.addEventListener('click', closePasswordGate);
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitPasswordGate();
+      if (e.key === 'Escape') closePasswordGate();
+    });
+    passwordOverlay.addEventListener('click', (e) => {
+      if (e.target === passwordOverlay) closePasswordGate();
+    });
 
     // ── MINI PLAYER ──
     const miniPlayerOverlay = document.getElementById('miniPlayerOverlay');
@@ -1730,13 +1902,19 @@
       el.addEventListener('click', function(e) {
         e.preventDefault();
         const src = this.getAttribute('data-href') || this.getAttribute('href');
-        if (src) {
-          let matched = null;
-          for (const channel of Object.values(CHANNEL_MAP)) {
-            if (channel.src === src) { matched = channel; break; }
-          }
-          openMiniPlayer(src, matched ? matched.name : null);
+        if (!src) return;
+
+        if (this.getAttribute('data-private') === 'true') {
+          const name = this.getAttribute('data-name') || null;
+          openPasswordGate(src, name);
+          return;
         }
+
+        let matched = null;
+        for (const channel of Object.values(CHANNEL_MAP)) {
+          if (channel.src === src) { matched = channel; break; }
+        }
+        openMiniPlayer(src, matched ? matched.name : null);
       });
     });
 
