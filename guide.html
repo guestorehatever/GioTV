@@ -591,6 +591,43 @@
       box-shadow: 0 0 8px rgba(155,79,220,0.8) !important;
     }
 
+    .manager-note {
+      background: rgba(245,200,66,0.1);
+      border: 1px solid rgba(245,200,66,0.35);
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin-top: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .manager-note::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .manager-note-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .manager-note-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
     .cta-banner {
       background: var(--off-black);
       border: 1px solid var(--border);
@@ -1326,18 +1363,22 @@
       <h2 class="section-heading"> Your #1 Go To</h2>
       <div class="featured-card">
         <div class="featured-banner-wrap" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
-          <img src="1.png" alt="Gio Network Banner" />
-          <div class="status-dot private"></div>
+          <img src="tapetime.jpg" alt="TapeTime Radio Banner" />
+          <div class="status-dot offline"></div>
           <div class="featured-overlay"></div>
         </div>
           <div class="featured-info">
           <div class="featured-badge">● Featured</div>
-          <h3 class="featured-name">Gio Network</h3>
+          <h3 class="featured-name">TapeTime Radio</h3>
           <div class="last-seen" id="last-seen-featured"></div>
           <p class="featured-desc">
-            Welcome to Gio Network, your ultimate destination for non-stop entertainment! Dive into a curated world where you can catch all your favorite movies, from timeless classics to modern blockbusters. Stay updated with the latest headlines through our comprehensive news coverage, and never miss out on the most popular shows that everyone is talking about.
+            Rebranding in progress. There will be some issues.
           </p>
-          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-private="true" data-name="Gio Network">
+          <div class="manager-note reveal" style="margin-bottom: 24px;">
+            <div class="manager-note-label">✦ Note from Channel Manager</div>
+            <p class="manager-note-text">We recently made the unfortunate decision to close down Gio Network on July 19, 2026. Thank you for being with us for nine months as we went through adventures like movie showcases and even a SpongeBob Day recently. Thank you!</p>
+          </div>
+          <button class="watch-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-private="true" data-name="TapeTime Radio">
             <span class="play-icon">▶</span>
             Watch Live
           </button>
@@ -1759,7 +1800,7 @@
       'hardrocktv1': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
       'younghollywood1': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
       'gigabytetv1': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
-      'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
+      'gionetwork1': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
     };
 
     // ── PRIVATE STREAM PASSWORD GATE ──
