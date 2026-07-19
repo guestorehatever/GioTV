@@ -606,9 +606,10 @@
       height: 28px;
       border-radius: 50%;
       background: rgba(0,0,0,0.65);
-      border: 1px solid rgba(245,200,66,0.5);
-      color: var(--gold);
+      border: 1px solid rgba(232,25,44,0.5);
+      color: var(--red);
       font-size: 0.85rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -619,8 +620,8 @@
     }
 
     .note-badge:hover {
-      background: rgba(245,200,66,0.2);
-      border-color: var(--gold);
+      background: rgba(232,25,44,0.2);
+      border-color: var(--red);
       transform: scale(1.08);
     }
 
@@ -1505,6 +1506,7 @@
             <p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
             <p><span class="dot dot-private"></span> Purple dot — private stream, password required</p>
             <p>★ — Official channel with FCC proofing or major cable presence</p>
+            <p>❗ — A way Managers of a channel can alert you on updates</p>
             <p><strong>Tip:</strong> Refresh to update live status.</p>
           </div>
         </details>
@@ -1573,7 +1575,7 @@
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
               <img src="tapetime.jpg" alt="TapeTime Radio" />
               <div class="status-dot offline"></div>
-              <button class="note-badge" data-note-target="tapetime-note" title="Note from Channel Manager" aria-label="Note from Channel Manager">📋</button>
+              <button class="note-badge" data-note-target="tapetime-note" title="Note from Channel Manager" aria-label="Note from Channel Manager">❗</button>
             </div>
             <div class="thumb-overlay">
               <div class="thumb-play"><span class="play-icon">▶</span></div>
@@ -1640,9 +1642,9 @@
         </div>
 
         <!-- Cubo TV -->
-        <div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/sep/1aa55c50f8fc40f585f8114ec3a7f03f/low.m3u8" data-channel="cubotv">
+        <div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8" data-channel="cubotv">
           <div class="channel-thumb">
-            <div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/sep/1aa55c50f8fc40f585f8114ec3a7f03f/low.m3u8">
+            <div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8">
               <img src="cubo_tv.png" alt="Cubo TV" />
               <div class="status-dot offline"></div>
             </div>
