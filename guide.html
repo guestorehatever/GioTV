@@ -430,6 +430,14 @@
     }
 
     /* ── MINI PLAYER ── */
+    .eas-card {
+      border-color: rgba(232,25,44,0.35) !important;
+    }
+
+    .eas-card .channel-tag {
+      color: var(--red);
+    }
+
     .mini-player-overlay {
       position: fixed;
       inset: 0;
@@ -473,6 +481,13 @@
       color: var(--text);
     }
 
+    .mini-player-header-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
     .mini-player-close {
       background: var(--red);
       color: #fff;
@@ -491,6 +506,40 @@
 
     .mini-player-close:hover {
       background: var(--dark-red);
+    }
+
+    .mini-player-skip {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 0 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.18s, border-color 0.18s;
+    }
+
+    .mini-player-skip:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .mini-player-box.eas-live {
+      border-color: var(--red);
+      animation: easPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes easPulse {
+      0%, 100% { box-shadow: 0 0 0 2px var(--red), 0 20px 80px rgba(232,25,44,0.35); }
+      50% { box-shadow: 0 0 0 2px var(--red), 0 20px 100px rgba(232,25,44,0.6); }
     }
 
     .mini-player-video-wrap {
@@ -517,21 +566,6 @@
       letter-spacing: 0.04em;
       pointer-events: none;
       background: #000;
-    }
-
-    .mini-player-status img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-
-    .mini-player-status.offline img {
-      display: block;
-    }
-
-    .mini-player-status.offline .mini-player-status-text {
-      display: none;
     }
 
     .watch-btn {
@@ -894,6 +928,27 @@
     }
 
     .channel-card:hover .channel-thumb img { transform: scale(1.06); }
+
+    .thumb-text-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(160deg, #1a0d0f 0%, var(--off-black) 100%);
+    }
+
+    .thumb-text-placeholder span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 1.15rem;
+      line-height: 1.25;
+      color: var(--red);
+    }
 
     .thumb-overlay {
       position: absolute;
@@ -1588,6 +1643,25 @@
           </div>
         </div>
 
+        <!-- EAS Details -->
+        <div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8" data-channel="easdetails">
+          <div class="channel-thumb">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
+              <div class="thumb-text-placeholder"><span>GioTV Emergency Alert System</span></div>
+              <div class="status-dot offline"></div>
+            </div>
+            <div class="thumb-overlay">
+              <div class="thumb-play"><span class="play-icon">▶</span></div>
+            </div>
+          </div>
+          <div class="channel-info">
+            <div class="channel-name">🚨 EAS Details</div>
+            <div class="channel-tag">Emergency Alert System</div>
+            <div class="last-seen"></div>
+            <button class="share-link" data-channel="easdetails">🔗 Share</button>
+          </div>
+        </div>
+
         <!-- Fight TV -->
         <div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8" data-channel="fighttv" data-gold="true">
           <div class="channel-thumb">
@@ -1797,15 +1871,17 @@
 
   <!-- MINI PLAYER -->
   <div class="mini-player-overlay" id="miniPlayerOverlay">
-    <div class="mini-player-box">
+    <div class="mini-player-box" id="miniPlayerBox">
       <div class="mini-player-header">
         <div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
-        <button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
+        <div class="mini-player-header-actions">
+          <button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
+          <button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip EAS alert">Skip ⏭</button>
+        </div>
       </div>
       <div class="mini-player-video-wrap">
         <video id="miniPlayerVideo" controls autoplay playsinline></video>
         <div class="mini-player-status" id="miniPlayerStatus">
-          <img src="offline.png" alt="Channel offline" id="miniPlayerOfflineImg" />
           <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
         </div>
       </div>
@@ -1869,6 +1945,23 @@
       return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
     }
 
+    const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8';
+    const EAS_OFFLINE_IMG = 'eas_offline.png';
+
+    const CHANNEL_MAP = {
+      'easdetails': { name: 'EAS Details', src: EAS_SRC, offlineImg: EAS_OFFLINE_IMG },
+      'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+      'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+      'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
+      'gustotv': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+      'throwbacktv': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+      'hardrocktv': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+      'younghollywood': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+      'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+      'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
+      'kpoptvplay': { name: 'TV Play K-Pop', src: 'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' }
+    };
+
     function initLastSeen() {
       const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
       const channels = document.querySelectorAll('[data-stream]');
@@ -1896,6 +1989,14 @@
     initLastSeen();
 
     let previousChannelStates = {};
+
+    // ── EAS INTERRUPT STATE ──
+    let easActive = false;
+    let easInterruptShown = false;
+    let preEASState = null;
+    let currentPlayerSrc = null;
+    let currentPlayerName = null;
+    let currentPlayerOfflineImg = 'offline.png';
 
     async function checkStatus() {
       const channels = document.querySelectorAll('[data-stream]');
@@ -1954,6 +2055,16 @@
 
         previousChannelStates[url] = isOnline;
 
+        if (url === EAS_SRC) {
+          if (isOnline && !easInterruptShown) {
+            easInterruptShown = true;
+            triggerEASInterrupt();
+          } else if (!isOnline) {
+            easInterruptShown = false;
+            if (easActive) revertFromEAS();
+          }
+        }
+
         if (isOnline) {
           dot.classList.remove('offline');
           dot.classList.add('online');
@@ -1983,19 +2094,6 @@
     }
     setInterval(checkStatus, 10000);
     checkStatus();
-
-    const CHANNEL_MAP = {
-      'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
-      'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
-      'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
-      'gustotv': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
-      'throwbacktv': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
-      'hardrocktv': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
-      'younghollywood': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
-      'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
-      'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
-      'kpoptvplay': { name: 'TV Play K-Pop', src: 'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' }
-    };
 
     // ── CHANNEL MANAGER NOTES ──
     const CHANNEL_NOTES = {
@@ -2044,7 +2142,7 @@
 
     function openChannelBySlug(slug) {
       const channel = CHANNEL_MAP[slug];
-      if (channel) openMiniPlayer(channel.src, channel.name);
+      if (channel) selectChannel(channel.src, channel.name, channel.offlineImg, slug);
     }
 
     async function copyShareLink(slug, btnEl) {
@@ -2141,27 +2239,82 @@
 
     // ── MINI PLAYER ──
     const miniPlayerOverlay = document.getElementById('miniPlayerOverlay');
+    const miniPlayerBox = document.getElementById('miniPlayerBox');
     const miniPlayerVideo = document.getElementById('miniPlayerVideo');
     const miniPlayerTitle = document.getElementById('miniPlayerTitle');
     const miniPlayerClose = document.getElementById('miniPlayerClose');
+    const miniPlayerSkip = document.getElementById('miniPlayerSkip');
     const miniPlayerStatus = document.getElementById('miniPlayerStatus');
     const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
     let hlsInstance = null;
 
     function showMiniPlayerLoading() {
-      miniPlayerStatus.classList.remove('offline');
       miniPlayerStatus.style.display = 'flex';
       miniPlayerStatusText.textContent = 'Loading stream…';
     }
 
-    function showMiniPlayerOffline() {
-      miniPlayerStatus.style.display = 'flex';
-      miniPlayerStatus.classList.add('offline');
+    function hideMiniPlayerStatus() {
+      miniPlayerStatus.style.display = 'none';
     }
 
-    function hideMiniPlayerStatus() {
-      miniPlayerStatus.classList.remove('offline');
-      miniPlayerStatus.style.display = 'none';
+    let miniPlayerRetryTimer = null;
+
+    function stopMiniPlayerRetry() {
+      if (miniPlayerRetryTimer) {
+        clearInterval(miniPlayerRetryTimer);
+        miniPlayerRetryTimer = null;
+      }
+    }
+
+    function startMiniPlayerRetry(src) {
+      stopMiniPlayerRetry();
+      miniPlayerRetryTimer = setInterval(function() {
+        if (!miniPlayerOverlay.classList.contains('active') || currentPlayerSrc !== src) {
+          stopMiniPlayerRetry();
+          return;
+        }
+        attemptMiniPlayerPlayback(src);
+      }, 10000);
+    }
+
+    function attemptMiniPlayerPlayback(src) {
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
+
+      if (miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS support (Safari)
+        miniPlayerVideo.src = src;
+        miniPlayerVideo.addEventListener('loadedmetadata', function onLoaded() {
+          hideMiniPlayerStatus();
+          stopMiniPlayerRetry();
+          miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
+        });
+        miniPlayerVideo.addEventListener('error', function onError() {
+          showMiniPlayerLoading();
+          if (currentPlayerSrc === src) startMiniPlayerRetry(src);
+          miniPlayerVideo.removeEventListener('error', onError);
+        });
+        miniPlayerVideo.play().catch(() => {});
+      } else if (window.Hls && window.Hls.isSupported()) {
+        hlsInstance = new Hls();
+        hlsInstance.loadSource(src);
+        hlsInstance.attachMedia(miniPlayerVideo);
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+          hideMiniPlayerStatus();
+          stopMiniPlayerRetry();
+          miniPlayerVideo.play().catch(() => {});
+        });
+        hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+          if (data.fatal) {
+            showMiniPlayerLoading();
+            if (currentPlayerSrc === src) startMiniPlayerRetry(src);
+          }
+        });
+      } else {
+        showMiniPlayerLoading();
+      }
     }
 
     function closeMiniPlayer() {
@@ -2173,53 +2326,74 @@
         hlsInstance.destroy();
         hlsInstance = null;
       }
+      stopMiniPlayerRetry();
+      easActive = false;
+      preEASState = null;
+      if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
+      if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
     }
 
-    function openMiniPlayer(src, name) {
+    function openMiniPlayer(src, name, offlineImg) {
+      currentPlayerSrc = src;
+      currentPlayerName = name;
+
       miniPlayerTitle.textContent = name || 'Now Playing';
       showMiniPlayerLoading();
       miniPlayerOverlay.classList.add('active');
+      stopMiniPlayerRetry();
 
-      if (hlsInstance) {
-        hlsInstance.destroy();
-        hlsInstance = null;
-      }
+      const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
+      easActive = isLiveEAS;
+      if (miniPlayerSkip) miniPlayerSkip.style.display = isLiveEAS ? 'flex' : 'none';
+      if (miniPlayerBox) miniPlayerBox.classList.toggle('eas-live', isLiveEAS);
 
-      if (miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
-        // Native HLS support (Safari)
-        miniPlayerVideo.src = src;
-        miniPlayerVideo.addEventListener('loadedmetadata', function onLoaded() {
-          hideMiniPlayerStatus();
-          miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
-        });
-        miniPlayerVideo.addEventListener('error', function onError() {
-          showMiniPlayerOffline();
-          miniPlayerVideo.removeEventListener('error', onError);
-        });
-        miniPlayerVideo.play().catch(() => {});
-      } else if (window.Hls && window.Hls.isSupported()) {
-        hlsInstance = new Hls();
-        hlsInstance.loadSource(src);
-        hlsInstance.attachMedia(miniPlayerVideo);
-        hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-          hideMiniPlayerStatus();
-          miniPlayerVideo.play().catch(() => {});
-        });
-        hlsInstance.on(Hls.Events.ERROR, function(event, data) {
-          if (data.fatal) {
-            showMiniPlayerOffline();
-          }
-        });
-      } else {
-        showMiniPlayerOffline();
+      attemptMiniPlayerPlayback(src);
+    }
+
+    // Routes a channel selection through the EAS takeover: if EAS is currently
+    // live, any channel selection redirects to the EAS stream instead, and
+    // remembers what was requested so Skip can still return to it.
+    function selectChannel(src, name, offlineImg, slug) {
+      if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC) {
+        preEASState = { src: src, name: name, offlineImg: offlineImg };
+        history.replaceState(null, '', '#easdetails');
+        openMiniPlayer(EAS_SRC, 'EAS Details', EAS_OFFLINE_IMG);
+        return;
       }
+      if (slug) {
+        history.replaceState(null, '', `#${slug}`);
+      }
+      openMiniPlayer(src, name, offlineImg);
     }
 
     function openPlayer(channelId) {
       const channel = CHANNEL_MAP[channelId];
-      if (channel) openMiniPlayer(channel.src, channel.name);
+      if (channel) selectChannel(channel.src, channel.name, channel.offlineImg, channelId);
     }
 
+    function triggerEASInterrupt() {
+      // Remember whatever was playing (if anything) so it can be restored on skip
+      if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc !== EAS_SRC) {
+        preEASState = { src: currentPlayerSrc, name: currentPlayerName, offlineImg: currentPlayerOfflineImg };
+      } else if (!miniPlayerOverlay.classList.contains('active')) {
+        preEASState = null;
+      }
+      openMiniPlayer(EAS_SRC, 'EAS Details', EAS_OFFLINE_IMG);
+    }
+
+    function revertFromEAS() {
+      easActive = false;
+      if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
+      if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
+      if (preEASState) {
+        openMiniPlayer(preEASState.src, preEASState.name, preEASState.offlineImg);
+      } else {
+        closeMiniPlayer();
+      }
+      preEASState = null;
+    }
+
+    miniPlayerSkip.addEventListener('click', revertFromEAS);
     miniPlayerClose.addEventListener('click', closeMiniPlayer);
     miniPlayerOverlay.addEventListener('click', function(e) {
       if (e.target === miniPlayerOverlay) closeMiniPlayer();
@@ -2245,10 +2419,11 @@
         for (const channel of Object.values(CHANNEL_MAP)) {
           if (channel.src === src) { matched = channel; break; }
         }
-        if (slug) {
-          history.replaceState(null, '', `#${slug}`);
+        if (src === EAS_SRC) {
+          // Manually opened, not an auto-interrupt — skip should just close, not restore anything
+          preEASState = null;
         }
-        openMiniPlayer(src, matched ? matched.name : null);
+        selectChannel(src, matched ? matched.name : null, matched ? matched.offlineImg : null, slug);
       });
     });
 
