@@ -645,16 +645,7 @@
     }
 
     .mini-player-status.offline .mini-player-status-text {
-      position: relative;
-      z-index: 1;
-      background: rgba(8,10,15,0.7);
-      color: var(--text);
-      padding: 6px 16px;
-      border-radius: 4px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      display: none;
     }
 
     .watch-btn {
@@ -2376,7 +2367,6 @@
     function showMiniPlayerOffline() {
       miniPlayerStatus.style.display = 'flex';
       miniPlayerStatus.classList.add('offline');
-      miniPlayerStatusText.textContent = 'Channel is offline';
     }
 
     function hideMiniPlayerStatus() {
