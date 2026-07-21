@@ -229,12 +229,13 @@
   }
   #playerOverlay.show{opacity:1;}
 
-  #playerTop{display:flex; align-items:center; gap:1vw;}
+  #playerTop{display:flex; align-items:center; gap:1vw; pointer-events:auto;}
   #backChip{
     display:flex; align-items:center; gap:0.6vw;
     font-family:'Barlow Condensed',sans-serif; font-weight:700;
     letter-spacing:0.1em; text-transform:uppercase; font-size:0.95vw;
     color:var(--text);
+    cursor:pointer;
   }
   #playerChanName{
     font-family:'Bebas Neue',sans-serif; font-size:2.1vw; letter-spacing:0.02em;
@@ -242,6 +243,7 @@
 
   #playerBottom{
     display:flex; align-items:center; gap:1.6vw;
+    pointer-events:auto;
   }
   .ctrl-btn{
     display:flex; align-items:center; justify-content:center;
@@ -249,6 +251,7 @@
     background:rgba(20,22,30,0.75); border:1px solid var(--border);
     color:var(--text); font-size:1.3vw;
     transition:background .2s, border-color .2s, transform .2s;
+    cursor:pointer;
   }
   .ctrl-btn.dpad-focus{
     border-color:var(--red);
@@ -349,6 +352,7 @@ let hls = null;
 let liveState = {}; // slug -> bool
 let playerFocusIdx = 0; // 0 = play/pause, 1 = mute
 let overlayTimer = null;
+let retryTimer = null;
 
 const carousel = document.getElementById('carousel');
 const chanTitleEl = document.getElementById('chanTitle');
@@ -366,6 +370,7 @@ const playerChanName = document.getElementById('playerChanName');
 const btnPlayPause = document.getElementById('btnPlayPause');
 const btnMute = document.getElementById('btnMute');
 const volFill = document.getElementById('volFill');
+const backChip = document.getElementById('backChip');
 
 /* ───────────────────────── Build tiles ───────────────────────── */
 CHANNELS.forEach((ch, i) => {
@@ -401,9 +406,7 @@ function updateFocus(){
   eyebrowText.textContent = 'Now Browsing';
   liveDot.classList.toggle('on', !!liveState[ch.slug]);
 
-  if (ch.img && !ch.img.startsWith('http')) {
-    heroBg.style.backgroundImage = `url("${ch.img}")`;
-  } else if (ch.img) {
+  if (ch.img) {
     heroBg.style.backgroundImage = `url("${ch.img}")`;
   } else {
     heroBg.style.backgroundImage = 'none';
@@ -461,8 +464,81 @@ function tickClock(){
 }
 tickClock(); setInterval(tickClock, 15000);
 
-/* ───────────────────────── Player ───────────────────────── */
-function openChannel(index){
+/* ───────────────────────── Player / HLS playback (fixed) ─────────────────────────
+   Old version created a brand-new Hls() instance every 8s on ANY error, forever
+   stacking instances on top of the still-attached old one. That's what was
+   killing playback. This version:
+   - lets hls.js recover network/media errors in place (hls.startLoad() /
+     hls.recoverMediaError()) instead of nuking everything
+   - only does a full teardown+rebuild for truly fatal "other" errors, on a
+     single clean retry loop
+*/
+function showStatus(msg){
+  playerStatus.style.display = 'flex';
+  playerStatusText.textContent = msg;
+}
+function hideStatus(){ playerStatus.style.display = 'none'; }
+
+function attemptPlayback(src){
+  if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
+
+  function startNative(){
+    video.src = src;
+    const onLoaded = () => { hideStatus(); video.removeEventListener('loadedmetadata', onLoaded); };
+    const onErr = () => { showStatus('Channel unavailable — retrying…'); scheduleFullRetry(); };
+    video.addEventListener('loadedmetadata', onLoaded);
+    video.addEventListener('error', onErr, { once:true });
+    video.play().catch(()=>{});
+  }
+
+  function startHls(){
+    hls = new Hls({ maxBufferLength: 30, liveSyncDurationCount: 3 });
+    hls.loadSource(src);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      hideStatus();
+      video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR, (evt, data) => {
+      if (!data.fatal) return;
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          showStatus('Reconnecting…');
+          hls.startLoad();
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          showStatus('Recovering playback…');
+          hls.recoverMediaError();
+          break;
+        default:
+          showStatus('Channel unavailable — retrying…');
+          scheduleFullRetry();
+          break;
+      }
+    });
+  }
+
+  function scheduleFullRetry(){
+    clearInterval(retryTimer);
+    retryTimer = setInterval(() => {
+      if (!player.classList.contains('active')) { clearInterval(retryTimer); return; }
+      if (hls) { hls.destroy(); hls = null; }
+      if (window.Hls && Hls.isSupported()) startHls(); else startNative();
+    }, 8000);
+  }
+
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    startNative();
+  } else if (window.Hls && Hls.isSupported()) {
+    startHls();
+  } else {
+    showStatus('HLS playback not supported in this browser');
+  }
+}
+
+/* ───────────────────────── Player open/close ───────────────────────── */
+function openChannel(index, fromHash){
   lastFocusIndex = index;
   const ch = CHANNELS[index];
   playerChanName.textContent = ch.name;
@@ -470,58 +546,25 @@ function openChannel(index){
   showStatus('Loading stream…');
   attemptPlayback(ch.src);
   showOverlay(true);
+  if (!fromHash) {
+    history.pushState({ giotv:'player', slug: ch.slug }, '', '#' + ch.slug);
+  }
 }
 
-function closePlayer(){
+function closePlayer(skipHash){
   player.classList.remove('active');
   video.pause();
   video.removeAttribute('src');
   video.load();
   if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
   clearTimeout(overlayTimer);
   // restore focus to previously selected channel
   focusIndex = lastFocusIndex;
   updateFocus();
-}
-
-function showStatus(msg){
-  playerStatus.style.display = 'flex';
-  playerStatusText.textContent = msg;
-}
-function hideStatus(){ playerStatus.style.display = 'none'; }
-
-let retryTimer = null;
-function attemptPlayback(src){
-  if (hls) { hls.destroy(); hls = null; }
-  clearInterval(retryTimer);
-
-  const tryPlay = () => {
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = src;
-      video.addEventListener('loadedmetadata', function onLoaded(){
-        hideStatus(); clearInterval(retryTimer);
-        video.removeEventListener('loadedmetadata', onLoaded);
-      });
-      video.addEventListener('error', function onErr(){
-        showStatus('Channel unavailable — retrying…');
-        video.removeEventListener('error', onErr);
-      });
-      video.play().catch(()=>{});
-    } else if (window.Hls && window.Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function(){
-        hideStatus(); clearInterval(retryTimer);
-        video.play().catch(()=>{});
-      });
-      hls.on(Hls.Events.ERROR, function(evt, data){
-        if (data.fatal) showStatus('Channel unavailable — retrying…');
-      });
-    }
-  };
-  tryPlay();
-  retryTimer = setInterval(() => { if (player.classList.contains('active')) tryPlay(); }, 8000);
+  if (!skipHash) {
+    history.pushState({ giotv:'select' }, '', location.pathname + location.search);
+  }
 }
 
 function showOverlay(temporary){
@@ -541,6 +584,7 @@ function toggleMute(){
 }
 btnPlayPause.addEventListener('click', togglePlayPause);
 btnMute.addEventListener('click', toggleMute);
+backChip.addEventListener('click', () => history.back());
 video.addEventListener('play', () => btnPlayPause.textContent = '❚❚');
 video.addEventListener('pause', () => btnPlayPause.textContent = '▶');
 
@@ -562,7 +606,7 @@ document.addEventListener('keydown', (e) => {
   } else {
     switch (e.key) {
       case 'Backspace': case 'Escape': case 'GoBack': case 'BrowserBack':
-        e.preventDefault(); closePlayer(); break;
+        e.preventDefault(); history.back(); break;
       case 'ArrowLeft': case 'ArrowRight':
         e.preventDefault();
         playerFocusIdx = playerFocusIdx === 0 ? 1 : 0;
@@ -589,13 +633,51 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-/* Android TV / browser back button (popstate) support while in player */
-history.pushState({ giotv:'select' }, '');
-window.addEventListener('popstate', () => {
-  if (player.classList.contains('active')) {
-    closePlayer();
+/* ───────────────────────── Deep-linking: website.com/tv#channelname ─────────────────────────
+   - Loading the page with a hash jumps straight into that channel.
+   - Opening a channel pushes its slug into the hash so it's shareable.
+   - Browser/remote back closes the player and clears the hash instead of
+     leaving the page (same "trap" pattern as guide.html).
+*/
+function slugFromHash(){
+  return decodeURIComponent(location.hash.replace(/^#/, ''));
+}
+
+function initFromHash(){
+  const slug = slugFromHash();
+  if (!slug) {
+    history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+    return;
   }
-  history.pushState({ giotv:'select' }, '');
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    history.replaceState({ giotv:'player', slug }, '', '#' + slug);
+    openChannel(idx, true);
+  } else {
+    history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+  }
+}
+
+window.addEventListener('popstate', (e) => {
+  const slug = slugFromHash();
+  if (!slug) {
+    if (player.classList.contains('active')) {
+      closePlayer(true); // hash already cleared by the back nav itself
+    }
+    return;
+  }
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    if (!player.classList.contains('active')) {
+      openChannel(idx, true);
+    } else if (CHANNELS[lastFocusIndex].slug !== slug) {
+      openChannel(idx, true);
+    }
+  }
 });
 
 /* Click on video re-shows overlay (touch remotes / mouse fallback) */
@@ -605,6 +687,7 @@ player.addEventListener('click', () => showOverlay(true));
 /* ───────────────────────── Init ───────────────────────── */
 updateFocus();
 updatePlayerCtrlFocus();
+initFromHash();
 </script>
 </body>
 </html>
