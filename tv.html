@@ -43,9 +43,8 @@
   #heroBg{
     position:absolute; inset:0;
     background-size:cover; background-position:center;
-    filter:blur(38px) brightness(0.38) saturate(1.1);
-    transform:scale(1.15);
-    transition:background-image .5s ease;
+    filter:blur(14px) brightness(0.4);
+    transform:scale(1.08);
   }
   #heroScrim{
     position:absolute; inset:0;
@@ -125,7 +124,7 @@
   #carouselWrap{
     position:absolute; left:0; right:0; bottom:3.4vw;
     z-index:5; overflow-x:auto; overflow-y:hidden; padding:0 3vw;
-    scroll-behavior:smooth;
+    scroll-behavior:auto;
     scrollbar-width:none;
   }
   #carouselWrap::-webkit-scrollbar{ display:none; }
@@ -143,7 +142,7 @@
     background:var(--panel);
     border:0.16vw solid transparent;
     transform:scale(0.86);
-    transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+    transition:transform .15s ease, border-color .15s ease, opacity .15s ease;
     opacity:0.62;
     cursor:pointer;
     padding:0;
@@ -372,6 +371,7 @@ let retryTimer = null;
 let lastOpenedSlug = null;
 
 const carousel = document.getElementById('carousel');
+const selectScreen = document.getElementById('selectScreen');
 const carouselWrap = document.getElementById('carouselWrap');
 const chanTitleEl = document.getElementById('chanTitle');
 const chanTagEl = document.getElementById('chanTag');
@@ -420,34 +420,39 @@ CHANNELS.forEach((ch, i) => {
     eyebrowText.textContent = 'Now Browsing';
     liveDot.classList.toggle('on', !!liveState[ch.slug]);
     heroBg.style.backgroundImage = ch.img ? `url("${ch.img}")` : 'none';
-    tile.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+    tile.scrollIntoView({ behavior:'auto', inline:'center', block:'nearest' });
   });
   tile.addEventListener('click', () => openChannel(ch));
   carousel.appendChild(tile);
 });
 
 /* ───────────────────────── Live status polling ───────────────────────── */
-async function pollLiveStatus(){
-  for (const ch of CHANNELS) {
+async function checkOneChannel(ch){
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 6000);
+    let ok = false;
     try {
-      const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), 6000);
-      let ok = false;
-      try {
-        const res = await fetch(ch.src, { method:'HEAD', cache:'no-cache', signal: controller.signal });
-        ok = res.ok;
-      } catch(e) {
-        await fetch(ch.src, { method:'GET', mode:'no-cors', cache:'no-cache', signal: controller.signal });
-        ok = true;
-      }
-      clearTimeout(t);
-      liveState[ch.slug] = ok;
+      const res = await fetch(ch.src, { method:'HEAD', cache:'no-cache', signal: controller.signal });
+      ok = res.ok;
     } catch(e) {
-      liveState[ch.slug] = false;
+      await fetch(ch.src, { method:'GET', mode:'no-cors', cache:'no-cache', signal: controller.signal });
+      ok = true;
     }
-    const badge = document.getElementById('live-' + ch.slug);
-    if (badge) badge.classList.toggle('on', !!liveState[ch.slug]);
+    clearTimeout(t);
+    liveState[ch.slug] = ok;
+  } catch(e) {
+    liveState[ch.slug] = false;
   }
+  const badge = document.getElementById('live-' + ch.slug);
+  if (badge) badge.classList.toggle('on', !!liveState[ch.slug]);
+}
+
+async function pollLiveStatus(){
+  // Parallel instead of one-at-a-time — a sequential loop meant 12 waits
+  // stacked back to back, keeping the network/CPU busy for the whole
+  // stretch; running them together cuts that down to a single burst.
+  await Promise.allSettled(CHANNELS.map(checkOneChannel));
   const focused = document.activeElement;
   if (focused && focused.classList && focused.classList.contains('tile')) {
     const idx = focused.dataset.index;
@@ -455,7 +460,7 @@ async function pollLiveStatus(){
   }
 }
 pollLiveStatus();
-setInterval(pollLiveStatus, 20000);
+let liveTimer = setInterval(pollLiveStatus, 45000);
 
 /* ───────────────────────── Clock ───────────────────────── */
 function tickClock(){
@@ -536,6 +541,12 @@ function openChannel(ch){
   lastOpenedSlug = ch.slug;
   playerChanName.textContent = ch.name;
   player.classList.add('active');
+  // Stop the blurred hero background and 12-tile carousel from being
+  // composited/painted at all while a stream plays — on weaker Google TV
+  // GPUs, rendering that full layer underneath the player alongside video
+  // decode was very likely a real source of the lag.
+  selectScreen.style.display = 'none';
+  clearInterval(liveTimer);
   showStatus('Loading stream…');
   attemptPlayback(ch.src);
   try { backBtn.focus({ preventScroll:true }); } catch(e) {}
@@ -548,6 +559,8 @@ function openChannel(ch){
 
 function closePlayer(skipHash){
   player.classList.remove('active');
+  selectScreen.style.display = '';
+  liveTimer = setInterval(pollLiveStatus, 45000);
   video.pause();
   video.removeAttribute('src');
   video.load();
