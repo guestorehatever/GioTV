@@ -33,6 +33,1513 @@
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
     background:#000;
+    outline:none;
+  }
+  #stage{
+    position:relative;
+    width:100vw; height:56.25vw; /* 16:9 based on width */
+    max-height:100vh; max-width:177.78vh; /* 16:9 based on height */
+    background:var(--black);
+    overflow:hidden;
+  }
+
+  /* ── Ambient hero backdrop ── */
+  #heroBg{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    filter:blur(38px) brightness(0.38) saturate(1.1);
+    transform:scale(1.15);
+    transition:background-image .5s ease;
+  }
+  #heroScrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(to top, rgba(7,8,12,0.98) 0%, rgba(7,8,12,0.75) 34%, rgba(7,8,12,0.15) 62%, rgba(7,8,12,0.55) 100%),
+      linear-gradient(90deg, rgba(7,8,12,0.55) 0%, transparent 45%);
+  }
+
+  /* ── Header / brand + live badge ── */
+  #brandRow{
+    position:absolute; top:2.6vw; left:3vw; right:3vw;
+    display:flex; align-items:center; justify-content:space-between;
+    z-index:5;
+  }
+  #brand{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2vw; letter-spacing:0.08em;
+    color:var(--muted);
+  }
+  #brand span{color:var(--red);}
+  #clock{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; letter-spacing:0.1em;
+    font-size:1.1vw; color:var(--muted);
+  }
+
+  /* ── Focused channel info ── */
+  #infoBlock{
+    position:absolute; left:3vw; top:16vw;
+    z-index:5; max-width:52vw;
+  }
+  #chanEyebrow{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.95vw; letter-spacing:0.3em; text-transform:uppercase;
+    color:var(--red); font-weight:700; margin-bottom:0.6vw;
+    display:flex; align-items:center; gap:0.6vw;
+  }
+  .live-dot{
+    width:0.6vw; height:0.6vw; border-radius:50%;
+    background:var(--red); box-shadow:0 0 0.8vw var(--red);
+    display:none;
+  }
+  .live-dot.on{display:inline-block;}
+  #chanTitle{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:4.6vw; line-height:0.95;
+    letter-spacing:0.01em;
+    text-shadow:0 4px 24px rgba(0,0,0,0.5);
+  }
+  #chanTag{
+    margin-top:0.9vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.05vw; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--muted); font-weight:600;
+  }
+
+  /* ── Remote hint ── */
+  #hint{
+    position:absolute; right:3vw; top:16.4vw; z-index:5;
+    display:flex; gap:1.4vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.85vw; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--muted); font-weight:700;
+  }
+  #hint span{display:flex; align-items:center; gap:0.5vw;}
+  .key{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:1.8vw; height:1.8vw; padding:0 0.4vw;
+    border:1px solid var(--border); border-radius:0.3vw;
+    color:var(--text); font-size:0.85vw;
+  }
+
+  /* ── Carousel row ── */
+  #carouselWrap{
+    position:absolute; left:0; right:0; bottom:3.4vw;
+    z-index:5; overflow:hidden; padding:0 3vw;
+  }
+  #carousel{
+    display:flex; align-items:flex-end; gap:1.4vw;
+    transition:transform .38s cubic-bezier(.2,.8,.2,1);
+    will-change:transform;
+  }
+  .tile{
+    position:relative;
+    flex:0 0 auto;
+    width:17vw;
+    aspect-ratio:16/9;
+    border-radius:0.5vw;
+    overflow:hidden;
+    background:var(--panel);
+    border:0.16vw solid transparent;
+    transform:scale(0.86);
+    transition:transform .28s cubic-bezier(.2,.8,.2,1), border-color .28s, box-shadow .28s, opacity .28s;
+    opacity:0.62;
+  }
+  .tile img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .tile .tile-fallback{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:1vw;
+    background:linear-gradient(160deg,#1a0d0f 0%, var(--panel) 100%);
+  }
+  .tile .tile-fallback span{
+    font-family:'Barlow Condensed',sans-serif; font-weight:900;
+    text-transform:uppercase; letter-spacing:0.05em;
+    font-size:1vw; color:var(--red); line-height:1.25;
+  }
+  .tile-live{
+    position:absolute; top:0.6vw; left:0.6vw;
+    display:none; align-items:center; gap:0.35vw;
+    background:rgba(0,0,0,0.55); border:1px solid rgba(232,25,44,0.5);
+    border-radius:0.25vw; padding:0.18vw 0.55vw;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:0.68vw; letter-spacing:0.12em; color:var(--red);
+  }
+  .tile-live.on{display:flex;}
+  .tile-live .dotpulse{
+    width:0.4vw; height:0.4vw; border-radius:50%; background:var(--red);
+    box-shadow:0 0 0.5vw var(--red);
+  }
+  .tile-scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+    opacity:0; transition:opacity .28s;
+  }
+  .tile-name{
+    position:absolute; left:0.7vw; right:0.7vw; bottom:0.55vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    font-size:0.85vw; color:var(--text);
+    opacity:0; transform:translateY(4px);
+    transition:opacity .28s, transform .28s;
+    text-shadow:0 2px 10px rgba(0,0,0,0.8);
+  }
+
+  .tile.focused{
+    transform:scale(1);
+    opacity:1;
+    border-color:var(--red);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.35), 0 1.4vw 3vw rgba(232,25,44,0.35);
+  }
+  .tile.focused .tile-scrim{opacity:1;}
+  .tile.focused .tile-name{opacity:1; transform:translateY(0);}
+
+  /* ── Player ── */
+  #player{
+    position:absolute; inset:0; background:#000;
+    z-index:50; display:none;
+  }
+  #player.active{display:block;}
+  #player video{width:100%; height:100%; object-fit:contain; background:#000;}
+
+  #playerStatus{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:1vw;
+    background:#000; color:var(--muted);
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.1vw; letter-spacing:0.08em; text-transform:uppercase;
+  }
+  #playerStatus .spinner{
+    width:2.6vw; height:2.6vw; border-radius:50%;
+    border:0.25vw solid rgba(255,255,255,0.15);
+    border-top-color:var(--red);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  #playerOverlay{
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:2.4vw 3vw;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 22%, transparent 70%, rgba(0,0,0,0.75) 100%);
+    opacity:0; pointer-events:none;
+    transition:opacity .3s;
+  }
+  #playerOverlay.show{opacity:1; pointer-events:auto;}
+
+  #playerTop{display:flex; align-items:center; gap:1vw; pointer-events:auto;}
+  #backChip{
+    display:flex; align-items:center; gap:0.6vw;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; font-size:0.95vw;
+    color:var(--text);
+    cursor:pointer;
+  }
+  #backChip.dpad-focus{
+    border:0.14vw solid var(--red);
+    border-radius:0.35vw;
+    padding:0.4vw 0.8vw;
+    background:rgba(232,25,44,0.18);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.4);
+  }
+  #playerChanName{
+    font-family:'Bebas Neue',sans-serif; font-size:2.1vw; letter-spacing:0.02em;
+  }
+
+  #playerBottom{
+    display:flex; align-items:center; gap:1.6vw;
+    pointer-events:auto;
+  }
+  .ctrl-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:3.4vw; height:3.4vw; border-radius:50%;
+    background:rgba(20,22,30,0.75); border:1px solid var(--border);
+    color:var(--text); font-size:1.3vw;
+    transition:background .2s, border-color .2s, transform .2s;
+    cursor:pointer;
+  }
+  .ctrl-btn.dpad-focus{
+    border-color:var(--red);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.4);
+    background:rgba(232,25,44,0.18);
+    transform:scale(1.08);
+  }
+  #volTrack{
+    width:9vw; height:0.35vw; border-radius:1vw;
+    background:rgba(255,255,255,0.18);
+    position:relative;
+  }
+  #volFill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:70%; border-radius:1vw; background:var(--red);
+  }
+
+  /* Suppress the WebView/browser's own default focus indicator (often a
+     yellow box on Android/Google TV) everywhere. Every interactive element
+     here is focused programmatically purely so the remote's D-pad routes
+     as real key events and so native TV focus-tracking lands on the right
+     element — the only visible focus indicator should be our own red
+     .focused / .dpad-focus styling below. */
+  *:focus{ outline:none !important; }
+
+  /* focus ring fallback for reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="app" tabindex="0">
+  <div id="stage">
+
+    <!-- Selection screen -->
+    <div id="selectScreen">
+      <div id="heroBg"></div>
+      <div id="heroScrim"></div>
+
+      <div id="brandRow">
+        <div id="brand">Gio<span>TV</span></div>
+        <div id="clock">--:--</div>
+      </div>
+
+      <div id="infoBlock">
+        <div id="chanEyebrow"><span class="live-dot" id="liveDot"></span><span id="eyebrowText">Now Browsing</span></div>
+        <div id="chanTitle">—</div>
+        <div id="chanTag">—</div>
+      </div>
+
+      <div id="hint">
+        <span><span class="key">◀ ▶</span> Browse</span>
+        <span><span class="key">OK</span> Watch</span>
+      </div>
+
+      <div id="carouselWrap">
+        <div id="carousel"></div>
+      </div>
+    </div>
+
+    <!-- Full screen player -->
+    <div id="player">
+      <div id="playerStatus"><div class="spinner"></div><span id="playerStatusText">Loading stream…</span></div>
+      <video id="video" playsinline></video>
+      <div id="playerOverlay">
+        <div id="playerTop">
+          <div id="backChip" tabindex="-1"><span class="key">◀ BACK</span></div>
+        </div>
+        <div>
+          <div id="playerChanName">—</div>
+          <div id="playerBottom" style="margin-top:1vw;">
+            <div class="ctrl-btn" id="btnPlayPause" data-dpad="0" tabindex="-1">▶</div>
+            <div class="ctrl-btn" id="btnMute" data-dpad="1" tabindex="-1">🔊</div>
+            <div id="volTrack"><div id="volFill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ───────────────────────── Channel data ───────────────────────── */
+const CHANNELS = [
+  { slug:'tapetime',       name:'TapeTime Radio',    tag:'Variety',            img:'tapetime.jpg',       src:'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
+  { slug:'easdetails',     name:'EAS Details',        tag:'Emergency Alert System', img:null,             src:'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8' },
+  { slug:'fighttv',        name:'Fight TV',           tag:'Boxing / Fighting',  img:'fight_tv.jpeg',      src:'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+  { slug:'galaxytv',       name:'GALAXY TV',          tag:'Entertainment',      img:'galaxy_tv.png',      src:'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+  { slug:'cubotv',         name:'Cubo TV',            tag:'Anime',              img:'cubo_tv.png',        src:'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
+  { slug:'gustotv',        name:'Gusto TV',           tag:'Cooking',            img:'gusto_tv.png',       src:'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+  { slug:'throwbacktv',    name:'Throwback TV Network', tag:'Comedy',           img:'throwback_tv.jpeg',  src:'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+  { slug:'hardrocktv',     name:'Hard Rock TV',       tag:'Music',              img:'IMG_5344.jpeg',      src:'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+  { slug:'younghollywood', name:'Young Hollywood',    tag:'Lifestyle',          img:'young_hollywood.jpg',src:'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+  { slug:'gigabytetv',     name:'GigabyteTV',         tag:'Variety',            img:'gigabyte_tv.png',    src:'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+  { slug:'highlandweather',name:'Highland Weather',   tag:'Weather · TN / SC / NC', img:'https://api.mistweather.com/api/v1.5/image/ad783999-61dc-4382-a9de-1abcfe81e0e2?width=600&height=169&fit=inside', src:'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' },
+  { slug:'kpoptvplay',     name:'TV Play K-Pop',      tag:'Music',              img:'kpop.png',           src:'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' }
+];
+
+/* ───────────────────────── State ───────────────────────── */
+let focusIndex = 0;
+let lastFocusIndex = 0;
+let hls = null;
+let liveState = {}; // slug -> bool
+let playerFocusIdx = 0; // index into playerControls (defined further below, after backChip exists)
+let overlayTimer = null;
+let retryTimer = null;
+
+const carousel = document.getElementById('carousel');
+const chanTitleEl = document.getElementById('chanTitle');
+const chanTagEl = document.getElementById('chanTag');
+const eyebrowText = document.getElementById('eyebrowText');
+const liveDot = document.getElementById('liveDot');
+const heroBg = document.getElementById('heroBg');
+const selectScreen = document.getElementById('selectScreen');
+const player = document.getElementById('player');
+const video = document.getElementById('video');
+const playerStatus = document.getElementById('playerStatus');
+const playerStatusText = document.getElementById('playerStatusText');
+const playerOverlay = document.getElementById('playerOverlay');
+const playerChanName = document.getElementById('playerChanName');
+const btnPlayPause = document.getElementById('btnPlayPause');
+const btnMute = document.getElementById('btnMute');
+const volFill = document.getElementById('volFill');
+const backChip = document.getElementById('backChip');
+
+// Ordered focus targets for D-pad/keyboard selection inside the player.
+// backChip is included so ArrowLeft/ArrowRight selection can actually
+// reach the back button — previously only play/pause and mute were
+// reachable this way, so back could only be triggered by the dedicated
+// Backspace/Escape keys, never by highlighting it and pressing OK.
+const playerControls = [btnPlayPause, btnMute, backChip];
+
+/* ───────────────────────── Build tiles ───────────────────────── */
+CHANNELS.forEach((ch, i) => {
+  const tile = document.createElement('div');
+  tile.className = 'tile';
+  tile.dataset.index = i;
+
+  let mediaHTML;
+  if (ch.img) {
+    mediaHTML = `<img src="${ch.img}" alt="${ch.name}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tile-fallback',innerHTML:'<span>${ch.name}</span>'}))">`;
+  } else {
+    mediaHTML = `<div class="tile-fallback"><span>${ch.name}</span></div>`;
+  }
+
+  tile.innerHTML = `
+    ${mediaHTML}
+    <div class="tile-live" id="live-${ch.slug}"><span class="dotpulse"></span>LIVE</div>
+    <div class="tile-scrim"></div>
+    <div class="tile-name">${ch.name}</div>
+  `;
+  tile.setAttribute('tabindex', '-1');
+  tile.style.outline = 'none';
+  tile.addEventListener('click', () => { focusIndex = i; updateFocus(); openChannel(i); });
+  carousel.appendChild(tile);
+});
+
+/* ───────────────────────── Focus / carousel logic ───────────────────────── */
+function updateFocus(){
+  const tiles = carousel.querySelectorAll('.tile');
+  tiles.forEach((t, i) => t.classList.toggle('focused', i === focusIndex));
+
+  const ch = CHANNELS[focusIndex];
+  chanTitleEl.textContent = ch.name;
+  chanTagEl.textContent = ch.tag;
+  eyebrowText.textContent = 'Now Browsing';
+  liveDot.classList.toggle('on', !!liveState[ch.slug]);
+
+  if (ch.img) {
+    heroBg.style.backgroundImage = `url("${ch.img}")`;
+  } else {
+    heroBg.style.backgroundImage = 'none';
+  }
+
+  // center focused tile within the row
+  const focused = tiles[focusIndex];
+  focused.focus({ preventScroll:true }); // keeps native TV focus-tracking in sync with our own, so the browser's default highlight lands on the same element the red .focused box is drawn on (and outline:none hides it)
+  const wrapWidth = document.getElementById('carouselWrap').clientWidth;
+  const tileLeft = focused.offsetLeft;
+  const tileWidth = focused.offsetWidth;
+  const offset = tileLeft - (wrapWidth / 2) + (tileWidth / 2);
+  carousel.style.transform = `translateX(${-offset}px)`;
+}
+
+function moveFocus(delta){
+  const next = focusIndex + delta;
+  if (next < 0 || next >= CHANNELS.length) return;
+  focusIndex = next;
+  updateFocus();
+}
+
+/* ───────────────────────── Live status polling (lightweight) ───────────────────────── */
+async function pollLiveStatus(){
+  for (const ch of CHANNELS) {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 6000);
+      let ok = false;
+      try {
+        const res = await fetch(ch.src, { method:'HEAD', cache:'no-cache', signal: controller.signal });
+        ok = res.ok;
+      } catch(e) {
+        await fetch(ch.src, { method:'GET', mode:'no-cors', cache:'no-cache', signal: controller.signal });
+        ok = true;
+      }
+      clearTimeout(t);
+      liveState[ch.slug] = ok;
+    } catch(e) {
+      liveState[ch.slug] = false;
+    }
+    const badge = document.getElementById('live-' + ch.slug);
+    if (badge) badge.classList.toggle('on', !!liveState[ch.slug]);
+  }
+  liveDot.classList.toggle('on', !!liveState[CHANNELS[focusIndex].slug]);
+}
+pollLiveStatus();
+setInterval(pollLiveStatus, 20000);
+
+/* ───────────────────────── Clock ───────────────────────── */
+function tickClock(){
+  const d = new Date();
+  let h = d.getHours(); const m = String(d.getMinutes()).padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12; h = h ? h : 12;
+  document.getElementById('clock').textContent = `${h}:${m} ${ampm}`;
+}
+tickClock(); setInterval(tickClock, 15000);
+
+/* ───────────────────────── Player / HLS playback (fixed)
+   Old version created a brand-new Hls() instance every 8s on ANY error, forever
+   stacking instances on top of the still-attached old one. This version:
+   - lets hls.js recover network/media errors in place (hls.startLoad() /
+     hls.recoverMediaError()) instead of nuking everything
+   - only does a full teardown+rebuild for truly fatal "other" errors, on a
+     single clean retry loop
+*/
+function showStatus(msg){
+  playerStatus.style.display = 'flex';
+  playerStatusText.textContent = msg;
+}
+function hideStatus(){ playerStatus.style.display = 'none'; }
+
+function attemptPlayback(src){
+  if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
+
+  function startNative(){
+    video.src = src;
+    const onLoaded = () => { hideStatus(); video.removeEventListener('loadedmetadata', onLoaded); };
+    const onErr = () => { showStatus('Channel unavailable — retrying…'); scheduleFullRetry(); };
+    video.addEventListener('loadedmetadata', onLoaded);
+    video.addEventListener('error', onErr, { once:true });
+    video.play().catch(()=>{});
+  }
+
+  function startHls(){
+    hls = new Hls({ maxBufferLength: 30, liveSyncDurationCount: 3 });
+    hls.loadSource(src);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      hideStatus();
+      video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR, (evt, data) => {
+      if (!data.fatal) return;
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          showStatus('Reconnecting…');
+          hls.startLoad();
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          showStatus('Recovering playback…');
+          hls.recoverMediaError();
+          break;
+        default:
+          showStatus('Channel unavailable — retrying…');
+          scheduleFullRetry();
+          break;
+      }
+    });
+  }
+
+  function scheduleFullRetry(){
+    clearInterval(retryTimer);
+    retryTimer = setInterval(() => {
+      if (!player.classList.contains('active')) { clearInterval(retryTimer); return; }
+      if (hls) { hls.destroy(); hls = null; }
+      if (window.Hls && Hls.isSupported()) startHls(); else startNative();
+    }, 8000);
+  }
+
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    startNative();
+  } else if (window.Hls && Hls.isSupported()) {
+    startHls();
+  } else {
+    showStatus('HLS playback not supported in this browser');
+  }
+}
+
+/* ───────────────────────── Player open/close ───────────────────────── */
+function openChannel(index, fromHash){
+  lastFocusIndex = index;
+  const ch = CHANNELS[index];
+  playerChanName.textContent = ch.name;
+  player.classList.add('active');
+  showStatus('Loading stream…');
+  attemptPlayback(ch.src);
+  showOverlay(true);
+  if (!fromHash) {
+    try {
+      history.pushState({ giotv:'player', slug: ch.slug }, '', '#' + ch.slug);
+    } catch (e) {
+      // Some WebView/sandbox contexts restrict history rewrites; deep-link
+      // sharing via hash just won't update in that case, but playback and
+      // in-page back navigation keep working since they don't depend on it.
+      location.hash = ch.slug;
+    }
+  }
+}
+
+function closePlayer(skipHash){
+  player.classList.remove('active');
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
+  clearTimeout(overlayTimer);
+  // restore focus to previously selected channel
+  focusIndex = lastFocusIndex;
+  updateFocus();
+  if (!skipHash) {
+    try {
+      history.pushState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) {
+      location.hash = '';
+    }
+  }
+}
+
+function showOverlay(temporary){
+  playerOverlay.classList.add('show');
+  clearTimeout(overlayTimer);
+  if (temporary) overlayTimer = setTimeout(() => playerOverlay.classList.remove('show'), 3500);
+}
+
+function togglePlayPause(){
+  if (video.paused) { video.play().catch(()=>{}); btnPlayPause.textContent = '❚❚'; }
+  else { video.pause(); btnPlayPause.textContent = '▶'; }
+}
+function toggleMute(){
+  video.muted = !video.muted;
+  btnMute.textContent = video.muted ? '🔇' : '🔊';
+  volFill.style.width = video.muted ? '0%' : '70%';
+}
+btnPlayPause.addEventListener('click', togglePlayPause);
+btnMute.addEventListener('click', toggleMute);
+backChip.addEventListener('click', () => closePlayer());
+video.addEventListener('play', () => btnPlayPause.textContent = '❚❚');
+video.addEventListener('pause', () => btnPlayPause.textContent = '▶');
+
+function updatePlayerCtrlFocus(){
+  playerControls.forEach((b,i) => b.classList.toggle('dpad-focus', i === playerFocusIdx));
+  playerControls[playerFocusIdx].focus({ preventScroll:true }); // sync native focus tracking to the same element the red box is on
+}
+
+/* ───────────────────────── Remote / D-pad input ───────────────────────── */
+document.addEventListener('keydown', (e) => {
+  const inPlayer = player.classList.contains('active');
+
+  if (!inPlayer) {
+    switch (e.key) {
+      case 'ArrowLeft': e.preventDefault(); moveFocus(-1); break;
+      case 'ArrowRight': e.preventDefault(); moveFocus(1); break;
+      case 'Enter': case ' ': case 'OK':
+        e.preventDefault(); openChannel(focusIndex); break;
+    }
+  } else {
+    switch (e.key) {
+      case 'Backspace': case 'Escape': case 'GoBack': case 'BrowserBack':
+        e.preventDefault(); closePlayer(); break;
+      case 'ArrowLeft': case 'ArrowRight':
+        e.preventDefault();
+        playerFocusIdx = e.key === 'ArrowRight'
+          ? (playerFocusIdx + 1) % playerControls.length
+          : (playerFocusIdx - 1 + playerControls.length) % playerControls.length;
+        updatePlayerCtrlFocus(); showOverlay(true);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (!video.muted) { video.volume = Math.min(1, video.volume + 0.1); volFill.style.width = (video.volume*100)+'%'; }
+        showOverlay(true);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!video.muted) { video.volume = Math.max(0, video.volume - 0.1); volFill.style.width = (video.volume*100)+'%'; }
+        showOverlay(true);
+        break;
+      case 'Enter': case ' ': case 'OK':
+        e.preventDefault();
+        if (playerControls[playerFocusIdx] === btnPlayPause) togglePlayPause();
+        else if (playerControls[playerFocusIdx] === btnMute) toggleMute();
+        else closePlayer(); // backChip selected
+        showOverlay(true);
+        break;
+      default:
+        showOverlay(true);
+    }
+  }
+});
+
+/* ───────────────────────── Deep-linking: website.com/tv#channelname ─────────────────────────
+   - Loading the page with a hash jumps straight into that channel.
+   - Opening a channel pushes its slug into the hash so it's shareable.
+   - Browser/remote back closes the player and clears the hash instead of
+     leaving the page (same "trap" pattern as guide.html).
+*/
+function slugFromHash(){
+  return decodeURIComponent(location.hash.replace(/^#/, ''));
+}
+
+function initFromHash(){
+  const slug = slugFromHash();
+  if (!slug) {
+    try {
+      history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) { /* restrictive context — safe to ignore, nothing depends on this succeeding */ }
+    return;
+  }
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    try {
+      history.replaceState({ giotv:'player', slug }, '', '#' + slug);
+    } catch (e) { /* restrictive context — safe to ignore */ }
+    openChannel(idx, true);
+  } else {
+    try {
+      history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) { /* restrictive context — safe to ignore */ }
+  }
+}
+
+window.addEventListener('popstate', (e) => {
+  const slug = slugFromHash();
+  if (!slug) {
+    if (player.classList.contains('active')) {
+      closePlayer(true); // hash already cleared by the back nav itself
+    }
+    return;
+  }
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    if (!player.classList.contains('active')) {
+      openChannel(idx, true);
+    } else if (CHANNELS[lastFocusIndex].slug !== slug) {
+      openChannel(idx, true);
+    }
+  }
+});
+
+/* Click on video re-shows overlay (touch remotes / mouse fallback) */
+player.addEventListener('mousemove', () => showOverlay(true));
+player.addEventListener('click', () => showOverlay(true));
+
+/* Keep overlay visible while the cursor is actually over it (back button,
+   play/pause, mute, volume) — otherwise the 3.5s auto-hide timer can fade
+   the overlay out from under the cursor mid-approach, making buttons look
+   unreachable even though they're still technically clickable underneath. */
+playerOverlay.addEventListener('mouseenter', () => {
+  clearTimeout(overlayTimer);
+});
+playerOverlay.addEventListener('mouseleave', () => {
+  showOverlay(true); // resumes the normal 3.5s countdown once cursor leaves
+});
+
+/* ───────────────────────── D-pad vs. pointer mode ─────────────────────────
+   Google TV / Android TV WebViews only dispatch D-pad presses as real
+   keyboard events (ArrowLeft/ArrowRight/Enter, etc.) when the page has an
+   actual focused, focusable element. Without one, the remote falls back to
+   emulating a movable mouse pointer instead. #app has tabindex="0" for
+   exactly this reason — grab focus on load, and re-grab it if anything
+   else steals it (e.g. a stray click), so D-pad input stays reliable.
+*/
+const appShell = document.getElementById('app');
+function ensureDpadFocus(){ appShell.focus({ preventScroll:true }); }
+ensureDpadFocus();
+window.addEventListener('focus', ensureDpadFocus);
+document.addEventListener('mouseup', () => setTimeout(ensureDpadFocus, 0));
+
+/* ───────────────────────── Init ───────────────────────── */
+updateFocus();
+updatePlayerCtrlFocus();
+initFromHash();
+</script>
+</body>
+</html>
+
+On Tue, Jul 21, 2026 at 7:54 AM Brandon Becerra <brandon@helixmindaisolutions.ai> wrote:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>GioTV</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<style>
+  :root{
+    --red:#e8192c;
+    --dark-red:#a50e1c;
+    --black:#07080c;
+    --panel:#12141b;
+    --border:rgba(255,255,255,0.09);
+    --text:#f0f2f7;
+    --muted:#8a92a6;
+    --gold:#f5c842;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    width:100%;height:100%;
+    background:var(--black);
+    color:var(--text);
+    font-family:'Barlow',sans-serif;
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+  }
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none;}
+
+  /* ── App shell, locked to 16:9 ── */
+  #app{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#000;
+  }
+  #stage{
+    position:relative;
+    width:100vw; height:56.25vw; /* 16:9 based on width */
+    max-height:100vh; max-width:177.78vh; /* 16:9 based on height */
+    background:var(--black);
+    overflow:hidden;
+  }
+
+  /* ── Ambient hero backdrop ── */
+  #heroBg{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    filter:blur(38px) brightness(0.38) saturate(1.1);
+    transform:scale(1.15);
+    transition:background-image .5s ease;
+  }
+  #heroScrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(to top, rgba(7,8,12,0.98) 0%, rgba(7,8,12,0.75) 34%, rgba(7,8,12,0.15) 62%, rgba(7,8,12,0.55) 100%),
+      linear-gradient(90deg, rgba(7,8,12,0.55) 0%, transparent 45%);
+  }
+
+  /* ── Header / brand + live badge ── */
+  #brandRow{
+    position:absolute; top:2.6vw; left:3vw; right:3vw;
+    display:flex; align-items:center; justify-content:space-between;
+    z-index:5;
+  }
+  #brand{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2vw; letter-spacing:0.08em;
+    color:var(--muted);
+  }
+  #brand span{color:var(--red);}
+  #clock{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; letter-spacing:0.1em;
+    font-size:1.1vw; color:var(--muted);
+  }
+
+  /* ── Focused channel info ── */
+  #infoBlock{
+    position:absolute; left:3vw; top:16vw;
+    z-index:5; max-width:52vw;
+  }
+  #chanEyebrow{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.95vw; letter-spacing:0.3em; text-transform:uppercase;
+    color:var(--red); font-weight:700; margin-bottom:0.6vw;
+    display:flex; align-items:center; gap:0.6vw;
+  }
+  .live-dot{
+    width:0.6vw; height:0.6vw; border-radius:50%;
+    background:var(--red); box-shadow:0 0 0.8vw var(--red);
+    display:none;
+  }
+  .live-dot.on{display:inline-block;}
+  #chanTitle{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:4.6vw; line-height:0.95;
+    letter-spacing:0.01em;
+    text-shadow:0 4px 24px rgba(0,0,0,0.5);
+  }
+  #chanTag{
+    margin-top:0.9vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.05vw; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--muted); font-weight:600;
+  }
+
+  /* ── Remote hint ── */
+  #hint{
+    position:absolute; right:3vw; top:16.4vw; z-index:5;
+    display:flex; gap:1.4vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.85vw; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--muted); font-weight:700;
+  }
+  #hint span{display:flex; align-items:center; gap:0.5vw;}
+  .key{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:1.8vw; height:1.8vw; padding:0 0.4vw;
+    border:1px solid var(--border); border-radius:0.3vw;
+    color:var(--text); font-size:0.85vw;
+  }
+
+  /* ── Carousel row ── */
+  #carouselWrap{
+    position:absolute; left:0; right:0; bottom:3.4vw;
+    z-index:5; overflow:hidden; padding:0 3vw;
+  }
+  #carousel{
+    display:flex; align-items:flex-end; gap:1.4vw;
+    transition:transform .38s cubic-bezier(.2,.8,.2,1);
+    will-change:transform;
+  }
+  .tile{
+    position:relative;
+    flex:0 0 auto;
+    width:17vw;
+    aspect-ratio:16/9;
+    border-radius:0.5vw;
+    overflow:hidden;
+    background:var(--panel);
+    border:0.16vw solid transparent;
+    transform:scale(0.86);
+    transition:transform .28s cubic-bezier(.2,.8,.2,1), border-color .28s, box-shadow .28s, opacity .28s;
+    opacity:0.62;
+  }
+  .tile img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .tile .tile-fallback{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:1vw;
+    background:linear-gradient(160deg,#1a0d0f 0%, var(--panel) 100%);
+  }
+  .tile .tile-fallback span{
+    font-family:'Barlow Condensed',sans-serif; font-weight:900;
+    text-transform:uppercase; letter-spacing:0.05em;
+    font-size:1vw; color:var(--red); line-height:1.25;
+  }
+  .tile-live{
+    position:absolute; top:0.6vw; left:0.6vw;
+    display:none; align-items:center; gap:0.35vw;
+    background:rgba(0,0,0,0.55); border:1px solid rgba(232,25,44,0.5);
+    border-radius:0.25vw; padding:0.18vw 0.55vw;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:0.68vw; letter-spacing:0.12em; color:var(--red);
+  }
+  .tile-live.on{display:flex;}
+  .tile-live .dotpulse{
+    width:0.4vw; height:0.4vw; border-radius:50%; background:var(--red);
+    box-shadow:0 0 0.5vw var(--red);
+  }
+  .tile-scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+    opacity:0; transition:opacity .28s;
+  }
+  .tile-name{
+    position:absolute; left:0.7vw; right:0.7vw; bottom:0.55vw;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    font-size:0.85vw; color:var(--text);
+    opacity:0; transform:translateY(4px);
+    transition:opacity .28s, transform .28s;
+    text-shadow:0 2px 10px rgba(0,0,0,0.8);
+  }
+
+  .tile.focused{
+    transform:scale(1);
+    opacity:1;
+    border-color:var(--red);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.35), 0 1.4vw 3vw rgba(232,25,44,0.35);
+  }
+  .tile.focused .tile-scrim{opacity:1;}
+  .tile.focused .tile-name{opacity:1; transform:translateY(0);}
+
+  /* ── Player ── */
+  #player{
+    position:absolute; inset:0; background:#000;
+    z-index:50; display:none;
+  }
+  #player.active{display:block;}
+  #player video{width:100%; height:100%; object-fit:contain; background:#000;}
+
+  #playerStatus{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:1vw;
+    background:#000; color:var(--muted);
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:1.1vw; letter-spacing:0.08em; text-transform:uppercase;
+  }
+  #playerStatus .spinner{
+    width:2.6vw; height:2.6vw; border-radius:50%;
+    border:0.25vw solid rgba(255,255,255,0.15);
+    border-top-color:var(--red);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  #playerOverlay{
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:2.4vw 3vw;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 22%, transparent 70%, rgba(0,0,0,0.75) 100%);
+    opacity:0; pointer-events:none;
+    transition:opacity .3s;
+  }
+  #playerOverlay.show{opacity:1; pointer-events:auto;}
+
+  #playerTop{display:flex; align-items:center; gap:1vw; pointer-events:auto;}
+  #backChip{
+    display:flex; align-items:center; gap:0.6vw;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; font-size:0.95vw;
+    color:var(--text);
+    cursor:pointer;
+  }
+  #backChip.dpad-focus{
+    border:0.14vw solid var(--red);
+    border-radius:0.35vw;
+    padding:0.4vw 0.8vw;
+    background:rgba(232,25,44,0.18);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.4);
+  }
+  #playerChanName{
+    font-family:'Bebas Neue',sans-serif; font-size:2.1vw; letter-spacing:0.02em;
+  }
+
+  #playerBottom{
+    display:flex; align-items:center; gap:1.6vw;
+    pointer-events:auto;
+  }
+  .ctrl-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:3.4vw; height:3.4vw; border-radius:50%;
+    background:rgba(20,22,30,0.75); border:1px solid var(--border);
+    color:var(--text); font-size:1.3vw;
+    transition:background .2s, border-color .2s, transform .2s;
+    cursor:pointer;
+  }
+  .ctrl-btn.dpad-focus{
+    border-color:var(--red);
+    box-shadow:0 0 0 0.14vw rgba(232,25,44,0.4);
+    background:rgba(232,25,44,0.18);
+    transform:scale(1.08);
+  }
+  #volTrack{
+    width:9vw; height:0.35vw; border-radius:1vw;
+    background:rgba(255,255,255,0.18);
+    position:relative;
+  }
+  #volFill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:70%; border-radius:1vw; background:var(--red);
+  }
+
+  /* focus ring fallback for reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="stage">
+
+    <!-- Selection screen -->
+    <div id="selectScreen">
+      <div id="heroBg"></div>
+      <div id="heroScrim"></div>
+
+      <div id="brandRow">
+        <div id="brand">Gio<span>TV</span></div>
+        <div id="clock">--:--</div>
+      </div>
+
+      <div id="infoBlock">
+        <div id="chanEyebrow"><span class="live-dot" id="liveDot"></span><span id="eyebrowText">Now Browsing</span></div>
+        <div id="chanTitle">—</div>
+        <div id="chanTag">—</div>
+      </div>
+
+      <div id="hint">
+        <span><span class="key">◀ ▶</span> Browse</span>
+        <span><span class="key">OK</span> Watch</span>
+      </div>
+
+      <div id="carouselWrap">
+        <div id="carousel"></div>
+      </div>
+    </div>
+
+    <!-- Full screen player -->
+    <div id="player">
+      <div id="playerStatus"><div class="spinner"></div><span id="playerStatusText">Loading stream…</span></div>
+      <video id="video" playsinline></video>
+      <div id="playerOverlay">
+        <div id="playerTop">
+          <div id="backChip"><span class="key">◀ BACK</span></div>
+        </div>
+        <div>
+          <div id="playerChanName">—</div>
+          <div id="playerBottom" style="margin-top:1vw;">
+            <div class="ctrl-btn" id="btnPlayPause" data-dpad="0">▶</div>
+            <div class="ctrl-btn" id="btnMute" data-dpad="1">🔊</div>
+            <div id="volTrack"><div id="volFill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ───────────────────────── Channel data ───────────────────────── */
+const CHANNELS = [
+  { slug:'tapetime',       name:'TapeTime Radio',    tag:'Variety',            img:'tapetime.jpg',       src:'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
+  { slug:'easdetails',     name:'EAS Details',        tag:'Emergency Alert System', img:null,             src:'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8' },
+  { slug:'fighttv',        name:'Fight TV',           tag:'Boxing / Fighting',  img:'fight_tv.jpeg',      src:'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+  { slug:'galaxytv',       name:'GALAXY TV',          tag:'Entertainment',      img:'galaxy_tv.png',      src:'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+  { slug:'cubotv',         name:'Cubo TV',            tag:'Anime',              img:'cubo_tv.png',        src:'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
+  { slug:'gustotv',        name:'Gusto TV',           tag:'Cooking',            img:'gusto_tv.png',       src:'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+  { slug:'throwbacktv',    name:'Throwback TV Network', tag:'Comedy',           img:'throwback_tv.jpeg',  src:'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+  { slug:'hardrocktv',     name:'Hard Rock TV',       tag:'Music',              img:'IMG_5344.jpeg',      src:'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+  { slug:'younghollywood', name:'Young Hollywood',    tag:'Lifestyle',          img:'young_hollywood.jpg',src:'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+  { slug:'gigabytetv',     name:'GigabyteTV',         tag:'Variety',            img:'gigabyte_tv.png',    src:'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+  { slug:'highlandweather',name:'Highland Weather',   tag:'Weather · TN / SC / NC', img:'https://api.mistweather.com/api/v1.5/image/ad783999-61dc-4382-a9de-1abcfe81e0e2?width=600&height=169&fit=inside', src:'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' },
+  { slug:'kpoptvplay',     name:'TV Play K-Pop',      tag:'Music',              img:'kpop.png',           src:'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' }
+];
+
+/* ───────────────────────── State ───────────────────────── */
+let focusIndex = 0;
+let lastFocusIndex = 0;
+let hls = null;
+let liveState = {}; // slug -> bool
+let playerFocusIdx = 0; // index into playerControls (defined further below, after backChip exists)
+let overlayTimer = null;
+let retryTimer = null;
+
+const carousel = document.getElementById('carousel');
+const chanTitleEl = document.getElementById('chanTitle');
+const chanTagEl = document.getElementById('chanTag');
+const eyebrowText = document.getElementById('eyebrowText');
+const liveDot = document.getElementById('liveDot');
+const heroBg = document.getElementById('heroBg');
+const selectScreen = document.getElementById('selectScreen');
+const player = document.getElementById('player');
+const video = document.getElementById('video');
+const playerStatus = document.getElementById('playerStatus');
+const playerStatusText = document.getElementById('playerStatusText');
+const playerOverlay = document.getElementById('playerOverlay');
+const playerChanName = document.getElementById('playerChanName');
+const btnPlayPause = document.getElementById('btnPlayPause');
+const btnMute = document.getElementById('btnMute');
+const volFill = document.getElementById('volFill');
+const backChip = document.getElementById('backChip');
+
+// Ordered focus targets for D-pad/keyboard selection inside the player.
+// backChip is included so ArrowLeft/ArrowRight selection can actually
+// reach the back button — previously only play/pause and mute were
+// reachable this way, so back could only be triggered by the dedicated
+// Backspace/Escape keys, never by highlighting it and pressing OK.
+const playerControls = [btnPlayPause, btnMute, backChip];
+
+/* ───────────────────────── Build tiles ───────────────────────── */
+CHANNELS.forEach((ch, i) => {
+  const tile = document.createElement('div');
+  tile.className = 'tile';
+  tile.dataset.index = i;
+
+  let mediaHTML;
+  if (ch.img) {
+    mediaHTML = `<img src="${ch.img}" alt="${ch.name}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'tile-fallback',innerHTML:'<span>${ch.name}</span>'}))">`;
+  } else {
+    mediaHTML = `<div class="tile-fallback"><span>${ch.name}</span></div>`;
+  }
+
+  tile.innerHTML = `
+    ${mediaHTML}
+    <div class="tile-live" id="live-${ch.slug}"><span class="dotpulse"></span>LIVE</div>
+    <div class="tile-scrim"></div>
+    <div class="tile-name">${ch.name}</div>
+  `;
+  tile.addEventListener('click', () => { focusIndex = i; updateFocus(); openChannel(i); });
+  carousel.appendChild(tile);
+});
+
+/* ───────────────────────── Focus / carousel logic ───────────────────────── */
+function updateFocus(){
+  const tiles = carousel.querySelectorAll('.tile');
+  tiles.forEach((t, i) => t.classList.toggle('focused', i === focusIndex));
+
+  const ch = CHANNELS[focusIndex];
+  chanTitleEl.textContent = ch.name;
+  chanTagEl.textContent = ch.tag;
+  eyebrowText.textContent = 'Now Browsing';
+  liveDot.classList.toggle('on', !!liveState[ch.slug]);
+
+  if (ch.img) {
+    heroBg.style.backgroundImage = `url("${ch.img}")`;
+  } else {
+    heroBg.style.backgroundImage = 'none';
+  }
+
+  // center focused tile within the row
+  const focused = tiles[focusIndex];
+  const wrapWidth = document.getElementById('carouselWrap').clientWidth;
+  const tileLeft = focused.offsetLeft;
+  const tileWidth = focused.offsetWidth;
+  const offset = tileLeft - (wrapWidth / 2) + (tileWidth / 2);
+  carousel.style.transform = `translateX(${-offset}px)`;
+}
+
+function moveFocus(delta){
+  const next = focusIndex + delta;
+  if (next < 0 || next >= CHANNELS.length) return;
+  focusIndex = next;
+  updateFocus();
+}
+
+/* ───────────────────────── Live status polling (lightweight) ───────────────────────── */
+async function pollLiveStatus(){
+  for (const ch of CHANNELS) {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 6000);
+      let ok = false;
+      try {
+        const res = await fetch(ch.src, { method:'HEAD', cache:'no-cache', signal: controller.signal });
+        ok = res.ok;
+      } catch(e) {
+        await fetch(ch.src, { method:'GET', mode:'no-cors', cache:'no-cache', signal: controller.signal });
+        ok = true;
+      }
+      clearTimeout(t);
+      liveState[ch.slug] = ok;
+    } catch(e) {
+      liveState[ch.slug] = false;
+    }
+    const badge = document.getElementById('live-' + ch.slug);
+    if (badge) badge.classList.toggle('on', !!liveState[ch.slug]);
+  }
+  liveDot.classList.toggle('on', !!liveState[CHANNELS[focusIndex].slug]);
+}
+pollLiveStatus();
+setInterval(pollLiveStatus, 20000);
+
+/* ───────────────────────── Clock ───────────────────────── */
+function tickClock(){
+  const d = new Date();
+  let h = d.getHours(); const m = String(d.getMinutes()).padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12; h = h ? h : 12;
+  document.getElementById('clock').textContent = `${h}:${m} ${ampm}`;
+}
+tickClock(); setInterval(tickClock, 15000);
+
+/* ───────────────────────── Player / HLS playback (fixed)
+   Old version created a brand-new Hls() instance every 8s on ANY error, forever
+   stacking instances on top of the still-attached old one. This version:
+   - lets hls.js recover network/media errors in place (hls.startLoad() /
+     hls.recoverMediaError()) instead of nuking everything
+   - only does a full teardown+rebuild for truly fatal "other" errors, on a
+     single clean retry loop
+*/
+function showStatus(msg){
+  playerStatus.style.display = 'flex';
+  playerStatusText.textContent = msg;
+}
+function hideStatus(){ playerStatus.style.display = 'none'; }
+
+function attemptPlayback(src){
+  if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
+
+  function startNative(){
+    video.src = src;
+    const onLoaded = () => { hideStatus(); video.removeEventListener('loadedmetadata', onLoaded); };
+    const onErr = () => { showStatus('Channel unavailable — retrying…'); scheduleFullRetry(); };
+    video.addEventListener('loadedmetadata', onLoaded);
+    video.addEventListener('error', onErr, { once:true });
+    video.play().catch(()=>{});
+  }
+
+  function startHls(){
+    hls = new Hls({ maxBufferLength: 30, liveSyncDurationCount: 3 });
+    hls.loadSource(src);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      hideStatus();
+      video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR, (evt, data) => {
+      if (!data.fatal) return;
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          showStatus('Reconnecting…');
+          hls.startLoad();
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          showStatus('Recovering playback…');
+          hls.recoverMediaError();
+          break;
+        default:
+          showStatus('Channel unavailable — retrying…');
+          scheduleFullRetry();
+          break;
+      }
+    });
+  }
+
+  function scheduleFullRetry(){
+    clearInterval(retryTimer);
+    retryTimer = setInterval(() => {
+      if (!player.classList.contains('active')) { clearInterval(retryTimer); return; }
+      if (hls) { hls.destroy(); hls = null; }
+      if (window.Hls && Hls.isSupported()) startHls(); else startNative();
+    }, 8000);
+  }
+
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    startNative();
+  } else if (window.Hls && Hls.isSupported()) {
+    startHls();
+  } else {
+    showStatus('HLS playback not supported in this browser');
+  }
+}
+
+/* ───────────────────────── Player open/close ───────────────────────── */
+function openChannel(index, fromHash){
+  lastFocusIndex = index;
+  const ch = CHANNELS[index];
+  playerChanName.textContent = ch.name;
+  player.classList.add('active');
+  showStatus('Loading stream…');
+  attemptPlayback(ch.src);
+  showOverlay(true);
+  if (!fromHash) {
+    try {
+      history.pushState({ giotv:'player', slug: ch.slug }, '', '#' + ch.slug);
+    } catch (e) {
+      // Some WebView/sandbox contexts restrict history rewrites; deep-link
+      // sharing via hash just won't update in that case, but playback and
+      // in-page back navigation keep working since they don't depend on it.
+      location.hash = ch.slug;
+    }
+  }
+}
+
+function closePlayer(skipHash){
+  player.classList.remove('active');
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  if (hls) { hls.destroy(); hls = null; }
+  clearInterval(retryTimer);
+  clearTimeout(overlayTimer);
+  // restore focus to previously selected channel
+  focusIndex = lastFocusIndex;
+  updateFocus();
+  if (!skipHash) {
+    try {
+      history.pushState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) {
+      location.hash = '';
+    }
+  }
+}
+
+function showOverlay(temporary){
+  playerOverlay.classList.add('show');
+  clearTimeout(overlayTimer);
+  if (temporary) overlayTimer = setTimeout(() => playerOverlay.classList.remove('show'), 3500);
+}
+
+function togglePlayPause(){
+  if (video.paused) { video.play().catch(()=>{}); btnPlayPause.textContent = '❚❚'; }
+  else { video.pause(); btnPlayPause.textContent = '▶'; }
+}
+function toggleMute(){
+  video.muted = !video.muted;
+  btnMute.textContent = video.muted ? '🔇' : '🔊';
+  volFill.style.width = video.muted ? '0%' : '70%';
+}
+btnPlayPause.addEventListener('click', togglePlayPause);
+btnMute.addEventListener('click', toggleMute);
+backChip.addEventListener('click', () => closePlayer());
+video.addEventListener('play', () => btnPlayPause.textContent = '❚❚');
+video.addEventListener('pause', () => btnPlayPause.textContent = '▶');
+
+function updatePlayerCtrlFocus(){
+  playerControls.forEach((b,i) => b.classList.toggle('dpad-focus', i === playerFocusIdx));
+}
+
+/* ───────────────────────── Remote / D-pad input ───────────────────────── */
+document.addEventListener('keydown', (e) => {
+  const inPlayer = player.classList.contains('active');
+
+  if (!inPlayer) {
+    switch (e.key) {
+      case 'ArrowLeft': e.preventDefault(); moveFocus(-1); break;
+      case 'ArrowRight': e.preventDefault(); moveFocus(1); break;
+      case 'Enter': case ' ': case 'OK':
+        e.preventDefault(); openChannel(focusIndex); break;
+    }
+  } else {
+    switch (e.key) {
+      case 'Backspace': case 'Escape': case 'GoBack': case 'BrowserBack':
+        e.preventDefault(); closePlayer(); break;
+      case 'ArrowLeft': case 'ArrowRight':
+        e.preventDefault();
+        playerFocusIdx = e.key === 'ArrowRight'
+          ? (playerFocusIdx + 1) % playerControls.length
+          : (playerFocusIdx - 1 + playerControls.length) % playerControls.length;
+        updatePlayerCtrlFocus(); showOverlay(true);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (!video.muted) { video.volume = Math.min(1, video.volume + 0.1); volFill.style.width = (video.volume*100)+'%'; }
+        showOverlay(true);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!video.muted) { video.volume = Math.max(0, video.volume - 0.1); volFill.style.width = (video.volume*100)+'%'; }
+        showOverlay(true);
+        break;
+      case 'Enter': case ' ': case 'OK':
+        e.preventDefault();
+        if (playerControls[playerFocusIdx] === btnPlayPause) togglePlayPause();
+        else if (playerControls[playerFocusIdx] === btnMute) toggleMute();
+        else closePlayer(); // backChip selected
+        showOverlay(true);
+        break;
+      default:
+        showOverlay(true);
+    }
+  }
+});
+
+/* ───────────────────────── Deep-linking: website.com/tv#channelname ─────────────────────────
+   - Loading the page with a hash jumps straight into that channel.
+   - Opening a channel pushes its slug into the hash so it's shareable.
+   - Browser/remote back closes the player and clears the hash instead of
+     leaving the page (same "trap" pattern as guide.html).
+*/
+function slugFromHash(){
+  return decodeURIComponent(location.hash.replace(/^#/, ''));
+}
+
+function initFromHash(){
+  const slug = slugFromHash();
+  if (!slug) {
+    try {
+      history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) { /* restrictive context — safe to ignore, nothing depends on this succeeding */ }
+    return;
+  }
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    try {
+      history.replaceState({ giotv:'player', slug }, '', '#' + slug);
+    } catch (e) { /* restrictive context — safe to ignore */ }
+    openChannel(idx, true);
+  } else {
+    try {
+      history.replaceState({ giotv:'select' }, '', location.pathname + location.search);
+    } catch (e) { /* restrictive context — safe to ignore */ }
+  }
+}
+
+window.addEventListener('popstate', (e) => {
+  const slug = slugFromHash();
+  if (!slug) {
+    if (player.classList.contains('active')) {
+      closePlayer(true); // hash already cleared by the back nav itself
+    }
+    return;
+  }
+  const idx = CHANNELS.findIndex(c => c.slug === slug);
+  if (idx >= 0) {
+    focusIndex = idx;
+    updateFocus();
+    if (!player.classList.contains('active')) {
+      openChannel(idx, true);
+    } else if (CHANNELS[lastFocusIndex].slug !== slug) {
+      openChannel(idx, true);
+    }
+  }
+});
+
+/* Click on video re-shows overlay (touch remotes / mouse fallback) */
+player.addEventListener('mousemove', () => showOverlay(true));
+player.addEventListener('click', () => showOverlay(true));
+
+/* Keep overlay visible while the cursor is actually over it (back button,
+   play/pause, mute, volume) — otherwise the 3.5s auto-hide timer can fade
+   the overlay out from under the cursor mid-approach, making buttons look
+   unreachable even though they're still technically clickable underneath. */
+playerOverlay.addEventListener('mouseenter', () => {
+  clearTimeout(overlayTimer);
+});
+playerOverlay.addEventListener('mouseleave', () => {
+  showOverlay(true); // resumes the normal 3.5s countdown once cursor leaves
+});
+
+/* ───────────────────────── Init ───────────────────────── */
+updateFocus();
+updatePlayerCtrlFocus();
+initFromHash();
+</script>
+</body>
+</html>
+
+On Tue, Jul 21, 2026 at 7:35 AM Poppy TV <poppytv456@gmail.com> wrote:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>GioTV</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<style>
+  :root{
+    --red:#e8192c;
+    --dark-red:#a50e1c;
+    --black:#07080c;
+    --panel:#12141b;
+    --border:rgba(255,255,255,0.09);
+    --text:#f0f2f7;
+    --muted:#8a92a6;
+    --gold:#f5c842;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    width:100%;height:100%;
+    background:var(--black);
+    color:var(--text);
+    font-family:'Barlow',sans-serif;
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+  }
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none;}
+
+  /* ── App shell, locked to 16:9 ── */
+  #app{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#000;
   }
   #stage{
     position:relative;
