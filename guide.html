@@ -1746,7 +1746,7 @@
             </div>
           </div>
           <div class="channel-info">
-            <div class="channel-name">🚨 EAS Details</div>
+            <div class="channel-name">🚨 EAS Details Channel</div>
             <div class="channel-tag">Emergency Alert System</div>
             <div class="last-seen"></div>
             <button class="share-link" data-channel="easdetails">🔗 Share</button>
@@ -1937,7 +1937,7 @@
             </div>
           </div>
           <div class="channel-info">
-            <div class="channel-name">Highland Weather 24/7 Monitoring - LIVE Forecasts & Alerts</div>
+            <div class="channel-name">Highland Weather (Tennessee, South and North Carolina)</div>
             <div class="channel-tag">Weather</div>
             <div class="last-seen"></div>
             <button class="share-link" data-channel="highlandweather">🔗 Share</button>
@@ -2066,7 +2066,7 @@
     const EAS_OFFLINE_IMG = 'eas_offline.png';
 
     const CHANNEL_MAP = {
-      'easdetails': { name: 'EAS Details', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+      'easdetails': { name: 'EAS Details Channel', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
       'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
       'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
       'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
@@ -2077,7 +2077,7 @@
       'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
       'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
       'kpoptvplay': { name: 'TV Play K-Pop', src: 'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' },
-      'highlandweather': { name: 'Highland Weather 24/7 Monitoring - LIVE Forecasts & Alerts', src: 'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' }
+      'highlandweather': { name: 'Highland Weather (Tennessee, South and North Carolina)', src: 'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' }
     };
 
     function initLastSeen() {
@@ -2504,7 +2504,7 @@
       if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
         preEASState = { src: src, name: name, offlineImg: offlineImg };
         history.replaceState(null, '', '#easdetails');
-        openMiniPlayer(EAS_SRC, 'EAS Details', EAS_OFFLINE_IMG);
+        openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
         return;
       }
       if (slug) {
@@ -2529,7 +2529,7 @@
       } else if (!miniPlayerOverlay.classList.contains('active')) {
         preEASState = null;
       }
-      openMiniPlayer(EAS_SRC, 'EAS Details', EAS_OFFLINE_IMG);
+      openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
     }
 
     function revertFromEAS() {
