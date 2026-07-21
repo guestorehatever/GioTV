@@ -2364,9 +2364,16 @@
       miniPlayerStatusText.textContent = 'Loading stream…';
     }
 
-    function showMiniPlayerOffline() {
+    function showMiniPlayerOffline(src) {
       miniPlayerStatus.style.display = 'flex';
-      miniPlayerStatus.classList.add('offline');
+      if (src === EAS_SRC) {
+        // The invisible EAS interrupt feed gets a custom text-only screen
+        // instead of the generic offline.png used for regular channels.
+        miniPlayerStatus.classList.remove('offline');
+        miniPlayerStatusText.textContent = 'Please wait as we try to get your alert';
+      } else {
+        miniPlayerStatus.classList.add('offline');
+      }
     }
 
     function hideMiniPlayerStatus() {
@@ -2409,7 +2416,7 @@
           miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
         });
         miniPlayerVideo.addEventListener('error', function onError() {
-          showMiniPlayerOffline();
+          showMiniPlayerOffline(src);
           if (currentPlayerSrc === src) startMiniPlayerRetry(src);
           miniPlayerVideo.removeEventListener('error', onError);
         });
@@ -2425,7 +2432,7 @@
         });
         hlsInstance.on(Hls.Events.ERROR, function(event, data) {
           if (data.fatal) {
-            showMiniPlayerOffline();
+            showMiniPlayerOffline(src);
             if (currentPlayerSrc === src) startMiniPlayerRetry(src);
           }
         });
