@@ -447,6 +447,55 @@
       color: var(--red);
     }
 
+    .eas-alert-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(232,25,44,0.12);
+      border: 1px solid var(--red);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 0 0 24px;
+      animation: easPulse 1.6s ease-in-out infinite;
+      flex-wrap: wrap;
+    }
+
+    .eas-alert-banner.eas-alert-banner-show {
+      display: flex !important;
+    }
+
+    .eas-alert-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .eas-alert-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .eas-alert-text strong {
+      display: block;
+      color: var(--red);
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .eas-alert-text p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .eas-alert-btn {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+      white-space: nowrap;
+    }
+
     .mini-player-overlay {
       position: fixed;
       inset: 0;
@@ -1627,6 +1676,17 @@
       </div>
     </div>
 
+    <div id="easAlertBanner" class="eas-alert-banner">
+      <div class="eas-alert-content">
+        <span class="eas-alert-icon">🚨</span>
+        <div class="eas-alert-text">
+          <strong>Emergency Alert in Effect</strong>
+          <p>An EAS alert is currently active on this network.</p>
+        </div>
+      </div>
+      <a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
+    </div>
+
     <section class="channels-section reveal">
       <p class="section-label">All Channels</p>
       <h2 class="section-heading">Browse the Lineup</h2>
@@ -2084,6 +2144,12 @@
           if (easDetailsCard) {
             easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
           }
+
+          // Alert banner above the channel lineup
+          const easAlertBanner = document.getElementById('easAlertBanner');
+          if (easAlertBanner) {
+            easAlertBanner.classList.toggle('eas-alert-banner-show', isOnline);
+          }
         }
 
         if (isOnline) {
@@ -2375,7 +2441,7 @@
     // live, any channel selection redirects to the EAS stream instead, and
     // remembers what was requested so Skip can still return to it.
     function selectChannel(src, name, offlineImg, slug) {
-      if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC) {
+      if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
         preEASState = { src: src, name: name, offlineImg: offlineImg };
         history.replaceState(null, '', '#easdetails');
         openMiniPlayer(EAS_SRC, 'EAS Details', EAS_OFFLINE_IMG);
@@ -2393,6 +2459,10 @@
     }
 
     function triggerEASInterrupt() {
+      // Already on the EAS Details channel — no need to interrupt, they're already there
+      if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc === EAS_DETAILS_VISIBLE_SRC) {
+        return;
+      }
       // Remember whatever was playing (if anything) so it can be restored on skip
       if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc !== EAS_SRC) {
         preEASState = { src: currentPlayerSrc, name: currentPlayerName, offlineImg: currentPlayerOfflineImg };
