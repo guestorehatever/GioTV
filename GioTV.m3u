@@ -1,0 +1,25 @@
+#EXTM3U
+#EXTINF:-1,TapeTime Radio
+https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8
+#EXTINF:-1,EAS Details
+https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8
+#EXTINF:-1,Fight TV
+https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8
+#EXTINF:-1,GALAXY TV
+https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8
+#EXTINF:-1,Cubo TV
+https://app.viloud.tv/hls/channel/sep/1aa55c50f8fc40f585f8114ec3a7f03f/low.m3u8
+#EXTINF:-1,Gusto TV
+https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8
+#EXTINF:-1,Throwback TV Network
+https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8
+#EXTINF:-1,Hard Rock TV
+https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8
+#EXTINF:-1,Young Hollywood
+https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8
+#EXTINF:-1,GigabyteTV
+https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8
+#EXTINF:-1,Highland Weather 24/7 Monitoring - LIVE Forecasts & Alerts
+https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8
+#EXTINF:-1,TV Play K-Pop
+https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8
