@@ -626,6 +626,37 @@
       background: #000;
     }
 
+    .mini-player-status.offline {
+      background: #000;
+      flex-direction: column;
+    }
+
+    .mini-player-status-img {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mini-player-status.offline .mini-player-status-img {
+      display: block;
+    }
+
+    .mini-player-status.offline .mini-player-status-text {
+      position: relative;
+      z-index: 1;
+      background: rgba(8,10,15,0.7);
+      color: var(--text);
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
     .watch-btn {
       display: inline-flex;
       align-items: center;
@@ -1956,6 +1987,7 @@
       <div class="mini-player-video-wrap">
         <video id="miniPlayerVideo" controls autoplay playsinline></video>
         <div class="mini-player-status" id="miniPlayerStatus">
+          <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
           <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
         </div>
       </div>
@@ -2337,11 +2369,19 @@
 
     function showMiniPlayerLoading() {
       miniPlayerStatus.style.display = 'flex';
+      miniPlayerStatus.classList.remove('offline');
       miniPlayerStatusText.textContent = 'Loading stream…';
+    }
+
+    function showMiniPlayerOffline() {
+      miniPlayerStatus.style.display = 'flex';
+      miniPlayerStatus.classList.add('offline');
+      miniPlayerStatusText.textContent = 'Channel is offline';
     }
 
     function hideMiniPlayerStatus() {
       miniPlayerStatus.style.display = 'none';
+      miniPlayerStatus.classList.remove('offline');
     }
 
     let miniPlayerRetryTimer = null;
@@ -2379,7 +2419,7 @@
           miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
         });
         miniPlayerVideo.addEventListener('error', function onError() {
-          showMiniPlayerLoading();
+          showMiniPlayerOffline();
           if (currentPlayerSrc === src) startMiniPlayerRetry(src);
           miniPlayerVideo.removeEventListener('error', onError);
         });
@@ -2395,7 +2435,7 @@
         });
         hlsInstance.on(Hls.Events.ERROR, function(event, data) {
           if (data.fatal) {
-            showMiniPlayerLoading();
+            showMiniPlayerOffline();
             if (currentPlayerSrc === src) startMiniPlayerRetry(src);
           }
         });
