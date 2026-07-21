@@ -431,10 +431,19 @@
 
     /* ── MINI PLAYER ── */
     .eas-card {
-      border-color: rgba(232,25,44,0.35) !important;
+      border-color: var(--border) !important;
     }
 
     .eas-card .channel-tag {
+      color: var(--muted);
+    }
+
+    .eas-card.eas-interrupt-live {
+      border-color: var(--red) !important;
+      animation: easPulse 1.6s ease-in-out infinite;
+    }
+
+    .eas-card.eas-interrupt-live .channel-tag {
       color: var(--red);
     }
 
@@ -1644,9 +1653,9 @@
         </div>
 
         <!-- EAS Details -->
-        <div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8" data-channel="easdetails">
+        <div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">
           <div class="channel-thumb">
-            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
+            <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8">
               <div class="thumb-text-placeholder"><span>GioTV Emergency Alert System</span></div>
               <div class="status-dot offline"></div>
             </div>
@@ -1660,6 +1669,11 @@
             <div class="last-seen"></div>
             <button class="share-link" data-channel="easdetails">🔗 Share</button>
           </div>
+        </div>
+
+        <!-- Invisible EAS interrupt monitor (not shown in channel list, polled for takeover) -->
+        <div style="display:none;" aria-hidden="true" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
+          <div class="status-dot offline"></div>
         </div>
 
         <!-- Fight TV -->
@@ -1945,11 +1959,12 @@
       return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
     }
 
-    const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8';
+    const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
+    const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8'; // visible EAS Details channel, no interrupt
     const EAS_OFFLINE_IMG = 'eas_offline.png';
 
     const CHANNEL_MAP = {
-      'easdetails': { name: 'EAS Details', src: EAS_SRC, offlineImg: EAS_OFFLINE_IMG },
+      'easdetails': { name: 'EAS Details', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
       'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
       'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
       'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
@@ -2062,6 +2077,12 @@
           } else if (!isOnline) {
             easInterruptShown = false;
             if (easActive) revertFromEAS();
+          }
+
+          // Glowing outline on the visible EAS Details tile while the invisible interrupt feed is live
+          const easDetailsCard = document.querySelector('.eas-card');
+          if (easDetailsCard) {
+            easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
           }
         }
 
