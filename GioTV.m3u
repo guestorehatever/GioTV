@@ -1,7 +1,7 @@
 #EXTM3U
 #EXTINF:-1,TapeTime Radio
 https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8
-#EXTINF:-1,EAS Details
+#EXTINF:-1,EAS Details Channel
 https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8
 #EXTINF:-1,Fight TV
 https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8
@@ -19,7 +19,7 @@ https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8
 https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8
 #EXTINF:-1,GigabyteTV
 https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8
-#EXTINF:-1,Highland Weather 24/7 Monitoring - LIVE Forecasts & Alerts
+#EXTINF:-1,Highland Weather 24/7
 https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8
 #EXTINF:-1,TV Play K-Pop
 https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8
