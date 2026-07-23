@@ -6,6 +6,10 @@
   <title>GioTV – Channel Guide</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
   <style>
+    html {
+      filter: grayscale(1);
+    }
+
     :root {
       --red: #e8192c;
       --dark-red: #a50e1c;
@@ -578,27 +582,7 @@
     }
 
     .mini-player-skip {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      height: 32px;
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-      padding: 0 12px;
-      border-radius: 3px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color 0.18s, border-color 0.18s;
-    }
-
-    .mini-player-skip:hover {
-      color: var(--text);
-      border-color: rgba(255,255,255,0.25);
+      display: none !important;
     }
 
     .mini-player-box.eas-live {
@@ -964,6 +948,65 @@
       align-self: stretch;
       background: var(--border);
       flex-shrink: 0;
+    }
+
+    /* ── MEMORIAL BANNER ── */
+    .memorial-banner {
+      background: var(--off-black);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 32px 36px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .memorial-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+    }
+
+    .memorial-photo {
+      width: 130px;
+      height: 130px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .memorial-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .memorial-text .cta-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .memorial-text p {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    @media (max-width: 640px) {
+      .memorial-banner { flex-direction: column; text-align: center; }
+      .memorial-photo { width: 100px; height: 100px; }
     }
 
     .channels-grid {
@@ -1690,6 +1733,16 @@
 
   <div class="main-content">
 
+    <div class="memorial-banner reveal">
+      <div class="memorial-photo">
+        <img src="marilyn.jpg" alt="Marilyn Louise" />
+      </div>
+      <div class="memorial-text">
+        <p class="cta-label">✦ In Memoriam</p>
+        <p>Due to the death of my great-grandmother Marilyn Louise, GioTV is being shut down for the remainder of today, Friday and Saturday. May she rest in peace.</p>
+      </div>
+    </div>
+
     <div class="cta-banner cta-banner-last cta-banner-merged reveal">
       <div class="cta-banner-half">
         <div class="cta-banner-text">
@@ -1712,13 +1765,13 @@
 
     <div id="easAlertBanner" class="eas-alert-banner">
       <div class="eas-alert-content">
-        <span class="eas-alert-icon">🚨</span>
+        <span class="eas-alert-icon">📢</span>
         <div class="eas-alert-text">
-          <strong>Emergency Alert in Effect</strong>
-          <p>An EAS alert is currently active on this network.</p>
+          <strong>Channel Notice</strong>
+          <p>GioTV is temporarily off air due to a death in the family.</p>
         </div>
       </div>
-      <a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
+      <a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">View Details</a>
     </div>
 
     <section class="channels-section reveal">
@@ -1746,11 +1799,11 @@
           </div>
         </div>
 
-        <!-- EAS Details -->
+        <!-- Channel Notice -->
         <div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">
           <div class="channel-thumb">
             <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8">
-              <div class="thumb-text-placeholder"><span>GioTV Emergency Alert System</span></div>
+              <div class="thumb-text-placeholder"><span>GioTV Channel Notice</span></div>
               <div class="status-dot offline"></div>
             </div>
             <div class="thumb-overlay">
@@ -1758,14 +1811,14 @@
             </div>
           </div>
           <div class="channel-info">
-            <div class="channel-name">🚨 EAS Details Channel</div>
-            <div class="channel-tag">Emergency Alert System</div>
+            <div class="channel-name">📢 Channel Notice</div>
+            <div class="channel-tag">Announcement</div>
             <div class="last-seen"></div>
             <button class="share-link" data-channel="easdetails">🔗 Share</button>
           </div>
         </div>
 
-        <!-- Invisible EAS interrupt monitor (not shown in channel list, polled for takeover) -->
+        <!-- Invisible interrupt monitor (not shown in channel list, polled for takeover) -->
         <div style="display:none;" aria-hidden="true" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
           <div class="status-dot offline"></div>
         </div>
@@ -2003,7 +2056,7 @@
         <div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
         <div class="mini-player-header-actions">
           <button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
-          <button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip EAS alert">Skip ⏭</button>
+          <button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip notice" disabled>Skip ⏭</button>
         </div>
       </div>
       <div class="mini-player-video-wrap">
@@ -2074,11 +2127,11 @@
     }
 
     const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
-    const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8'; // visible EAS Details channel, no interrupt
+    const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8'; // visible Channel Notice tile, no interrupt
     const EAS_OFFLINE_IMG = 'eas_offline.png';
 
     const CHANNEL_MAP = {
-      'easdetails': { name: 'EAS Details Channel', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+      'easdetails': { name: 'Channel Notice', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
       'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
       'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
       'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
@@ -2120,7 +2173,7 @@
 
     let previousChannelStates = {};
 
-    // ── EAS INTERRUPT STATE ──
+    // ── INTERRUPT STATE (background channel-notice takeover) ──
     let easActive = false;
     let easInterruptShown = false;
     let preEASState = null;
@@ -2194,13 +2247,13 @@
             if (easActive) revertFromEAS();
           }
 
-          // Glowing outline on the visible EAS Details tile while the invisible interrupt feed is live
+          // Glowing outline on the visible Channel Notice tile while the invisible interrupt feed is live
           const easDetailsCard = document.querySelector('.eas-card');
           if (easDetailsCard) {
             easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
           }
 
-          // Alert banner above the channel lineup
+          // Notice banner above the channel lineup
           const easAlertBanner = document.getElementById('easAlertBanner');
           if (easAlertBanner) {
             easAlertBanner.classList.toggle('eas-alert-banner-show', isOnline);
@@ -2399,10 +2452,10 @@
     function showMiniPlayerOffline(src) {
       miniPlayerStatus.style.display = 'flex';
       if (src === EAS_SRC) {
-        // The invisible EAS interrupt feed gets a custom text-only screen
+        // The invisible interrupt feed gets a custom text-only screen
         // instead of the generic offline.png used for regular channels.
         miniPlayerStatus.classList.remove('offline');
-        miniPlayerStatusText.textContent = 'Please wait as we try to get your alert';
+        miniPlayerStatusText.textContent = 'Please wait as we try to get your notice';
       } else {
         miniPlayerStatus.classList.add('offline');
       }
@@ -2485,7 +2538,6 @@
       stopMiniPlayerRetry();
       easActive = false;
       preEASState = null;
-      if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
       if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
       if (window.location.hash) {
         history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -2503,20 +2555,21 @@
 
       const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
       easActive = isLiveEAS;
-      if (miniPlayerSkip) miniPlayerSkip.style.display = isLiveEAS ? 'flex' : 'none';
+      // Skip is permanently disabled: an active notice takeover cannot be dismissed by the viewer.
       if (miniPlayerBox) miniPlayerBox.classList.toggle('eas-live', isLiveEAS);
 
       attemptMiniPlayerPlayback(src);
     }
 
-    // Routes a channel selection through the EAS takeover: if EAS is currently
-    // live, any channel selection redirects to the EAS stream instead, and
-    // remembers what was requested so Skip can still return to it.
+    // Routes a channel selection through the notice takeover: if the notice is
+    // currently live, any channel selection redirects to that stream instead, and
+    // remembers what was requested so viewing can be restored once it clears on its own
+    // (there is no viewer-initiated skip).
     function selectChannel(src, name, offlineImg, slug) {
       if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
         preEASState = { src: src, name: name, offlineImg: offlineImg };
         history.replaceState(null, '', '#easdetails');
-        openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
+        openMiniPlayer(EAS_SRC, 'Channel Notice', EAS_OFFLINE_IMG);
         return;
       }
       if (slug) {
@@ -2531,22 +2584,23 @@
     }
 
     function triggerEASInterrupt() {
-      // Already on the EAS Details channel — no need to interrupt, they're already there
+      // Already on the Channel Notice channel — no need to interrupt, they're already there
       if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc === EAS_DETAILS_VISIBLE_SRC) {
         return;
       }
-      // Remember whatever was playing (if anything) so it can be restored on skip
+      // Remember whatever was playing (if anything) so it can be restored once the notice clears
       if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc !== EAS_SRC) {
         preEASState = { src: currentPlayerSrc, name: currentPlayerName, offlineImg: currentPlayerOfflineImg };
       } else if (!miniPlayerOverlay.classList.contains('active')) {
         preEASState = null;
       }
-      openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
+      openMiniPlayer(EAS_SRC, 'Channel Notice', EAS_OFFLINE_IMG);
     }
 
     function revertFromEAS() {
+      // Called only when the interrupt feed itself goes offline (notice has actually ended) —
+      // there is no user-facing skip control anymore.
       easActive = false;
-      if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
       if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
       if (preEASState) {
         openMiniPlayer(preEASState.src, preEASState.name, preEASState.offlineImg);
@@ -2556,7 +2610,6 @@
       preEASState = null;
     }
 
-    miniPlayerSkip.addEventListener('click', revertFromEAS);
     miniPlayerClose.addEventListener('click', closeMiniPlayer);
     miniPlayerOverlay.addEventListener('click', function(e) {
       if (e.target === miniPlayerOverlay) closeMiniPlayer();
@@ -2583,7 +2636,7 @@
           if (channel.src === src) { matched = channel; break; }
         }
         if (src === EAS_SRC) {
-          // Manually opened, not an auto-interrupt — skip should just close, not restore anything
+          // Manually opened, not an auto-interrupt — nothing to restore
           preEASState = null;
         }
         selectChannel(src, matched ? matched.name : null, matched ? matched.offlineImg : null, slug);
@@ -2721,4 +2774,3 @@
   </script>
 </body>
 </html>
-The 
