@@ -929,7 +929,17 @@
     function setupMediaSessionHandlers() {
       if (!('mediaSession' in navigator)) return;
 
-      navigator.mediaSession.setActionHandler('play', () => {
+      // Wrapper because the spec allows the browser to throw if it doesn't
+      // recognize a given action name — older WebKit in particular.
+      function setHandler(action, fn) {
+        try {
+          navigator.mediaSession.setActionHandler(action, fn);
+        } catch (err) {
+          // Action not supported on this platform — safe to ignore.
+        }
+      }
+
+      setHandler('play', () => {
         if (!currentStationId) return;
         // Some OSes/browsers drop the media element's buffered source while
         // backgrounded. If that's happened, re-load the stream from scratch
@@ -941,11 +951,11 @@
         player.play().catch(() => setUIError(currentStationId));
       });
 
-      navigator.mediaSession.setActionHandler('pause', () => {
+      setHandler('pause', () => {
         player.pause();
       });
 
-      navigator.mediaSession.setActionHandler('stop', () => {
+      setHandler('stop', () => {
         player.pause();
         if (currentStationId) {
           setUIPlaying(currentStationId, false);
@@ -954,22 +964,35 @@
         }
       });
 
-      // "Next"/"previous" on the lock screen or headset don't skip tracks for
-      // live radio — instead they hop to the next/previous station in
-      // stationOrder. Ignored while an emergency alert is interrupting
-      // playback, so a stray button press can't fight the EAS takeover.
-      navigator.mediaSession.setActionHandler('previoustrack', () => {
+      // Station-switching, registered under two different action names because
+      // platforms disagree on what they'll show/honor for live web audio:
+      //  - Android Chrome etc. support previoustrack/nexttrack directly, and
+      //    show them as skip-to-previous/next icons.
+      //  - iOS Safari's Now Playing widget doesn't support previoustrack/
+      //    nexttrack for web content at all — it always shows its default
+      //    "skip 15s" seek buttons instead, no matter what's registered. The
+      //    icons can't be relabeled from a webpage, but seekforward/
+      //    seekbackward ARE the actions those particular buttons trigger, so
+      //    we repurpose them here to do the same channel-hop instead of an
+      //    actual seek (there's nothing to seek in a live stream anyway).
+      // Both are ignored while an emergency alert is interrupting playback,
+      // so a stray button press can't fight the EAS takeover.
+      const goToPrevious = () => {
         if (easActive) return;
         playStationById(getAdjacentStationId(-1));
-      });
-
-      navigator.mediaSession.setActionHandler('nexttrack', () => {
+      };
+      const goToNext = () => {
         if (easActive) return;
         playStationById(getAdjacentStationId(1));
-      });
+      };
 
-      // Live radio has no seek/track position, so seek-related handlers are
-      // intentionally left unset — the OS will hide those controls automatically.
+      setHandler('previoustrack', goToPrevious);
+      setHandler('nexttrack', goToNext);
+      setHandler('seekbackward', goToPrevious);
+      setHandler('seekforward', goToNext);
+
+      // Live radio has no seek position to report, so seekto/setPositionState
+      // are intentionally left unset.
     }
 
     setupMediaSessionHandlers();
