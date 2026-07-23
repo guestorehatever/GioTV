@@ -825,6 +825,22 @@
     let currentStationId = null;
     let hlsInstance = null;
 
+    // Order that the OS lock-screen "next"/"previous" (skip) buttons cycle through.
+    // The Emergency Alert System channel is deliberately excluded — it's not
+    // meant to be something you skip past, it takes over automatically.
+    const stationOrder = ['seagull-983', 'tapetime', 'hardrock', 'kpoptvplay'];
+
+    // Returns the station id one step forward (direction=1) or back (direction=-1)
+    // from whatever is currently playing, wrapping around at the ends. If nothing
+    // is playing yet, or the current station isn't part of the cycle (e.g. the
+    // EAS feed), it just starts from the first station in the list.
+    function getAdjacentStationId(direction) {
+      const idx = stationOrder.indexOf(currentStationId);
+      if (idx === -1) return stationOrder[0];
+      const nextIdx = (idx + direction + stationOrder.length) % stationOrder.length;
+      return stationOrder[nextIdx];
+    }
+
     // Loads a stream into the shared <audio> element, transparently handling
     // both plain audio streams and .m3u8 (HLS) streams like the EAS feed.
     // Safari/iOS can play HLS natively; everywhere else we use hls.js, which
@@ -915,6 +931,13 @@
 
       navigator.mediaSession.setActionHandler('play', () => {
         if (!currentStationId) return;
+        // Some OSes/browsers drop the media element's buffered source while
+        // backgrounded. If that's happened, re-load the stream from scratch
+        // instead of calling play() on a dead source.
+        if (!player.src && !hlsInstance) {
+          playStationById(currentStationId);
+          return;
+        }
         player.play().catch(() => setUIError(currentStationId));
       });
 
@@ -931,8 +954,22 @@
         }
       });
 
-      // Live radio has no seek/track position, so these are intentionally
-      // left unset — the OS will hide those controls automatically.
+      // "Next"/"previous" on the lock screen or headset don't skip tracks for
+      // live radio — instead they hop to the next/previous station in
+      // stationOrder. Ignored while an emergency alert is interrupting
+      // playback, so a stray button press can't fight the EAS takeover.
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        if (easActive) return;
+        playStationById(getAdjacentStationId(-1));
+      });
+
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        if (easActive) return;
+        playStationById(getAdjacentStationId(1));
+      });
+
+      // Live radio has no seek/track position, so seek-related handlers are
+      // intentionally left unset — the OS will hide those controls automatically.
     }
 
     setupMediaSessionHandlers();
