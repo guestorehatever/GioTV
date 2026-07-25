@@ -876,6 +876,79 @@
     // both plain audio streams and .m3u8 (HLS) streams like the EAS feed.
     // Safari/iOS can play HLS natively; everywhere else we use hls.js, which
     // demuxes the HLS playlist/segments into something MSE-based browsers can play.
+    // ── STATION STATUS MONITOR ──
+    // Periodically checks whether each station's stream URL is actually reachable,
+    // and grays out / marks "Offline" any station whose link is currently broken.
+    // Most of these streams live on third-party hosts that don't send CORS
+    // headers, so a normal fetch() would get blocked by the browser even if the
+    // server is perfectly healthy. Using mode:'no-cors' sidesteps that — the
+    // browser can't let us read the response, but the fetch promise still
+    // rejects on a real connection failure (DNS failure, refused connection,
+    // timeout), which is exactly the "is this link broken" signal we want.
+    async function checkStreamOnline(url, timeoutMs = 8000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store', signal: controller.signal });
+        return true;
+      } catch (err) {
+        return false;
+      } finally {
+        clearTimeout(timer);
+        controller.abort(); // don't keep buffering the stream body once we know
+      }
+    }
+
+    // Updates a station's card/pill/button to reflect online or offline status.
+    // Offline stations get grayed out (via the existing .offline CSS) and their
+    // toggle button stops responding to clicks. If the offline station happens
+    // to be the one currently playing, playback is stopped and an error shown.
+    function setStationOnline(id, online) {
+      const card = document.querySelector(`.station-card[data-station="${id}"]`);
+      const pill = document.getElementById(`pill-${id}`);
+      const toggleBtn = document.getElementById(`toggle-${id}`);
+      if (!card || !pill || !toggleBtn) return;
+
+      if (online) {
+        card.classList.remove('offline');
+        pill.classList.remove('offline');
+        pill.classList.add('online');
+        pill.innerHTML = '<span class="dot"></span>Online';
+        toggleBtn.removeAttribute('data-offline');
+      } else {
+        card.classList.add('offline');
+        pill.classList.remove('online');
+        pill.classList.add('offline');
+        pill.innerHTML = '<span class="dot"></span>Offline';
+        toggleBtn.setAttribute('data-offline', 'true');
+
+        if (currentStationId === id) {
+          stopPlayback();
+          setUIError(id);
+        }
+      }
+    }
+
+    // Stations checked on a timer. The EAS feed is included too since its own
+    // stream URL is separate from the trigger-monitor URL used to detect alerts.
+    const monitoredStations = ['seagull-983', 'froggy96', 'tapetime', 'hardrock', 'kpoptvplay', 'metalrock', 'eas-feed'];
+
+    async function checkStationStatus(id) {
+      const btn = document.getElementById(`toggle-${id}`);
+      if (!btn) return;
+      const url = btn.getAttribute('data-stream');
+      const online = await checkStreamOnline(url);
+      setStationOnline(id, online);
+    }
+
+    function checkAllStationStatuses() {
+      monitoredStations.forEach(id => checkStationStatus(id));
+    }
+
+    const STATION_STATUS_POLL_INTERVAL_MS = 60000; // re-check every 60s
+    checkAllStationStatuses();
+    setInterval(checkAllStationStatuses, STATION_STATUS_POLL_INTERVAL_MS);
+
     function loadStream(streamUrl, format) {
       // Tear down any previous hls.js instance before loading a new stream
       if (hlsInstance) {
@@ -1233,6 +1306,7 @@
 
     document.querySelectorAll('.station-toggle').forEach(btn => {
       btn.addEventListener('click', function() {
+        if (this.hasAttribute('data-offline')) return; // link is broken — ignore taps
         const id = this.getAttribute('data-station');
         const isThisPlaying = currentStationId === id && !player.paused;
 
