@@ -885,7 +885,7 @@
     // browser can't let us read the response, but the fetch promise still
     // rejects on a real connection failure (DNS failure, refused connection,
     // timeout), which is exactly the "is this link broken" signal we want.
-    async function checkStreamOnline(url, timeoutMs = 8000) {
+    async function checkStreamOnline(url, timeoutMs = 4000) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
@@ -945,7 +945,7 @@
       monitoredStations.forEach(id => checkStationStatus(id));
     }
 
-    const STATION_STATUS_POLL_INTERVAL_MS = 60000; // re-check every 60s
+    const STATION_STATUS_POLL_INTERVAL_MS = 5000; // re-check every 5s
     checkAllStationStatuses();
     setInterval(checkAllStationStatuses, STATION_STATUS_POLL_INTERVAL_MS);
 
