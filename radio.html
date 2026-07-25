@@ -899,6 +899,52 @@
       }
     }
 
+    // For HLS (.m3u8) stations, a plain fetch() isn't good enough: the server
+    // can return a 200/404/whatever error page and an opaque no-cors fetch
+    // will still "succeed", falsely reporting the station as online. Instead,
+    // actually load the manifest through hls.js (same technique the EAS
+    // trigger monitor uses below) so a missing/empty/broken playlist is
+    // correctly caught as a fatal error.
+    function checkHlsOnline(url, timeoutMs = 6000) {
+      return new Promise((resolve) => {
+        if (window.Hls && Hls.isSupported()) {
+          const probeMedia = new Audio();
+          probeMedia.preload = 'none';
+          const probe = new Hls({ manifestLoadingTimeOut: timeoutMs, manifestLoadingMaxRetry: 0 });
+          let settled = false;
+          const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            probe.destroy();
+            resolve(result);
+          };
+          probe.on(Hls.Events.MANIFEST_PARSED, () => finish(true));
+          probe.on(Hls.Events.ERROR, (event, data) => {
+            if (data.fatal) finish(false);
+          });
+          setTimeout(() => finish(false), timeoutMs + 2000);
+          probe.attachMedia(probeMedia);
+          probe.loadSource(url);
+        } else {
+          // Safari / native HLS fallback
+          const probeAudio = new Audio();
+          probeAudio.preload = 'none';
+          let settled = false;
+          const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            probeAudio.src = '';
+            resolve(result);
+          };
+          probeAudio.addEventListener('loadedmetadata', () => finish(true));
+          probeAudio.addEventListener('error', () => finish(false));
+          setTimeout(() => finish(false), timeoutMs);
+          probeAudio.src = url;
+          probeAudio.load();
+        }
+      });
+    }
+
     // Updates a station's card/pill/button to reflect online or offline status.
     // Offline stations get grayed out (via the existing .offline CSS) and their
     // toggle button stops responding to clicks. If the offline station happens
@@ -933,12 +979,21 @@
     // stream URL is separate from the trigger-monitor URL used to detect alerts.
     const monitoredStations = ['seagull-983', 'froggy96', 'tapetime', 'hardrock', 'kpoptvplay', 'metalrock', 'eas-feed'];
 
+    const stationChecksInFlight = new Set();
+
     async function checkStationStatus(id) {
-      const btn = document.getElementById(`toggle-${id}`);
-      if (!btn) return;
-      const url = btn.getAttribute('data-stream');
-      const online = await checkStreamOnline(url);
-      setStationOnline(id, online);
+      if (stationChecksInFlight.has(id)) return; // previous check still running — skip this tick
+      stationChecksInFlight.add(id);
+      try {
+        const btn = document.getElementById(`toggle-${id}`);
+        if (!btn) return;
+        const url = btn.getAttribute('data-stream');
+        const format = btn.getAttribute('data-format') || 'audio';
+        const online = format === 'hls' ? await checkHlsOnline(url) : await checkStreamOnline(url);
+        setStationOnline(id, online);
+      } finally {
+        stationChecksInFlight.delete(id);
+      }
     }
 
     function checkAllStationStatuses() {
