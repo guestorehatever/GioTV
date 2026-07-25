@@ -15,8 +15,8 @@
 --border: rgba(255,255,255,0.07);
 --text: #f0f2f7;
 --muted: #7a8299;
---gold: #b7bcc6;
---purple: #868c99;
+--gold: #8b909c;
+--purple: #55585f;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -221,10 +221,10 @@ flex-shrink: 0;
 display: inline-block;
 }
 
-.dot-online { background: var(--red); box-shadow: 0 0 6px var(--red); }
-.dot-offline { background: var(--muted); }
-.dot-private { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
-.dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+.dot-online { background: #f2f3f6; box-shadow: 0 0 6px rgba(242,243,246,0.9); }
+.dot-offline { background: #2a2d33; }
+.dot-private { background: #6a6e78; box-shadow: 0 0 6px rgba(106,110,120,0.8); border: 2px solid rgba(255,255,255,0.7); }
+.dot-gold { background: #8f939e; box-shadow: 0 0 6px rgba(143,147,158,0.8); }
 
 .ticker-wrap {
 width: 100%;
@@ -704,23 +704,24 @@ transition: background 0.3s, box-shadow 0.3s;
 }
 
 .status-dot.online {
-background: var(--red);
-box-shadow: 0 0 8px rgba(110,116,129,0.8);
+background: #f2f3f6;
+box-shadow: 0 0 8px rgba(242,243,246,0.9);
 }
 
 .status-dot.offline {
-background: var(--muted);
+background: #2a2d33;
 box-shadow: none;
 }
 
 .status-dot.private {
-background: var(--purple) !important;
-box-shadow: 0 0 8px rgba(134,140,153,0.8) !important;
+background: #6a6e78 !important;
+box-shadow: 0 0 8px rgba(106,110,120,0.8) !important;
+border: 2px solid rgba(255,255,255,0.7) !important;
 }
 
 .status-dot.gold {
-background: var(--gold) !important;
-box-shadow: 0 0 8px rgba(183,188,198,0.8) !important;
+background: #8f939e !important;
+box-shadow: 0 0 8px rgba(143,147,158,0.8) !important;
 }
 
 .note-badge {
@@ -1743,10 +1744,10 @@ event.preventDefault();
 <details class="guide-key">
 <summary>Guide Key</summary>
 <div class="key-content">
-<p><span class="dot dot-online"></span> Red dot — channel is online</p>
-<p><span class="dot dot-gold"></span> Gold dot — proven 24/7 live channel</p>
-<p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
-<p><span class="dot dot-private"></span> Purple dot — private stream, password required</p>
+<p><span class="dot dot-online"></span> White dot — channel is online</p>
+<p><span class="dot dot-gold"></span> Grey dot — proven 24/7 live channel</p>
+<p><span class="dot dot-offline"></span> Black dot — channel is offline</p>
+<p><span class="dot dot-private"></span> Ringed dot — private stream, password required</p>
 <p>★ — Official channel with FCC proofing or major cable presence</p>
 <p>❗ — A way Managers of a channel can alert you on updates</p>
 <p><strong>Tip:</strong> Refresh to update live status.</p>
