@@ -1,0 +1,44 @@
+// Cloudflare Pages Functions middleware
+// Blocks requests whose User-Agent matches a known AI crawler/bot.
+// This runs on every request to your site, before it reaches your HTML.
+
+const AI_BOT_PATTERNS = [
+  "gptbot",
+  "chatgpt-user",
+  "oai-searchbot",
+  "claudebot",
+  "claude-web",
+  "anthropic-ai",
+  "ccbot",
+  "google-extended",
+  "bytespider",
+  "perplexitybot",
+  "applebot-extended",
+  "amazonbot",
+  "diffbot",
+  "facebookbot",
+  "meta-externalagent",
+  "youbot",
+  "omgilibot",
+  "omgili",
+  "cohere-ai",
+  "timpibot",
+  "imagesiftbot",
+  "ai2bot",
+  "bingbot/ai", // no-op placeholder, harmless if it never matches
+];
+
+export async function onRequest(context) {
+  const userAgent = (context.request.headers.get("user-agent") || "").toLowerCase();
+
+  const isAiBot = AI_BOT_PATTERNS.some((pattern) => userAgent.includes(pattern));
+
+  if (isAiBot) {
+    return new Response("Access denied: AI crawlers are not permitted on this site.", {
+      status: 403,
+      headers: { "content-type": "text/plain" },
+    });
+  }
+
+  return context.next();
+}
