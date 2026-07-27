@@ -601,6 +601,57 @@ color: var(--text);
 border-color: rgba(255,255,255,0.25);
 }
 
+.mini-player-record {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+height: 32px;
+background: transparent;
+color: var(--muted);
+border: 1px solid var(--border);
+font-size: 0.62rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+font-weight: 700;
+padding: 0 12px;
+border-radius: 3px;
+cursor: pointer;
+white-space: nowrap;
+transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+
+.mini-player-record:hover {
+color: var(--text);
+border-color: rgba(255,255,255,0.25);
+}
+
+.mini-player-record::before {
+content: '';
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--red);
+flex-shrink: 0;
+}
+
+.mini-player-record.recording {
+background: var(--red);
+border-color: var(--red);
+color: #fff;
+animation: easPulse 1.6s ease-in-out infinite;
+}
+
+.mini-player-record.recording::before {
+background: #fff;
+animation: recordBlink 1s ease-in-out infinite;
+}
+
+@keyframes recordBlink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.2; }
+}
+
 .mini-player-box.eas-live {
 border-color: var(--red);
 animation: easPulse 1.6s ease-in-out infinite;
@@ -2112,8 +2163,9 @@ event.preventDefault();
 <div class="mini-player-header">
 <div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
 <div class="mini-player-header-actions">
-<button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
 <button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip EAS alert">Skip ⏭</button>
+<button class="mini-player-record" id="miniPlayerRecord" aria-label="Record stream" title="Record what's on screen">Record</button>
+<button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
 </div>
 </div>
 <div class="mini-player-video-wrap">
