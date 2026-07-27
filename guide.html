@@ -2282,6 +2282,74 @@ initLastSeen();
 
 let previousChannelStates = {};
 
+// ── RECORD BUTTON ──
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+
+function startRecording() {
+  if (!miniPlayerVideo.captureStream && !miniPlayerVideo.mozCaptureStream) {
+    alert("Recording isn't supported in this browser.");
+    return;
+  }
+  try {
+    const stream = miniPlayerVideo.captureStream
+      ? miniPlayerVideo.captureStream()
+      : miniPlayerVideo.mozCaptureStream();
+
+    recordedChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9'
+      : 'video/webm';
+
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      if (!recordedChunks.length) return;
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const safeName = (currentPlayerName || 'giotv-recording').replace(/[^a-z0-9]+/gi, '_');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      a.href = url;
+      a.download = `${safeName}_${timestamp}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    miniPlayerRecord.classList.add('recording');
+    miniPlayerRecord.textContent = 'Stop';
+  } catch (err) {
+    alert("Couldn't start recording — this stream may not support it.");
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  isRecording = false;
+  miniPlayerRecord.classList.remove('recording');
+  miniPlayerRecord.textContent = 'Record';
+}
+
+miniPlayerRecord.addEventListener('click', () => {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+});
+
+
 // ── EAS INTERRUPT STATE ──
 let easActive = false;
 let easInterruptShown = false;
