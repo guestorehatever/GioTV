@@ -1786,7 +1786,7 @@ event.preventDefault();
 <div class="last-seen"></div>
 <div class="channel-actions">
 <button class="share-link" data-channel="easdetails">🔗 Share</button>
-<a href="https://easrepo.pages.dev" target="_blank" rel="noopener" class="share-link repo-link" onclick="event.stopPropagation()">📁 Go to Alert Repo</a>
+<a href="https://easrepo.pages.dev" target="_blank" rel="noopener" class="share-link repo-link">📁 Go to Alert Repo</a>
 </div>
 </div>
 </div>
@@ -2336,12 +2336,18 @@ btnEl.classList.remove('copied');
 }
 }
 
-document.querySelectorAll('.share-link').forEach(el => {
+document.querySelectorAll('.share-link:not(.repo-link)').forEach(el => {
 el.addEventListener('click', function(e) {
 e.preventDefault();
 e.stopPropagation();
 const slug = this.getAttribute('data-channel');
 if (slug) copyShareLink(slug, this);
+});
+});
+
+document.querySelectorAll('.repo-link').forEach(el => {
+el.addEventListener('click', function(e) {
+e.stopPropagation();
 });
 });
 
