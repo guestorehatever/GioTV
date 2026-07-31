@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>GioTV News Crawl</title>
+<link>https://yourwebsite.com/</link>
+<description>GioTV News and Weather Crawl</description>
+<!-- CRAWL MESSAGE 1 -->
+<item>
+<title>WEATHER ALERT</title>
+<description>THIS IS A TEST OF THE GIOTV WEATHER ALERT CRAWL. NO ACTION IS REQUIRED.</description>
+<guid>crawl-001</guid>
+</item>
+<!-- CRAWL MESSAGE 2 -->
+<item>
+<title>GioTV News</title>
+<description>WELCOME TO GIOTV NEWS. STAY TUNED FOR THE LATEST NEWS AND WEATHER INFORMATION.</description>
+<guid>crawl-002</guid>
+</item>
+<!-- CRAWL MESSAGE 3 -->
+<item>
+<title>Weather</title>
+<description>CHECK YOUR LOCAL FORECAST FOR THE LATEST WEATHER CONDITIONS IN YOUR AREA.</description>
+<guid>crawl-003</guid>
+</item>
+</channel>
+</rss>
