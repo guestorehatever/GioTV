@@ -627,17 +627,41 @@ display: block;
 /* ── EAS TICKER OVERLAY ──
 Persistent crawl overlay that sits on top of every stream, at all times,
 regardless of channel or EAS interrupt state. Not triggered by anything —
-it's just always rendered above the video. Matches the stream's own
-16:9 canvas (same size as the video itself) so the overlay's internal
-crawl bar renders at full scale instead of being squeezed into a thin strip. */
-.eas-ticker-frame {
+it's just always rendered above the video.
+
+The overlays.uno graphic is built for a full 16:9 canvas with the actual
+crawl bar sitting at the BOTTOM of that canvas (everything above it is
+transparent/empty). So instead of showing the whole 16:9 frame, we render
+the iframe at full video height (to keep the overlay's native scale) inside
+a short "window" that only exposes a thin band, and bottom-align the iframe
+inside that window so the crawl bar is what shows through.
+
+── TO ADJUST YOURSELF ──
+Just change these two numbers, nothing else needs to be touched:
+--eas-crawl-top     → how far down from the top of the video the band sits (%)
+--eas-crawl-height  → how tall the visible crawl band is (%), smaller = thinner strip
+The iframe's own height is auto-derived from --eas-crawl-height via calc(),
+so it always lines up correctly no matter what you set the band height to. */
+.eas-ticker-window {
+--eas-crawl-top: 6;
+--eas-crawl-height: 14;
 position: absolute;
-inset: 0;
+top: calc(var(--eas-crawl-top) * 1%);
+left: 0;
 width: 100%;
-height: 100%;
-border: none;
+height: calc(var(--eas-crawl-height) * 1%);
+overflow: hidden;
 z-index: 5;
 pointer-events: none;
+}
+
+.eas-ticker-frame {
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: calc(10000% / var(--eas-crawl-height));
+border: none;
 }
 
 .mini-player-status {
@@ -2050,8 +2074,11 @@ event.preventDefault();
 </div>
 <div class="mini-player-video-wrap">
 <video id="miniPlayerVideo" controls autoplay playsinline></video>
-<!-- Persistent EAS crawl overlay: always rendered on top of the stream, no trigger needed -->
+<!-- Persistent EAS crawl overlay: always rendered on top of the stream, no trigger needed.
+     Only the crawl band shows (see .eas-ticker-window / .eas-ticker-frame CSS to adjust position/height). -->
+<div class="eas-ticker-window">
 <iframe class="eas-ticker-frame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" allowtransparency="true" scrolling="no"></iframe>
+</div>
 <div class="mini-player-status" id="miniPlayerStatus">
 <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
 <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
