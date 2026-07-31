@@ -627,17 +627,29 @@ display: block;
 /* ── EAS TICKER OVERLAY ──
 Always-on crawl overlay sitting on top of the video, slightly inset from
 the very top edge (not flush against it). No trigger logic — it renders
-unconditionally whenever the mini player video area is present. */
-.eas-ticker-frame {
+unconditionally whenever the mini player video area is present.
+The source widget is a fixed 1170x71 canvas, so instead of shrinking the
+iframe's own viewport (which crushes/clips its contents on small screens),
+the iframe is kept at native size and scaled as a whole via CSS transform
+so it always fits the current screen while staying crisp and legible. */
+.eas-ticker-wrap {
 position: absolute;
 top: 10px;
 left: 0;
 width: 100%;
 aspect-ratio: 1170 / 71;
 z-index: 30;
-border: none;
+overflow: hidden;
 pointer-events: none;
+}
+
+.eas-ticker-frame {
+display: block;
+width: 1170px;
+height: 71px;
+border: none;
 background: transparent;
+transform-origin: top left;
 }
 
 .mini-player-status {
@@ -2054,7 +2066,9 @@ event.preventDefault();
 <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
 <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
 </div>
-<iframe class="eas-ticker-frame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" scrolling="no" allowtransparency="true"></iframe>
+<div class="eas-ticker-wrap" id="easTickerWrap">
+<iframe class="eas-ticker-frame" id="easTickerFrame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" scrolling="no" allowtransparency="true"></iframe>
+</div>
 </div>
 </div>
 </div>
@@ -2439,6 +2453,29 @@ const miniPlayerStatus = document.getElementById('miniPlayerStatus');
 const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
 let hlsInstance = null;
 
+// ── EAS TICKER SCALING ──
+// Scales the fixed 1170x71 ticker widget to fit whatever width the video
+// wrap actually has on the current device, so it stays full-size and
+// legible instead of shrinking down inside a tiny native viewport.
+const EAS_TICKER_NATIVE_WIDTH = 1170;
+const easTickerWrap = document.getElementById('easTickerWrap');
+const easTickerFrame = document.getElementById('easTickerFrame');
+
+function scaleEasTicker() {
+if (!easTickerWrap || !easTickerFrame) return;
+const currentWidth = easTickerWrap.offsetWidth;
+if (!currentWidth) return;
+const scale = currentWidth / EAS_TICKER_NATIVE_WIDTH;
+easTickerFrame.style.transform = `scale(${scale})`;
+}
+
+if (easTickerWrap && window.ResizeObserver) {
+new ResizeObserver(scaleEasTicker).observe(easTickerWrap);
+} else {
+window.addEventListener('resize', scaleEasTicker);
+}
+scaleEasTicker();
+
 function showMiniPlayerLoading() {
 miniPlayerStatus.style.display = 'flex';
 miniPlayerStatus.classList.remove('offline');
@@ -2549,6 +2586,11 @@ miniPlayerTitle.textContent = name || 'Now Playing';
 showMiniPlayerLoading();
 miniPlayerOverlay.classList.add('active');
 stopMiniPlayerRetry();
+
+// The wrap was display:none until the line above, so its width only
+// becomes real *after* this paint — rescale on the next frame.
+requestAnimationFrame(scaleEasTicker);
+setTimeout(scaleEasTicker, 150);
 
 const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
 easActive = isLiveEAS;
