@@ -2077,7 +2077,7 @@ event.preventDefault();
 <!-- Persistent EAS crawl overlay: always rendered on top of the stream, no trigger needed.
      Only the crawl band shows (see .eas-ticker-window / .eas-ticker-frame CSS to adjust position/height). -->
 <div class="eas-ticker-window">
-<iframe class="eas-ticker-frame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" allowtransparency="true" scrolling="no"></iframe>
+<iframe class="eas-ticker-frame" id="easTickerFrame" title="EAS Ticker" allowtransparency="true" scrolling="no"></iframe>
 </div>
 <div class="mini-player-status" id="miniPlayerStatus">
 <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
@@ -2467,6 +2467,26 @@ const miniPlayerStatus = document.getElementById('miniPlayerStatus');
 const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
 let hlsInstance = null;
 
+// ── EAS TICKER RELOAD ──
+// The ticker iframe is only ever pointed at its real src while the mini
+// player is open. Every time a stream is opened it gets a fresh src (forcing
+// a reload, e.g. so a new EAS crawl/alert data starts clean), and every time
+// the player is closed it's pointed at blank so it effectively goes offline
+// instead of continuing to run in the background.
+const EAS_TICKER_SRC = 'https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf';
+const easTickerFrame = document.getElementById('easTickerFrame');
+
+function reloadEasTicker() {
+if (!easTickerFrame) return;
+easTickerFrame.src = 'about:blank';
+requestAnimationFrame(() => { easTickerFrame.src = EAS_TICKER_SRC; });
+}
+
+function clearEasTicker() {
+if (!easTickerFrame) return;
+easTickerFrame.src = 'about:blank';
+}
+
 function showMiniPlayerLoading() {
 miniPlayerStatus.style.display = 'flex';
 miniPlayerStatus.classList.remove('offline');
@@ -2560,6 +2580,7 @@ hlsInstance.destroy();
 hlsInstance = null;
 }
 stopMiniPlayerRetry();
+clearEasTicker();
 easActive = false;
 preEASState = null;
 if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
@@ -2577,6 +2598,7 @@ miniPlayerTitle.textContent = name || 'Now Playing';
 showMiniPlayerLoading();
 miniPlayerOverlay.classList.add('active');
 stopMiniPlayerRetry();
+reloadEasTicker();
 
 const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
 easActive = isLiveEAS;
