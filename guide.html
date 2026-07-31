@@ -627,15 +627,14 @@ display: block;
 /* ── EAS TICKER OVERLAY ──
 Persistent crawl overlay that sits on top of every stream, at all times,
 regardless of channel or EAS interrupt state. Not triggered by anything —
-it's just always rendered above the video. Sized to the source widget's
-native 1170x71 ratio, stretched edge-to-edge across the player, and sits
-a little below the very top edge rather than flush against it. */
+it's just always rendered above the video. Matches the stream's own
+16:9 canvas (same size as the video itself) so the overlay's internal
+crawl bar renders at full scale instead of being squeezed into a thin strip. */
 .eas-ticker-frame {
 position: absolute;
-top: 4%;
-left: 0;
+inset: 0;
 width: 100%;
-aspect-ratio: 1170 / 71;
+height: 100%;
 border: none;
 z-index: 5;
 pointer-events: none;
