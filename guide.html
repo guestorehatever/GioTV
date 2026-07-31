@@ -624,6 +624,22 @@ height: 100%;
 display: block;
 }
 
+/* ── EAS TICKER OVERLAY ──
+Always-on crawl overlay sitting on top of the video, slightly inset from
+the very top edge (not flush against it). No trigger logic — it renders
+unconditionally whenever the mini player video area is present. */
+.eas-ticker-frame {
+position: absolute;
+top: 10px;
+left: 0;
+width: 100%;
+aspect-ratio: 1170 / 71;
+z-index: 30;
+border: none;
+pointer-events: none;
+background: transparent;
+}
+
 .mini-player-status {
 position: absolute;
 inset: 0;
@@ -2038,6 +2054,7 @@ event.preventDefault();
 <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
 <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
 </div>
+<iframe class="eas-ticker-frame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" scrolling="no" allowtransparency="true"></iframe>
 </div>
 </div>
 </div>
