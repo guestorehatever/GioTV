@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GioTV – Stream Your Passion</title>
+<title>GioTV – Channel Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -16,10 +16,10 @@
 --text: #f0f2f7;
 --muted: #7a8299;
 --gold: #f5c842;
+--purple: #9b4fdc;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -28,9 +28,9 @@ color: var(--text);
 font-family: 'Barlow', sans-serif;
 font-weight: 300;
 overflow-x: hidden;
+min-height: 100vh;
 }
 
-/* ── NOISE OVERLAY ── */
 body::before {
 content: '';
 position: fixed;
@@ -41,7 +41,6 @@ z-index: 9999;
 opacity: 0.35;
 }
 
-/* ── NAV ── */
 nav {
 position: fixed;
 top: 0; left: 0; right: 0;
@@ -72,6 +71,7 @@ transition: color 0.2s;
 }
 
 .nav-links a:hover { color: var(--text); }
+.nav-links a.active { color: var(--text); }
 
 .nav-cta {
 background: var(--red);
@@ -81,23 +81,16 @@ border-radius: 3px;
 transition: background 0.2s !important;
 }
 
-.nav-cta:hover { background: var(--dark-red) !important; color: #fff !important; }
+.nav-cta:hover { background: var(--dark-red) !important; }
 
-/* ── HERO ── */
-.hero {
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-text-align: center;
-padding: 120px 24px 80px;
+.page-header {
+padding: 140px 48px 72px;
 position: relative;
 overflow: hidden;
+text-align: center;
 }
 
-/* Animated scan-line background */
-.hero::before {
+.page-header::before {
 content: '';
 position: absolute;
 inset: 0;
@@ -106,59 +99,20 @@ repeating-linear-gradient(
 0deg,
 transparent,
 transparent 3px,
-rgba(232,25,44,0.025) 3px,
-rgba(232,25,44,0.025) 4px
+rgba(232,25,44,0.02) 3px,
+rgba(232,25,44,0.02) 4px
 ),
-radial-gradient(ellipse 80% 60% at 50% 40%, rgba(232,25,44,0.18) 0%, transparent 70%),
-linear-gradient(160deg, #0d0f18 0%, #080a0f 100%);
+radial-gradient(ellipse 70% 80% at 50% 0%, rgba(232,25,44,0.13) 0%, transparent 70%),
+linear-gradient(180deg, #0d0f18 0%, var(--black) 100%);
 z-index: 0;
 }
 
-/* Floating signal rings */
-.hero::after {
-content: '';
-position: absolute;
-width: 700px;
-height: 700px;
-border-radius: 50%;
-border: 1px solid rgba(232,25,44,0.1);
-top: 50%;
-left: 50%;
-transform: translate(-50%,-50%);
-box-shadow:
-0 0 0 80px rgba(232,25,44,0.04),
-0 0 0 160px rgba(232,25,44,0.025),
-0 0 0 260px rgba(232,25,44,0.012);
-animation: pulse 6s ease-in-out infinite;
-z-index: 0;
-}
-
-@keyframes pulse {
-0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
-50% { opacity: 1; transform: translate(-50%,-50%) scale(1.04); }
-}
-
-.hero-inner {
+.page-header-inner {
 position: relative;
 z-index: 2;
-max-width: 860px;
 }
 
-.hero-logo {
-height: 110px;
-object-fit: contain;
-display: block;
-margin: 0 auto 28px;
-filter: drop-shadow(0 0 40px rgba(232,25,44,0.55));
-animation: logoIn 1s cubic-bezier(0.16,1,0.3,1) both;
-}
-
-@keyframes logoIn {
-from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.hero-tag {
+.page-tag {
 display: inline-block;
 font-family: 'Barlow Condensed', sans-serif;
 font-size: 0.72rem;
@@ -169,42 +123,37 @@ background: rgba(232,25,44,0.1);
 border: 1px solid rgba(232,25,44,0.3);
 padding: 5px 16px;
 border-radius: 2px;
-margin-bottom: 22px;
-animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+margin-bottom: 20px;
+animation: fadeUp 0.8s 0.1s cubic-bezier(0.16,1,0.3,1) both;
 }
 
-.hero-headline {
+.page-title {
 font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(3.8rem, 9vw, 8rem);
+font-size: clamp(3rem, 7vw, 6rem);
 line-height: 0.95;
 letter-spacing: 0.02em;
-color: var(--text);
-margin-bottom: 28px;
-animation: fadeUp 0.8s 0.35s cubic-bezier(0.16,1,0.3,1) both;
+margin-bottom: 20px;
+animation: fadeUp 0.8s 0.25s cubic-bezier(0.16,1,0.3,1) both;
 }
 
-.hero-headline em {
-color: var(--red);
-font-style: normal;
-}
+.page-title em { color: var(--red); font-style: normal; }
 
-.hero-sub {
-font-size: 1.15rem;
+.page-sub {
+font-size: 1rem;
 color: var(--muted);
-max-width: 560px;
-margin: 0 auto 44px;
+max-width: 480px;
+margin: 0 auto 32px;
 line-height: 1.7;
-animation: fadeUp 0.8s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+animation: fadeUp 0.8s 0.4s cubic-bezier(0.16,1,0.3,1) both;
 }
 
-.hero-sub strong { color: var(--text); font-weight: 600; }
-
-.hero-actions {
+.header-actions {
 display: flex;
-gap: 16px;
+align-items: center;
 justify-content: center;
+gap: 16px;
 flex-wrap: wrap;
-animation: fadeUp 0.8s 0.65s cubic-bezier(0.16,1,0.3,1) both;
+animation: fadeUp 0.8s 0.55s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 @keyframes fadeUp {
@@ -212,12 +161,113 @@ from { opacity: 0; transform: translateY(22px); }
 to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── BUTTONS ── */
+.guide-key {
+display: inline-block;
+cursor: pointer;
+}
+
+.guide-key summary {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.78rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(--muted);
+font-weight: 700;
+list-style: none;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 8px 18px;
+border: 1px solid var(--border);
+border-radius: 3px;
+transition: color 0.2s, border-color 0.2s;
+}
+
+.guide-key summary::-webkit-details-marker { display: none; }
+.guide-key summary::before { content: '▸'; font-size: 0.7rem; transition: transform 0.2s; }
+.guide-key[open] summary::before { transform: rotate(90deg); }
+.guide-key summary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+.key-content {
+margin-top: 12px;
+background: var(--card-bg);
+border: 1px solid var(--border);
+border-radius: 6px;
+padding: 20px 24px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+text-align: left;
+max-width: 400px;
+margin-left: auto;
+margin-right: auto;
+}
+
+.key-content p {
+font-size: 0.85rem;
+color: var(--muted);
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.key-content strong { color: var(--text); }
+
+.dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+flex-shrink: 0;
+display: inline-block;
+}
+
+.dot-online { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.dot-offline { background: var(--muted); }
+.dot-private { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+.dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+
+.ticker-wrap {
+width: 100%;
+background: var(--red);
+overflow: hidden;
+padding: 10px 0;
+margin-bottom: 40px;
+}
+
+.ticker {
+display: flex;
+white-space: nowrap;
+animation: ticker 30s linear infinite;
+}
+
+.ticker-item {
+display: inline-flex;
+align-items: center;
+gap: 28px;
+padding: 0 20px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.82rem;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+font-weight: 700;
+color: rgba(255,255,255,0.9);
+}
+
+.ticker-dot {
+width: 5px;
+height: 5px;
+background: rgba(255,255,255,0.5);
+border-radius: 50%;
+flex-shrink: 0;
+}
+
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
 .btn {
 display: inline-flex;
 align-items: center;
 gap: 9px;
-padding: 16px 36px;
+padding: 14px 30px;
 border-radius: 3px;
 font-family: 'Barlow Condensed', sans-serif;
 font-size: 1rem;
@@ -231,6 +281,17 @@ border: none;
 }
 
 .btn:hover { transform: translateY(-2px); }
+
+.btn-blue {
+background: transparent;
+color: #3c93f5;
+border: 1px solid #1e7fe8;
+}
+
+.btn-blue:hover {
+background: rgba(30,127,232,0.08);
+border-color: #3c93f5;
+}
 
 .btn-primary {
 background: var(--red);
@@ -265,92 +326,12 @@ background: #f7d155;
 box-shadow: 0 8px 40px rgba(245,200,66,0.5);
 }
 
-/* Arrow icon */
-.btn-arrow::after {
-content: '→';
-font-size: 1.1em;
-}
+.btn-arrow::after { content: '→'; font-size: 1.1em; }
 
-/* ── TICKER ── */
-.ticker-wrap {
-width: 100%;
-background: var(--red);
-overflow: hidden;
-padding: 10px 0;
-}
-
-.ticker {
-display: flex;
-white-space: nowrap;
-animation: ticker 30s linear infinite;
-}
-
-.ticker-item {
-display: inline-flex;
-align-items: center;
-gap: 28px;
-padding: 0 20px;
-font-family: 'Barlow Condensed', sans-serif;
-font-size: 0.82rem;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-font-weight: 700;
-color: rgba(255,255,255,0.9);
-}
-
-.ticker-dot {
-width: 5px;
-height: 5px;
-background: rgba(255,255,255,0.5);
-border-radius: 50%;
-flex-shrink: 0;
-}
-
-@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-/* ── STATS ── */
-.stats {
-display: flex;
-justify-content: center;
-gap: 0;
-flex-wrap: wrap;
-border-top: 1px solid var(--border);
-border-bottom: 1px solid var(--border);
-}
-
-.stat {
-flex: 1;
-min-width: 160px;
-max-width: 280px;
-padding: 48px 32px;
-text-align: center;
-border-right: 1px solid var(--border);
-position: relative;
-}
-
-.stat:last-child { border-right: none; }
-
-.stat-num {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 3.5rem;
-color: var(--red);
-line-height: 1;
-margin-bottom: 8px;
-}
-
-.stat-label {
-font-size: 0.78rem;
-letter-spacing: 0.15em;
-text-transform: uppercase;
-color: var(--muted);
-font-weight: 600;
-}
-
-/* ── FEATURES ── */
-.section {
+.main-content {
 max-width: 1100px;
 margin: 0 auto;
-padding: 96px 40px;
+padding: 0 40px 96px;
 }
 
 .section-label {
@@ -359,42 +340,703 @@ font-size: 0.72rem;
 letter-spacing: 0.3em;
 text-transform: uppercase;
 color: var(--red);
-margin-bottom: 16px;
+margin-bottom: 12px;
 font-weight: 700;
 }
 
-.section-title {
+.section-heading {
 font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(2.4rem, 5vw, 4rem);
+font-size: clamp(2rem, 4vw, 3.2rem);
+line-height: 1;
+margin-bottom: 40px;
+}
+
+.featured-section {
+margin-bottom: 80px;
+}
+
+.featured-card {
+background: var(--card-bg);
+border: 1px solid var(--border);
+border-radius: 8px;
+overflow: hidden;
+display: grid;
+grid-template-columns: 1.1fr 1fr;
+transition: border-color 0.25s;
+position: relative;
+}
+
+.featured-card::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--red), transparent);
+}
+
+.featured-card:hover { border-color: rgba(232,25,44,0.4); }
+
+.featured-banner-wrap {
+position: relative;
+overflow: hidden;
+min-height: 320px;
+background: var(--off-black);
+}
+
+.featured-banner-wrap img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+transition: transform 0.5s ease;
+}
+
+.featured-card:hover .featured-banner-wrap img { transform: scale(1.03); }
+
+.featured-overlay {
+position: absolute;
+inset: 0;
+background: linear-gradient(to right, transparent 60%, var(--card-bg) 100%);
+}
+
+.featured-info {
+padding: 44px 40px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.featured-badge {
+display: inline-block;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.68rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(--red);
+background: rgba(232,25,44,0.1);
+border: 1px solid rgba(232,25,44,0.3);
+padding: 4px 12px;
+border-radius: 2px;
+margin-bottom: 16px;
+width: fit-content;
+}
+
+.featured-name {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 2.6rem;
 line-height: 1;
 margin-bottom: 16px;
+letter-spacing: 0.03em;
 }
 
-.section-sub {
+.featured-desc {
+font-size: 0.88rem;
 color: var(--muted);
-font-size: 1rem;
-max-width: 500px;
-line-height: 1.7;
-margin-bottom: 56px;
+line-height: 1.75;
+margin-bottom: 32px;
+display: -webkit-box;
+-webkit-line-clamp: 5;
+-webkit-box-orient: vertical;
+overflow: hidden;
 }
 
-.features-grid {
+/* ── MINI PLAYER ── */
+.eas-card {
+border-color: var(--border) !important;
+}
+
+.eas-card .channel-tag {
+color: var(--muted);
+}
+
+.eas-card.eas-interrupt-live {
+border-color: var(--red) !important;
+animation: easPulse 1.6s ease-in-out infinite;
+}
+
+.eas-card.eas-interrupt-live .channel-tag {
+color: var(--red);
+}
+
+.eas-alert-banner {
+display: none;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+background: rgba(232,25,44,0.12);
+border: 1px solid var(--red);
+border-radius: 12px;
+padding: 16px 20px;
+margin: 0 0 24px;
+animation: easPulse 1.6s ease-in-out infinite;
+flex-wrap: wrap;
+}
+
+.eas-alert-banner.eas-alert-banner-show {
+display: flex !important;
+}
+
+.eas-alert-content {
+display: flex;
+align-items: center;
+gap: 14px;
+}
+
+.eas-alert-icon {
+font-size: 28px;
+line-height: 1;
+}
+
+.eas-alert-text strong {
+display: block;
+color: var(--red);
+font-size: 1.05rem;
+letter-spacing: 0.02em;
+}
+
+.eas-alert-text p {
+margin: 2px 0 0;
+color: var(--muted);
+font-size: 0.9rem;
+}
+
+.eas-alert-btn {
+background: var(--red);
+border-color: var(--red);
+color: #fff;
+white-space: nowrap;
+}
+
+.mini-player-overlay {
+position: fixed;
+inset: 0;
+background: rgba(4,5,8,0.92);
+backdrop-filter: blur(6px);
+z-index: 10000;
+display: none;
+align-items: center;
+justify-content: center;
+padding: 24px;
+}
+
+.mini-player-overlay.active {
+display: flex;
+}
+
+.mini-player-box {
+width: 100%;
+max-width: 960px;
+background: var(--off-black);
+border: 1px solid var(--border);
+border-radius: 6px;
+overflow: hidden;
+box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+}
+
+.mini-player-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 12px 18px;
+border-bottom: 1px solid var(--border);
+}
+
+.mini-player-title {
+font-family: 'Barlow Condensed', sans-serif;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+font-size: 0.95rem;
+color: var(--text);
+}
+
+.mini-player-header-actions {
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 8px;
+}
+
+.mini-player-close {
+background: var(--red);
+color: #fff;
+border: none;
+width: 32px;
+height: 32px;
+border-radius: 3px;
+font-size: 1.1rem;
+line-height: 1;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: background 0.18s;
+}
+
+.mini-player-close:hover {
+background: var(--dark-red);
+}
+
+.mini-player-skip {
+display: none;
+align-items: center;
+justify-content: center;
+height: 32px;
+background: transparent;
+color: var(--muted);
+border: 1px solid var(--border);
+font-size: 0.62rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+font-weight: 700;
+padding: 0 12px;
+border-radius: 3px;
+cursor: pointer;
+white-space: nowrap;
+transition: color 0.18s, border-color 0.18s;
+}
+
+.mini-player-skip:hover {
+color: var(--text);
+border-color: rgba(255,255,255,0.25);
+}
+
+.mini-player-box.eas-live {
+border-color: var(--red);
+animation: easPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes easPulse {
+0%, 100% { box-shadow: 0 0 0 2px var(--red), 0 20px 80px rgba(232,25,44,0.35); }
+50% { box-shadow: 0 0 0 2px var(--red), 0 20px 100px rgba(232,25,44,0.6); }
+}
+
+.mini-player-video-wrap {
+position: relative;
+width: 100%;
+aspect-ratio: 16 / 9;
+background: #000;
+}
+
+.mini-player-video-wrap video {
+width: 100%;
+height: 100%;
+display: block;
+}
+
+/* ── EAS TICKER OVERLAY ──
+Always-on crawl overlay sitting on top of the video, slightly inset from
+the very top edge (not flush against it). No trigger logic — it renders
+unconditionally whenever the mini player video area is present.
+The source widget is a fixed 1170x71 canvas, so instead of shrinking the
+iframe's own viewport (which crushes/clips its contents on small screens),
+the iframe is kept at native size and scaled as a whole via CSS transform
+so it always fits the current screen while staying crisp and legible. */
+.eas-ticker-wrap {
+position: absolute;
+top: 10px;
+left: 0;
+width: 100%;
+aspect-ratio: 1170 / 71;
+z-index: 30;
+overflow: hidden;
+pointer-events: none;
+}
+
+.eas-ticker-frame {
+display: block;
+width: 1170px;
+height: 71px;
+border: none;
+background: transparent;
+transform-origin: top left;
+}
+
+.mini-player-status {
+position: absolute;
+inset: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+color: var(--muted);
+font-size: 0.9rem;
+letter-spacing: 0.04em;
+pointer-events: none;
+background: #000;
+}
+
+.mini-player-status.offline {
+background: #000;
+flex-direction: column;
+}
+
+.mini-player-status-img {
+display: none;
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.mini-player-status.offline .mini-player-status-img {
+display: block;
+}
+
+.mini-player-status.offline .mini-player-status-text {
+display: none;
+}
+
+.watch-btn {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+background: var(--red);
+color: #fff;
+padding: 13px 28px;
+border-radius: 3px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.95rem;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+font-weight: 700;
+text-decoration: none;
+width: fit-content;
+box-shadow: 0 4px 24px rgba(232,25,44,0.4);
+transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+cursor: pointer;
+border: none;
+}
+
+.watch-btn:hover {
+background: #f02035;
+box-shadow: 0 8px 36px rgba(232,25,44,0.55);
+transform: translateY(-2px);
+}
+
+.play-icon {
+font-size: 0.75rem;
+}
+
+.status-dot {
+position: absolute;
+top: 14px;
+left: 14px;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: var(--muted);
+border: 2px solid rgba(0,0,0,0.4);
+z-index: 10;
+transition: background 0.3s, box-shadow 0.3s;
+}
+
+.status-dot.online {
+background: var(--red);
+box-shadow: 0 0 8px rgba(232,25,44,0.8);
+}
+
+.status-dot.offline {
+background: var(--muted);
+box-shadow: none;
+}
+
+.status-dot.private {
+background: var(--purple) !important;
+box-shadow: 0 0 8px rgba(155,79,220,0.8) !important;
+}
+
+.status-dot.gold {
+background: var(--gold) !important;
+box-shadow: 0 0 8px rgba(245,200,66,0.8) !important;
+}
+
+.note-badge {
+position: absolute;
+top: 10px;
+right: 10px;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: rgba(0,0,0,0.65);
+border: 1px solid rgba(232,25,44,0.5);
+color: var(--red);
+font-size: 0.85rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+z-index: 11;
+transition: background 0.2s, transform 0.2s, border-color 0.2s;
+padding: 0;
+}
+
+.note-badge:hover {
+background: rgba(232,25,44,0.2);
+border-color: var(--red);
+transform: scale(1.08);
+}
+
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.75);
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 9999;
+padding: 24px;
+}
+
+.modal-overlay.active {
+display: flex;
+}
+
+.modal-box {
+background: var(--card-bg);
+border: 1px solid rgba(245,200,66,0.35);
+border-radius: 8px;
+padding: 32px;
+max-width: 480px;
+width: 100%;
+position: relative;
+max-height: 80vh;
+overflow-y: auto;
+}
+
+.modal-box::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.modal-close {
+position: absolute;
+top: 16px;
+right: 16px;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: transparent;
+border: 1px solid var(--border);
+color: var(--text);
+font-size: 0.9rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: border-color 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+border-color: var(--gold);
+color: var(--gold);
+}
+
+.modal-label {
+display: flex;
+align-items: center;
+gap: 8px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.72rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(--gold);
+font-weight: 700;
+margin-bottom: 14px;
+padding-right: 30px;
+}
+
+.modal-text {
+font-size: 0.92rem;
+color: var(--text);
+line-height: 1.75;
+}
+
+.share-link {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.68rem;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+font-weight: 700;
+color: var(--muted);
+background: transparent;
+border: 1px solid var(--border);
+border-radius: 3px;
+padding: 4px 9px;
+margin-top: 8px;
+cursor: pointer;
+transition: color 0.2s, border-color 0.2s;
+}
+
+.share-link:hover {
+color: var(--text);
+border-color: rgba(255,255,255,0.25);
+}
+
+.share-link.copied {
+color: var(--gold);
+border-color: rgba(245,200,66,0.4);
+}
+
+.featured-info .share-link {
+margin-top: 14px;
+}
+
+.channel-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-top: 8px;
+}
+
+.channel-actions .share-link {
+margin-top: 0;
+}
+
+.repo-link {
+color: var(--red) !important;
+border-color: rgba(232,25,44,0.35) !important;
+text-decoration: none;
+}
+
+.repo-link:hover {
+color: #fff !important;
+background: var(--red);
+border-color: var(--red) !important;
+}
+
+.manager-note {
+background: rgba(245,200,66,0.1);
+border: 1px solid rgba(245,200,66,0.35);
+border-radius: 6px;
+padding: 24px 28px;
+margin-top: 24px;
+position: relative;
+overflow: hidden;
+}
+
+.manager-note::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.manager-note-label {
+display: flex;
+align-items: center;
+gap: 8px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.72rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(--gold);
+font-weight: 700;
+margin-bottom: 12px;
+}
+
+.manager-note-text {
+font-size: 0.9rem;
+color: var(--text);
+line-height: 1.75;
+}
+
+.cta-banner {
+background: var(--off-black);
+border: 1px solid var(--border);
+border-radius: 6px;
+padding: 28px 36px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+margin-bottom: 32px;
+position: relative;
+overflow: hidden;
+}
+
+.cta-banner::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.cta-banner-text .cta-label {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.7rem;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: var(--gold);
+font-weight: 700;
+margin-bottom: 6px;
+}
+
+.cta-banner-text h3 {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 1.8rem;
+line-height: 1;
+margin-bottom: 4px;
+}
+
+.cta-banner-text p {
+font-size: 0.85rem;
+color: var(--muted);
+}
+
+.cta-banner-last {
+margin-bottom: 80px;
+}
+
+.cta-banner-merged {
+align-items: stretch;
+}
+
+.cta-banner-half {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+min-width: 0;
+}
+
+.cta-divider {
+width: 1px;
+align-self: stretch;
+background: var(--border);
+flex-shrink: 0;
+}
+
+.channels-grid {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 gap: 20px;
 }
 
-.feature-card {
+.channel-card {
 background: var(--card-bg);
 border: 1px solid var(--border);
 border-radius: 6px;
-padding: 36px 32px;
-position: relative;
 overflow: hidden;
+text-decoration: none;
+color: var(--text);
+display: block;
 transition: border-color 0.25s, transform 0.25s;
+cursor: pointer;
+position: relative;
 }
 
-.feature-card::before {
+.channel-card::after {
 content: '';
 position: absolute;
 top: 0; left: 0; right: 0;
@@ -404,248 +1046,141 @@ opacity: 0;
 transition: opacity 0.25s;
 }
 
-.feature-card:hover { border-color: rgba(232,25,44,0.35); transform: translateY(-4px); }
-.feature-card:hover::before { opacity: 1; }
-
-.feature-icon {
-font-size: 2rem;
-margin-bottom: 18px;
-display: block;
+.channel-card:hover {
+border-color: rgba(232,25,44,0.4);
+transform: translateY(-4px);
 }
 
-.feature-title {
+.channel-card:hover::after { opacity: 1; }
+
+.channel-thumb {
+position: relative;
+width: 100%;
+aspect-ratio: 16 / 9;
+background: var(--off-black);
+overflow: hidden;
+}
+
+.channel-thumb img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+transition: transform 0.4s ease;
+}
+
+.channel-card:hover .channel-thumb img { transform: scale(1.06); }
+
+.thumb-text-placeholder {
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 20px;
+background: linear-gradient(160deg, #1a0d0f 0%, var(--off-black) 100%);
+}
+
+.thumb-text-placeholder span {
 font-family: 'Barlow Condensed', sans-serif;
-font-size: 1.3rem;
+font-weight: 900;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+font-size: 1.15rem;
+line-height: 1.25;
+color: var(--red);
+}
+
+.thumb-overlay {
+position: absolute;
+inset: 0;
+background: rgba(8,10,15,0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0;
+transition: opacity 0.25s;
+}
+
+.channel-card:hover .thumb-overlay { opacity: 1; }
+
+.thumb-play {
+width: 48px;
+height: 48px;
+border-radius: 50%;
+background: var(--red);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.9rem;
+color: #fff;
+box-shadow: 0 0 24px rgba(232,25,44,0.6);
+transform: scale(0.8);
+transition: transform 0.25s;
+}
+
+.channel-card:hover .thumb-play { transform: scale(1); }
+
+.channel-info {
+padding: 14px 16px 16px;
+}
+
+.channel-name {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 1rem;
 font-weight: 700;
 letter-spacing: 0.04em;
 text-transform: uppercase;
-margin-bottom: 10px;
 color: var(--text);
-}
-
-.feature-desc {
-font-size: 0.9rem;
-color: var(--muted);
-line-height: 1.7;
-}
-
-/* ── PLUS SECTION ── */
-.plus-section {
-background: var(--off-black);
-border-top: 1px solid var(--border);
-border-bottom: 1px solid var(--border);
-position: relative;
-overflow: hidden;
-}
-
-.plus-section::before {
-content: 'PLUS';
-position: absolute;
-right: -40px;
-top: 50%;
-transform: translateY(-50%);
-font-family: 'Bebas Neue', sans-serif;
-font-size: 22rem;
-color: rgba(245,200,66,0.025);
-line-height: 1;
-pointer-events: none;
-user-select: none;
-}
-
-.plus-inner {
-max-width: 1100px;
-margin: 0 auto;
-padding: 96px 40px;
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 72px;
-align-items: center;
-}
-
-@media (max-width: 768px) {
-.plus-inner { grid-template-columns: 1fr; gap: 48px; }
-.plus-section::before { display: none; }
-nav { padding: 16px 20px; }
-.nav-links { display: none; }
-}
-
-.plus-badge {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-background: rgba(245,200,66,0.12);
-border: 1px solid rgba(245,200,66,0.3);
-border-radius: 2px;
-padding: 5px 14px;
-font-family: 'Barlow Condensed', sans-serif;
-font-size: 0.72rem;
-letter-spacing: 0.25em;
-text-transform: uppercase;
-color: var(--gold);
-font-weight: 700;
-margin-bottom: 22px;
-}
-
-.plus-title {
-font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(2.8rem, 5.5vw, 5rem);
-line-height: 0.95;
-margin-bottom: 22px;
-}
-
-.plus-title .plus-word {
-color: var(--gold);
-}
-
-.plus-desc {
-line-height: 1.75;
-margin-bottom: 36px;
-}
-
-.plus-perks {
-list-style: none;
-margin-bottom: 40px;
 display: flex;
-flex-direction: column;
-gap: 12px;
+align-items: center;
+justify-content: space-between;
 }
 
-.plus-perks li {
-display: flex;
-align-items: flex-start;
-gap: 12px;
-font-size: 0.92rem;
-color: var(--muted);
-}
-
-.plus-perks li::before {
-content: '✦';
-color: var(--gold);
+.pin-icon {
 font-size: 0.7rem;
-margin-top: 4px;
 flex-shrink: 0;
+margin-left: 8px;
 }
 
-.plus-perks li strong { color: var(--text); font-weight: 600; }
-
-.plus-actions {
-display: flex;
-flex-direction: column;
-gap: 14px;
-align-items: flex-start;
-}
-
-.already-signed {
-font-size: 0.83rem;
-color: var(--muted);
-display: flex;
-align-items: center;
-gap: 10px;
-padding-top: 4px;
-}
-
-.already-signed a {
-color: var(--gold);
-text-decoration: none;
-font-weight: 600;
-border-bottom: 1px solid rgba(245,200,66,0.3);
-padding-bottom: 1px;
-transition: border-color 0.2s;
-}
-
-.already-signed a:hover { border-color: var(--gold); }
-
-/* Plus visual card */
-.plus-visual {
-position: relative;
-}
-
-.plus-card {
-background: linear-gradient(135deg, #1a1608, #120e02);
-border: 1px solid rgba(245,200,66,0.2);
-border-radius: 12px;
-padding: 44px 40px;
-text-align: center;
-position: relative;
-overflow: hidden;
-box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(245,200,66,0.06);
-}
-
-.plus-card::before {
-content: '';
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.plus-card-logo {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 2.8rem;
-color: var(--gold);
-letter-spacing: 0.06em;
-margin-bottom: 6px;
-}
-
-.plus-card-logo span { color: rgba(255,255,255,0.7); }
-
-.plus-card-tagline {
-font-size: 0.75rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: rgba(245,200,66,0.5);
+.channel-tag {
 font-family: 'Barlow Condensed', sans-serif;
-font-weight: 700;
-margin-bottom: 36px;
-}
-
-.channel-count {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 5rem;
-color: var(--gold);
-line-height: 1;
-text-shadow: 0 0 60px rgba(245,200,66,0.4);
-}
-
-.channel-label {
-font-size: 0.8rem;
-letter-spacing: 0.2em;
+font-size: 0.65rem;
+letter-spacing: 0.15em;
 text-transform: uppercase;
 color: var(--muted);
-font-family: 'Barlow Condensed', sans-serif;
-font-weight: 600;
-margin-top: 4px;
-margin-bottom: 32px;
-}
-
-.network-logos {
-display: flex;
-justify-content: center;
-gap: 8px;
-flex-wrap: wrap;
-}
-
-.network-chip {
-background: rgba(255,255,255,0.06);
-border: 1px solid rgba(255,255,255,0.08);
+background: rgba(255,255,255,0.05);
+border: 1px solid var(--border);
+padding: 2px 8px;
 border-radius: 2px;
-padding: 5px 12px;
-font-size: 0.68rem;
+margin-top: 6px;
+display: inline-block;
+}
+
+.last-seen {
+display: none;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.6rem;
 letter-spacing: 0.1em;
 text-transform: uppercase;
-font-family: 'Barlow Condensed', sans-serif;
-font-weight: 700;
 color: var(--muted);
+margin-top: 4px;
+opacity: 0.8;
 }
 
-/* ── FOOTER ── */
+.star-badge {
+color: var(--gold);
+font-size: 0.85em;
+}
+
 footer {
 border-top: 1px solid var(--border);
 padding: 40px 48px;
 display: flex;
 align-items: center;
 justify-content: space-between;
-flex-wrap: gap;
+flex-wrap: wrap;
 gap: 20px;
 }
 
@@ -683,63 +1218,397 @@ transition: color 0.2s;
 
 .footer-links a:hover { color: var(--text); }
 
-/* ── SCROLL REVEAL ── */
 .reveal {
 opacity: 0;
 transform: translateY(30px);
 transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
 }
+
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* Player Modal Styles */
-.player-modal {
-display: none;
+.notification-popup {
 position: fixed;
-z-index: 2000;
-left: 0;
 top: 0;
-width: 100%;
-height: 100%;
-overflow: hidden;
-background-color: rgba(0, 0, 0, 0.95);
-backdrop-filter: blur(10px);
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(8, 10, 15, 0.85);
+backdrop-filter: blur(8px);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10000;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s, visibility 0.3s;
 }
 
-.modal-content {
-position: relative;
-margin: auto;
-width: 90%;
-max-width: 1200px;
-height: 80vh;
-top: 50%;
-transform: translateY(-50%);
-background: #000;
-border: 1px solid rgba(255, 255, 255, 0.1);
-border-radius: 8px;
-overflow: hidden;
-box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+.notification-popup.show {
+opacity: 1;
+visibility: visible;
 }
 
-.close-modal {
-position: absolute;
-top: 20px;
-right: 30px;
-color: #fff;
-font-size: 40px;
-font-weight: bold;
+.popup-content {
+background: var(--card-bg);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 40px;
+max-width: 420px;
+text-align: center;
+transform: translateY(20px);
+transition: transform 0.3s;
+}
+
+.notification-popup.show .popup-content {
+transform: translateY(0);
+}
+
+.popup-icon {
+font-size: 3rem;
+margin-bottom: 20px;
+}
+
+.popup-title {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 1.8rem;
+margin-bottom: 12px;
+color: var(--text);
+}
+
+.popup-text {
+font-size: 0.95rem;
+color: var(--muted);
+line-height: 1.6;
+margin-bottom: 28px;
+}
+
+.popup-buttons {
+display: flex;
+gap: 12px;
+justify-content: center;
+}
+
+.popup-btn {
+padding: 12px 28px;
+border-radius: 3px;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 0.9rem;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+font-weight: 700;
 cursor: pointer;
-z-index: 2001;
-transition: color 0.3s;
+border: none;
+transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
 }
 
-.close-modal:hover {
-color: var(--red);
+.popup-btn:hover {
+transform: translateY(-2px);
 }
 
-#player-iframe {
+.popup-btn-yes {
+background: var(--red);
+color: #fff;
+box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);
+}
+
+.popup-btn-yes:hover {
+background: #f02035;
+box-shadow: 0 6px 28px rgba(232, 25, 44, 0.55);
+}
+
+.popup-btn-no {
+background: transparent;
+color: var(--text);
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.popup-btn-no:hover {
+background: rgba(255, 255, 255, 0.05);
+border-color: rgba(255, 255, 255, 0.4);
+}
+
+.popup-btn-choose {
+background: var(--gold);
+color: #0a0800;
+box-shadow: 0 4px 20px rgba(245, 200, 66, 0.3);
+}
+
+.popup-btn-choose:hover {
+background: #f7d155;
+box-shadow: 0 6px 28px rgba(245, 200, 66, 0.5);
+}
+
+.channel-selection-popup {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(8, 10, 15, 0.9);
+backdrop-filter: blur(10px);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10001;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s, visibility 0.3s;
+}
+
+.channel-selection-popup.show {
+opacity: 1;
+visibility: visible;
+}
+
+.channel-selection-content {
+background: var(--card-bg);
+border: 1px solid var(--border);
+border-radius: 12px;
+width: 90%;
+max-width: 700px;
+max-height: 85vh;
+display: flex;
+flex-direction: column;
+transform: translateY(20px);
+transition: transform 0.3s;
+}
+
+.channel-selection-popup.show .channel-selection-content {
+transform: translateY(0);
+}
+
+.selection-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 24px 28px;
+border-bottom: 1px solid var(--border);
+}
+
+.selection-title {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 1.6rem;
+color: var(--text);
+margin: 0;
+}
+
+.close-btn {
+background: transparent;
+border: none;
+color: var(--muted);
+font-size: 1.5rem;
+cursor: pointer;
+padding: 4px 8px;
+transition: color 0.2s;
+}
+
+.close-btn:hover {
+color: var(--text);
+}
+
+.selection-info {
+padding: 16px 28px;
+font-size: 0.85rem;
+color: var(--muted);
+border-bottom: 1px solid var(--border);
+}
+
+.channels-list {
+flex: 1;
+overflow-y: auto;
+padding: 20px 28px;
+display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+.channel-item {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 16px;
+background: rgba(255, 255, 255, 0.02);
+border: 1px solid var(--border);
+border-radius: 8px;
+transition: border-color 0.2s, background 0.2s;
+}
+
+.channel-item:hover {
+border-color: rgba(232, 25, 44, 0.3);
+background: rgba(255, 255, 255, 0.04);
+}
+
+.channel-item-thumb {
+width: 80px;
+height: 45px;
+border-radius: 4px;
+overflow: hidden;
+flex-shrink: 0;
+background: var(--off-black);
+}
+
+.channel-item-thumb img {
 width: 100%;
 height: 100%;
-border: none;
+object-fit: cover;
+}
+
+.channel-item-info {
+flex: 1;
+}
+
+.channel-item-name {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 1rem;
+font-weight: 700;
+color: var(--text);
+margin-bottom: 8px;
+}
+
+.channel-checkboxes {
+display: flex;
+gap: 20px;
+}
+
+.checkbox-label {
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 0.8rem;
+color: var(--muted);
+cursor: pointer;
+user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+width: 16px;
+height: 16px;
+accent-color: var(--red);
+cursor: pointer;
+}
+
+.selection-footer {
+padding: 20px 28px;
+border-top: 1px solid var(--border);
+display: flex;
+justify-content: flex-end;
+}
+
+/* ── PASSWORD GATE ── */
+.password-overlay {
+position: fixed;
+inset: 0;
+background: rgba(4,5,8,0.92);
+backdrop-filter: blur(6px);
+z-index: 10002;
+display: none;
+align-items: center;
+justify-content: center;
+padding: 24px;
+}
+
+.password-overlay.active { display: flex; }
+
+.password-box {
+width: 100%;
+max-width: 380px;
+background: var(--card-bg);
+border: 1px solid rgba(155,79,220,0.3);
+border-radius: 8px;
+padding: 32px 28px;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+
+.password-box::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--purple), transparent);
+}
+
+.password-lock-icon {
+font-size: 2.2rem;
+margin-bottom: 14px;
+}
+
+.password-title {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 1.5rem;
+margin-bottom: 8px;
+color: var(--text);
+}
+
+.password-sub {
+font-size: 0.85rem;
+color: var(--muted);
+margin-bottom: 22px;
+line-height: 1.5;
+}
+
+.password-input {
+width: 100%;
+background: var(--off-black);
+border: 1px solid var(--border);
+border-radius: 4px;
+padding: 12px 14px;
+color: var(--text);
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 1.1rem;
+letter-spacing: 0.3em;
+text-align: center;
+margin-bottom: 12px;
+outline: none;
+transition: border-color 0.2s;
+}
+
+.password-input:focus { border-color: var(--purple); }
+
+.password-error {
+font-size: 0.78rem;
+color: var(--red);
+min-height: 16px;
+margin-bottom: 14px;
+}
+
+.password-buttons {
+display: flex;
+gap: 10px;
+}
+
+.password-buttons .btn {
+flex: 1;
+justify-content: center;
+padding: 12px 20px;
+}
+
+.btn-purple {
+background: var(--purple);
+color: #fff;
+box-shadow: 0 4px 24px rgba(155,79,220,0.4);
+}
+
+.btn-purple:hover {
+background: #ac66e6;
+box-shadow: 0 8px 32px rgba(155,79,220,0.55);
+}
+
+@media (max-width: 768px) {
+nav { padding: 16px 20px; }
+.nav-links { display: none; }
+.page-header { padding: 100px 24px 56px; }
+.main-content { padding: 0 20px 72px; }
+.featured-card { grid-template-columns: 1fr; }
+.featured-overlay { background: linear-gradient(to top, var(--card-bg) 0%, transparent 60%); }
+.featured-banner-wrap { min-height: 220px; }
+.featured-info { padding: 28px 24px; }
+.cta-banner { flex-direction: column; align-items: flex-start; }
+.cta-banner-merged { flex-direction: column; }
+.cta-banner-half { flex-direction: column; align-items: flex-start; width: 100%; gap: 16px; }
+.cta-divider { width: 100%; height: 1px; margin: 8px 0; }
+footer { padding: 32px 24px; flex-direction: column; }
 }
 img {
 -webkit-user-drag: none;
@@ -756,123 +1625,93 @@ event.preventDefault();
 }
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
 </head>
 <body>
 
-<!-- NAV -->
+<div class="notification-popup" id="notificationPopup">
+<div class="popup-content">
+<div class="popup-icon">🔔</div>
+<h3 class="popup-title">Stay Updated</h3>
+<p class="popup-text">Get notified when channels go live or offline</p>
+<div class="popup-buttons">
+<button class="popup-btn popup-btn-yes" id="popupAllowAll">Allow All</button>
+<button class="popup-btn popup-btn-choose" id="popupChoose">Choose</button>
+<button class="popup-btn popup-btn-no" id="popupNo">No Thanks</button>
+</div>
+</div>
+</div>
+
+<div class="channel-selection-popup" id="channelSelectionPopup">
+<div class="channel-selection-content">
+<div class="selection-header">
+<h3 class="selection-title">Select Channels</h3>
+<button class="close-btn" id="closeSelection">✕</button>
+</div>
+<div class="selection-info">Choose which channels to notify and when</div>
+<div class="channels-list" id="channelsList"></div>
+<div class="selection-footer">
+<button class="popup-btn popup-btn-yes" id="saveSelection">Save Preferences</button>
+</div>
+</div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="modal-overlay" id="noteModalOverlay">
+<div class="modal-box">
+<button class="modal-close" id="noteModalClose">✕</button>
+<div class="modal-label" id="noteModalLabel">✦ Note from Channel Manager</div>
+<p class="modal-text" id="noteModalText"></p>
+</div>
+</div>
+
+<!-- PASSWORD GATE -->
+<div class="password-overlay" id="passwordOverlay">
+<div class="password-box">
+<div class="password-lock-icon">🔒</div>
+<h3 class="password-title" id="passwordTitle">Private Stream</h3>
+<p class="password-sub">This channel is currently broadcasting a private stream. Enter the access code to watch.</p>
+<input type="password" class="password-input" id="passwordInput" placeholder="••••" maxlength="12" inputmode="numeric" />
+<div class="password-error" id="passwordError"></div>
+<div class="password-buttons">
+<button class="btn btn-outline" id="passwordCancel">Cancel</button>
+<button class="btn btn-purple" id="passwordSubmit">Unlock</button>
+</div>
+</div>
+</div>
+
 <nav>
 <ul class="nav-links">
-<li><a herf="guide.html">Guide</a></li>
-<li><a href="radio.html">Radio</a></li>
+<li><a href="guide.html" class="active">TV Guide</a></li>
+<li><a href="index.html#plus">GioTV+</a></li>
+<li><a href="giotv+.html" class="nav-cta">Sign Up</a></li>
 </ul>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-<div class="hero-inner">
-<div class="hero-tag">Now Broadcasting</div>
-<img src="TV.png" alt="GioTV" class="hero-logo" />
-<h1 class="hero-headline">Your Passion.<br/><em>Your Channel.</em></h1>
-<p class="hero-sub">
-GioTV is where <strong>regular streamers become broadcasters</strong>. Whether you're building an audience or watching from the couch — endless content from endless networks, all in one place.
-</p>
-<div class="hero-actions">
-<a href="guide.html" class="btn btn-primary btn-arrow">Go to Guide</a>
-<a href="#plus" class="btn btn-outline">Explore GioTV+</a>
+<div class="page-header">
+<div class="page-header-inner">
+<div class="page-tag">Now Broadcasting</div>
+<h1 class="page-title">Channel <em>Guide</em></h1>
+<p class="page-sub">All your channels in one place. Check live status, browse programming, and tune in instantly.</p>
+<div class="header-actions">
+<a href="index.html" class="btn btn-outline">← Back to Home</a>
+<a href="radio.html" class="btn btn-blue">Open Radio</a>
+<details class="guide-key">
+<summary>Guide Key</summary>
+<div class="key-content">
+<p><span class="dot dot-online"></span> Red dot — channel is online</p>
+<p><span class="dot dot-gold"></span> Gold dot — proven 24/7 live channel</p>
+<p><span class="dot dot-offline"></span> Grey dot — channel is offline</p>
+<p><span class="dot dot-private"></span> Purple dot — private stream, password required</p>
+<p>★ — Official channel with FCC proofing or major cable presence</p>
+<p>❗ — A way Managers of a channel can alert you on updates</p>
+<p><strong>Tip:</strong> Refresh to update live status.</p>
+</div>
+</details>
+</div>
+</div>
 </div>
 
-<!-- ============================================================
-Gio's Wacky Projects — paste-anywhere banner
-============================================================= -->
-<a href="https://gios-projects.pages.dev" target="_blank" rel="noopener"
-style="text-decoration:none; display:block; max-width:728px; margin:48px auto 0;">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-.gwp-banner {
-font-family: 'VT323', 'Courier New', monospace;
-background-color: #000033;
-background-image:
-radial-gradient(circle at 8% 30%, #fff 0px, #fff 1px, transparent 1px),
-radial-gradient(circle at 70% 70%, #fff 0px, #fff 1px, transparent 1px),
-radial-gradient(circle at 40% 15%, #99ccff 0px, #99ccff 1px, transparent 1px),
-radial-gradient(circle at 88% 40%, #99ccff 0px, #99ccff 1px, transparent 1px),
-radial-gradient(circle at 22% 80%, #fff 0px, #fff 1px, transparent 1px);
-background-size: 70px 70px;
-border: 4px ridge #3399ff;
-padding: 10px 18px;
-display: flex;
-align-items: center;
-gap: 16px;
-cursor: pointer;
-}
-.gwp-logo {
-flex-shrink: 0;
-font-size: 1.9em;
-font-weight: bold;
-line-height: 1;
-color: #ffff00;
-text-shadow: 2px 2px 0 #0066ff, -1px -1px 0 #00cc44;
-white-space: nowrap;
-text-align: center;
-}
-.gwp-logo .gwp-star {
-color: #ff3333;
-animation: gwp-blink 1s step-start infinite;
-}
-@keyframes gwp-blink { 50% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) {
-.gwp-logo .gwp-star { animation: none; }
-}
-.gwp-divider {
-width: 2px;
-align-self: stretch;
-background: repeating-linear-gradient(180deg, #00cc44 0 6px, #ffcc00 6px 12px, #3399ff 12px 18px);
-flex-shrink: 0;
-}
-.gwp-desc {
-color: #00ff00;
-font-size: 1.15em;
-line-height: 1.3;
-}
-.gwp-desc .gwp-cta {
-color: #33aaff;
-font-weight: bold;
-}
-.gwp-btn {
-flex-shrink: 0;
-display: inline-block;
-font-family: 'VT323', 'Courier New', monospace;
-font-size: 1.3em;
-font-weight: bold;
-color: #fff;
-background: #0000cc;
-border: 2px outset #6699ff;
-padding: 8px 16px;
-white-space: nowrap;
-}
-.gwp-banner:hover .gwp-btn {
-background: #0000ff;
-}
-.gwp-banner:active .gwp-btn {
-border-style: inset;
-}
-</style>
-<div class="gwp-banner">
-<div class="gwp-logo">
-<span class="gwp-star">&#9733;</span> GIO'S<br>WACKY<br>PROJECTS
-</div>
-<div class="gwp-divider"></div>
-<div class="gwp-desc">
-Hi, I'm Gio — a programmer messing with tech since I was 4.
-HTML, Python, retro AV, console modding &amp; more.
-</div>
-<div class="gwp-btn">ENTER SITE &rarr;</div>
-</div>
-</a>
-</div>
-</section>
-
-<!-- TICKER -->
 <div class="ticker-wrap" aria-hidden="true">
 <div class="ticker">
 <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
@@ -886,7 +1725,6 @@ HTML, Python, retro AV, console modding &amp; more.
 <div class="ticker-item">Science<span class="ticker-dot"></span></div>
 <div class="ticker-item">International<span class="ticker-dot"></span></div>
 <div class="ticker-item">Music<span class="ticker-dot"></span></div>
-<!-- duplicate for seamless loop -->
 <div class="ticker-item">Live Now<span class="ticker-dot"></span></div>
 <div class="ticker-item">Sports<span class="ticker-dot"></span></div>
 <div class="ticker-item">News<span class="ticker-dot"></span></div>
@@ -901,71 +1739,307 @@ HTML, Python, retro AV, console modding &amp; more.
 </div>
 </div>
 
-<!-- STATS -->
-<div class="stats reveal">
-<div class="stat">
-<div class="stat-num">Live</div>
-<div class="stat-label">Select Channels</div>
+<div class="main-content">
+
+<div class="cta-banner cta-banner-last cta-banner-merged reveal">
+<div class="cta-banner-half">
+<div class="cta-banner-text">
+<p class="cta-label">✦ Broadcast on GioTV</p>
+<h3>Want Your Own Channel?</h3>
+<p>Join the platform and start broadcasting to your audience today.</p>
 </div>
-<div class="stat">
-<div class="stat-num">Multi</div>
-<div class="stat-label">Cable Networks</div>
+<a href="survey.html" class="btn btn-gold btn-arrow">Get Started</a>
 </div>
-<div class="stat">
-<div class="stat-num">∞</div>
-<div class="stat-label">Channels to Explore</div>
+<div class="cta-divider"></div>
+<div class="cta-banner-half">
+<div class="cta-banner-text">
+<p class="cta-label">✦ Support</p>
+<h3>Have a Problem?</h3>
+<p>Our team is ready to help — give us a call anytime.</p>
 </div>
-<div class="stat">
-<div class="stat-num">Free</div>
-<div class="stat-label">To Get Started</div>
+<a href="tel:+15732220801" class="btn btn-gold btn-arrow">Call Us!</a>
 </div>
 </div>
 
-<!-- FEATURES -->
-<div class="section reveal">
-<p class="section-label">Why GioTV</p>
-<h2 class="section-title">Built for Broadcasters.<br/>Loved by Viewers.</h2>
-<p class="section-sub">Whether you're on-screen or on the couch, GioTV is the platform that gets cable streaming right.</p>
-<div class="features-grid">
-<div class="feature-card">
-<span class="feature-icon">📡</span>
-<div class="feature-title">Stream Your Way</div>
-<p class="feature-desc">Launch your own cable stream with professional-grade tools. Your passion, your channel, your audience — starting today.</p>
+<div id="easAlertBanner" class="eas-alert-banner">
+<div class="eas-alert-content">
+<span class="eas-alert-icon">🚨</span>
+<div class="eas-alert-text">
+<strong>Emergency Alert in Effect</strong>
+<p>An EAS alert is currently active on this network.</p>
 </div>
-<div class="feature-card">
-<span class="feature-icon">📺</span>
-<div class="feature-title">Endless Networks</div>
-<p class="feature-desc">Access content from a variety of cable networks all under one roof. Never run out of something to watch — ever.</p>
 </div>
-<div class="feature-card">
-<span class="feature-icon">🔴</span>
-<div class="feature-title">Live Channels</div>
-<p class="feature-desc">Tune into live programming on select channels. Sports, news, entertainment, and more — streaming in real time when it matters.</p>
+<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
 </div>
-<div class="feature-card">
-<span class="feature-icon">🌐</span>
-<div class="feature-title">Watch Anywhere</div>
-<p class="feature-desc">At home, on the go, or at your desk. GioTV works across all your devices so the signal never drops.</p>
-</div>
-<div class="feature-card">
-<span class="feature-icon">🗂️</span>
-<div class="feature-title">Smart TV Guide</div>
-<p class="feature-desc">Navigate a full interactive programming guide updated in real time. Find your shows, mark your favorites, never miss a moment.</p>
-</div>
-<div class="feature-card">
-<span class="feature-icon">⭐</span>
-<div class="feature-title">GioTV+ Premium</div>
-<p class="feature-desc">Want even more? Upgrade to GioTV+ and unlock a massive selection of channels from top cable providers around the world.</p>
 
+<section class="channels-section reveal">
+<p class="section-label">All Channels</p>
+<h2 class="section-heading">Browse the Lineup</h2>
+
+<div class="channels-grid">
+
+<!-- TapeTime Radio (pinned to top) -->
+<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-channel="tapetime" data-pinned="true">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
+<img src="tapetime.jpg" alt="TapeTime Radio" />
+<div class="status-dot offline"></div>
+<button class="note-badge" data-note-target="tapetime-note" title="Note from Channel Manager" aria-label="Note from Channel Manager">❗</button>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">TapeTime Radio <span class="pin-icon" title="Pinned channel">📌</span></div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="tapetime">🔗 Share</button>
+</div>
+</div>
+
+<!-- Gio TV News (formerly EAS Details) -->
+<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8">
+<img src="thumb.jpeg" alt="Gio TV News" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Gio TV News</div>
+<div class="channel-tag">Emergency Alert System</div>
+<div class="last-seen"></div>
+<div class="channel-actions">
+<button class="share-link" data-channel="easdetails">🔗 Share</button>
+<a href="https://easrepo.pages.dev" target="_blank" rel="noopener" class="share-link repo-link">📁 Go to Alert Repo</a>
 </div>
 </div>
 </div>
+
+<!-- Invisible EAS interrupt monitor (not shown in channel list, polled for takeover) -->
+<div style="display:none;" aria-hidden="true" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
+<div class="status-dot offline"></div>
+</div>
+
+<!-- Fight TV -->
+<div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8" data-channel="fighttv" data-gold="true">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8">
+<img src="fight_tv.jpeg" alt="Fight TV" />
+<div class="status-dot gold"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Fight TV</div>
+<div class="channel-tag">Boxing/Fighting</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="fighttv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Geej (suspended) -->
+<div class="channel-card" style="cursor: not-allowed;" title="This channel has been suspended">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper">
+<img src="sus.png" alt="CHANNEL SUSPENDED" />
+<div class="status-dot offline"></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">CHANNEL SUSPENDED</div>
+<div class="channel-tag">Gaming</div>
+<div class="last-seen"></div>
+</div>
+</div>
+
+<!-- GALAXY TV -->
+<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8" data-channel="galaxytv">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8">
+<img src="galaxy_tv.png" alt="GALAXY TV" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">GALAXY TV</div>
+<div class="channel-tag">Entertainment</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="galaxytv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Cubo TV -->
+<div class="channel-card watch-link" data-href="https://app.viloud.tv/hls/channel/sep/b8af84b06b7d8163d379533029336955/low.m3u8" data-channel="cubotv">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://app.viloud.tv/hls/channel/sep/b8af84b06b7d8163d379533029336955/low.m3u8">
+<img src="cubo_tv.png" alt="Cubo TV" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Cubo TV</div>
+<div class="channel-tag">Anime (アニメ)</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="cubotv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Gusto TV -->
+<div class="channel-card watch-link" data-href="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8" data-channel="gustotv" data-gold="true">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8">
+<img src="gusto_tv.png" alt="Gusto TV" />
+<div class="status-dot gold"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Gusto TV <span class="star-badge">★</span></div>
+<div class="channel-tag">Cooking</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="gustotv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Throwback Television Network -->
+<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8" data-channel="throwbacktv" data-gold="true">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8">
+<img src="throwback_tv.jpeg" alt="Throwback Television Network" />
+<div class="status-dot gold"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Throwback TV Network</div>
+<div class="channel-tag">Comedy</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="throwbacktv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Hard Rock TV -->
+<div class="channel-card watch-link" data-href="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8" data-channel="hardrocktv">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8">
+<img src="IMG_5344.jpeg" alt="Hard Rock TV" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Hard Rock TV</div>
+<div class="channel-tag">Music</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="hardrocktv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Young Hollywood -->
+<div class="channel-card watch-link" data-href="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8" data-channel="younghollywood" data-gold="true">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8">
+<img src="young_hollywood.jpg" alt="Young Hollywood" />
+<div class="status-dot gold"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Young Hollywood <span class="star-badge">★</span></div>
+<div class="channel-tag">Lifestyle</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="younghollywood">🔗 Share</button>
+</div>
+</div>
+
+<!-- GigabyteTV -->
+<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8" data-channel="gigabytetv">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8">
+<img src="gigabyte_tv.png" alt="GigabyteTV" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">GigabyteTV</div>
+<div class="channel-tag">Variety</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="gigabytetv">🔗 Share</button>
+</div>
+</div>
+
+<!-- Highland Weather -->
+<div class="channel-card watch-link" data-href="https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8" data-channel="highlandweather">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8">
+<img src="https://api.mistweather.com/api/v1.5/image/ad783999-61dc-4382-a9de-1abcfe81e0e2?width=96&height=96&fit=inside" alt="Highland Weather" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">Highland Weather (Tennessee, South and North Carolina)</div>
+<div class="channel-tag">Weather</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="highlandweather">🔗 Share</button>
+</div>
+</div>
+
+<!-- TV Play K-Pop -->
+<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8" data-channel="kpoptvplay">
+<div class="channel-thumb">
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8">
+<img src="kpop.png" alt="TV Play K-Pop" />
+<div class="status-dot offline"></div>
+</div>
+<div class="thumb-overlay">
+<div class="thumb-play"><span class="play-icon">▶</span></div>
+</div>
+</div>
+<div class="channel-info">
+<div class="channel-name">TV Play K-Pop</div>
+<div class="channel-tag">Music</div>
+<div class="last-seen"></div>
+<button class="share-link" data-channel="kpoptvplay">🔗 Share</button>
+</div>
+</div>
+
 </div>
 </section>
 
+<section class="offline-section reveal" id="offlineSection" style="display: none; margin-top: 80px;">
+<p class="section-label">Offline Channels</p>
+<h2 class="section-heading">Nothing to see here</h2>
+<div class="channels-grid" id="offlineGrid"></div>
+</section>
 
+</div>
 
-<!-- FOOTER -->
 <footer>
 <div class="footer-logo">Gio<span>TV</span></div>
 <p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
@@ -976,8 +2050,30 @@ HTML, Python, retro AV, console modding &amp; more.
 </ul>
 </footer>
 
+<!-- MINI PLAYER -->
+<div class="mini-player-overlay" id="miniPlayerOverlay">
+<div class="mini-player-box" id="miniPlayerBox">
+<div class="mini-player-header">
+<div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
+<div class="mini-player-header-actions">
+<button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
+<button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip EAS alert">Skip ⏭</button>
+</div>
+</div>
+<div class="mini-player-video-wrap">
+<video id="miniPlayerVideo" controls autoplay playsinline></video>
+<div class="mini-player-status" id="miniPlayerStatus">
+<img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
+<span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
+</div>
+<div class="eas-ticker-wrap" id="easTickerWrap">
+<iframe class="eas-ticker-frame" id="easTickerFrame" src="https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf" title="EAS Ticker" scrolling="no" allowtransparency="true"></iframe>
+</div>
+</div>
+</div>
+</div>
+
 <script>
-// Scroll reveal
 const observer = new IntersectionObserver((entries) => {
 entries.forEach(e => {
 if (e.isIntersecting) {
@@ -985,68 +2081,729 @@ e.target.classList.add('visible');
 observer.unobserve(e.target);
 }
 });
-}, { threshold: 0.12 });
+}, { threshold: 0.08 });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Channel mapping with IDs
+function reorderGrid() {
+const mainGrid = document.querySelector('.channels-section .channels-grid');
+const offlineGrid = document.getElementById('offlineGrid');
+const offlineSection = document.getElementById('offlineSection');
+if (!mainGrid || !offlineGrid) return;
+
+const allCards = Array.from(document.querySelectorAll('.channel-card'));
+let hasOffline = false;
+const pinnedCard = document.querySelector('.channel-card[data-pinned="true"]');
+
+allCards.forEach(card => {
+const isOnline = card.querySelector('.status-dot.online, .status-dot.gold');
+if (isOnline) {
+mainGrid.appendChild(card);
+} else {
+offlineGrid.appendChild(card);
+hasOffline = true;
+}
+});
+
+if (pinnedCard && pinnedCard.querySelector('.status-dot.online')) {
+mainGrid.insertBefore(pinnedCard, mainGrid.firstChild);
+}
+
+offlineSection.style.display = hasOffline ? 'block' : 'none';
+if (hasOffline && !offlineSection.classList.contains('visible')) {
+offlineSection.classList.add('visible');
+offlineSection.style.opacity = '1';
+offlineSection.style.transform = 'translateY(0)';
+}
+}
+
+function formatLastSeen(timestamp = null) {
+const date = timestamp ? new Date(timestamp) : new Date();
+const mm = String(date.getMonth() + 1).padStart(2, '0');
+const dd = String(date.getDate()).padStart(2, '0');
+const yy = String(date.getFullYear()).slice(-2);
+let hh = date.getHours();
+const min = String(date.getMinutes()).padStart(2, '0');
+const ampm = hh >= 12 ? 'PM' : 'AM';
+hh = hh % 12;
+hh = hh ? hh : 12;
+return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
+}
+
+const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
+const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8'; // visible Gio TV News channel, no interrupt
+const EAS_OFFLINE_IMG = 'eas_offline.png';
+
 const CHANNEL_MAP = {
-'fighttv1': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
-'geej1': { name: 'Geej', src: 'https://183.bozztv.com/giatv/giatv-giogolive/giogolive/playlist.m3u8' },
-'weatherscan1': { name: '24/7 Weatherscan', src: 'https://183.bozztv.com/giatv/giatv-gioscan/gioscan/playlist.m3u8' },
-'galaxytv1': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
-'cubotv1': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/8bbd37ec03ea0e570a4a6c1c4bb1943b.m3u8' },
-'gustotv1': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
-'throwbacktv1': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
-'hardrocktv1': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
-'younghollywood1': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
-'gigabytetv1': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
-'gionetwork1': { name: 'Gio Network', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' }
+'easdetails': { name: 'Gio TV News', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
+'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
+'cubotv': { name: 'Cubo TV', src: 'https://app.viloud.tv/hls/channel/sep/b8af84b06b7d8163d379533029336955/low.m3u8' },
+'gustotv': { name: 'Gusto TV', src: 'https://amg01077-amg01077c7-wisptv-us-3741.playouts.now.amagi.tv/playlist/amg01077-gusto-gustousmain-wisptvus/playlist.m3u8' },
+'throwbacktv': { name: 'Throwback TV Network', src: 'https://183.bozztv.com/giatv/giatv-throwbacktv/throwbacktv/playlist.m3u8' },
+'hardrocktv': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
+'younghollywood': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
+'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
+'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
+'kpoptvplay': { name: 'TV Play K-Pop', src: 'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' },
+'highlandweather': { name: 'Highland Weather (Tennessee, South and North Carolina)', src: 'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' }
 };
 
-// Player Navigation Logic
-function openPlayer(channelId) {
-// Navigate to player page with custom channel URL
-window.location.href = `player/?channel=${encodeURIComponent(channelId)}`;
+function initLastSeen() {
+const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
+const channels = document.querySelectorAll('[data-stream]');
+channels.forEach(channel => {
+const url = channel.getAttribute('data-stream');
+const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
+if (card) {
+const lastSeenEl = card.querySelector('.last-seen');
+if (lastSeenEl) {
+const dot = channel.querySelector('.status-dot');
+if (dot && dot.classList.contains('offline')) {
+if (lastSeenData[url]) {
+lastSeenEl.textContent = lastSeenData[url];
+} else {
+lastSeenEl.textContent = formatLastSeen();
+}
+lastSeenEl.style.display = 'block';
+} else {
+lastSeenEl.style.display = 'none';
+}
+}
+}
+});
+}
+initLastSeen();
+
+let previousChannelStates = {};
+
+// ── EAS INTERRUPT STATE ──
+let easActive = false;
+let easInterruptShown = false;
+let preEASState = null;
+let currentPlayerSrc = null;
+let currentPlayerName = null;
+let currentPlayerOfflineImg = 'offline.png';
+
+async function checkStatus() {
+const channels = document.querySelectorAll('[data-stream]');
+const lastSeenData = JSON.parse(localStorage.getItem('giotv_last_seen') || '{}');
+const now = new Date();
+
+for (const channel of channels) {
+const url = channel.getAttribute('data-stream');
+const dot = channel.querySelector('.status-dot');
+if (!dot) continue;
+if (dot.classList.contains('private')) continue;
+if (dot.classList.contains('gold')) continue;
+
+let isOnline = false;
+try {
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 8000);
+try {
+const response = await fetch(url, { method: 'HEAD', cache: 'no-cache', signal: controller.signal });
+clearTimeout(timeoutId);
+isOnline = response.ok;
+} catch (corsError) {
+await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache', signal: controller.signal });
+clearTimeout(timeoutId);
+isOnline = true;
+}
+} catch (error) {
+isOnline = false;
 }
 
-// Intercept watch links to open in player
-document.querySelectorAll('a[href*=".m3u8"]').forEach(link => {
-link.addEventListener('click', function(e) {
+const previousState = previousChannelStates[url];
+const wasOffline = previousState === false;
+const wasOnline = previousState === true;
+const stateChanged = previousState !== undefined && previousState !== isOnline;
+
+if (stateChanged) {
+const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
+let channelName = 'A channel';
+if (card) {
+const nameEl = card.querySelector('.channel-name, .featured-name');
+if (nameEl) channelName = nameEl.textContent.trim();
+}
+
+const prefs = getChannelPreferences();
+const channelPrefs = prefs[url] || { online: false, offline: false };
+const notificationChoice = getCookie('notification_choice');
+
+if (notificationChoice === 'yes' && 'Notification' in window && Notification.permission === 'granted') {
+if (wasOffline && isOnline && channelPrefs.online) {
+new Notification('🔔 Channel Live!', { body: `${channelName} is now live!`, icon: '📺' });
+} else if (wasOnline && !isOnline && channelPrefs.offline) {
+new Notification('📴 Channel Offline', { body: `${channelName} has gone offline`, icon: '📺' });
+}
+}
+}
+
+previousChannelStates[url] = isOnline;
+
+if (url === EAS_SRC) {
+if (isOnline && !easInterruptShown) {
+easInterruptShown = true;
+triggerEASInterrupt();
+} else if (!isOnline) {
+easInterruptShown = false;
+if (easActive) revertFromEAS();
+}
+
+// Glowing outline on the visible Gio TV News tile while the invisible interrupt feed is live
+const easDetailsCard = document.querySelector('.eas-card');
+if (easDetailsCard) {
+easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
+}
+
+// Alert banner above the channel lineup
+const easAlertBanner = document.getElementById('easAlertBanner');
+if (easAlertBanner) {
+easAlertBanner.classList.toggle('eas-alert-banner-show', isOnline);
+}
+}
+
+if (isOnline) {
+dot.classList.remove('offline');
+dot.classList.add('online');
+lastSeenData[url] = formatLastSeen();
+} else {
+dot.classList.remove('online');
+dot.classList.add('offline');
+if (!lastSeenData[url]) lastSeenData[url] = formatLastSeen();
+}
+
+const card = channel.closest('.channel-card') || channel.closest('.featured-card') || channel.parentElement.closest('.featured-card') || channel.parentElement.closest('.channel-card');
+if (card) {
+const lastSeenEl = card.querySelector('.last-seen');
+if (lastSeenEl) {
+if (!isOnline) {
+lastSeenEl.textContent = lastSeenData[url] || formatLastSeen();
+lastSeenEl.style.display = 'block';
+} else {
+lastSeenEl.textContent = '';
+lastSeenEl.style.display = 'none';
+}
+}
+}
+}
+localStorage.setItem('giotv_last_seen', JSON.stringify(lastSeenData));
+reorderGrid();
+}
+setInterval(checkStatus, 10000);
+checkStatus();
+
+// ── CHANNEL MANAGER NOTES ──
+const CHANNEL_NOTES = {
+'tapetime-note': {
+label: '✦ Note from Channel Manager',
+text: "We recently made the unfortunate decision to close down Gio Network on July 19, 2026. Between the stress and everything else on our plate, we simply couldn't keep up. Thank you for being with us for nine months as we went through adventures like movie showcases and even a SpongeBob Day recently. Thank you!"
+}
+};
+
+const noteModalOverlay = document.getElementById('noteModalOverlay');
+const noteModalLabel = document.getElementById('noteModalLabel');
+const noteModalText = document.getElementById('noteModalText');
+
+function openNoteModal(noteKey) {
+const note = CHANNEL_NOTES[noteKey];
+if (!note) return;
+noteModalLabel.textContent = note.label;
+noteModalText.textContent = note.text;
+noteModalOverlay.classList.add('active');
+}
+
+function closeNoteModal() {
+noteModalOverlay.classList.remove('active');
+}
+
+document.querySelectorAll('.note-badge').forEach(badge => {
+badge.addEventListener('click', function(e) {
 e.preventDefault();
-// Find the channel ID by matching the href URL
-let channelId = null;
-for (const [id, channel] of Object.entries(CHANNEL_MAP)) {
-if (channel.src === this.href) {
-channelId = id;
-break;
-}
-}
-if (channelId) {
-openPlayer(channelId);
-}
+e.stopPropagation();
+openNoteModal(this.getAttribute('data-note-target'));
 });
 });
 
-// Handle watch buttons
-document.querySelectorAll('.watch-btn, .watch-link').forEach(btn => {
-btn.addEventListener('click', function(e) {
+document.getElementById('noteModalClose')?.addEventListener('click', closeNoteModal);
+noteModalOverlay?.addEventListener('click', function(e) {
+if (e.target === noteModalOverlay) closeNoteModal();
+});
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape') closeNoteModal();
+});
+
+// ── SHAREABLE CHANNEL LINKS ──
+function getChannelShareUrl(slug) {
+return `${window.location.origin}${window.location.pathname}#${slug}`;
+}
+
+function openChannelBySlug(slug) {
+const channel = CHANNEL_MAP[slug];
+if (channel) selectChannel(channel.src, channel.name, channel.offlineImg, slug);
+}
+
+async function copyShareLink(slug, btnEl) {
+const url = getChannelShareUrl(slug);
+try {
+await navigator.clipboard.writeText(url);
+} catch (err) {
+const temp = document.createElement('textarea');
+temp.value = url;
+document.body.appendChild(temp);
+temp.select();
+document.execCommand('copy');
+document.body.removeChild(temp);
+}
+if (btnEl) {
+const original = btnEl.textContent;
+btnEl.textContent = 'Copied!';
+btnEl.classList.add('copied');
+setTimeout(() => {
+btnEl.textContent = original;
+btnEl.classList.remove('copied');
+}, 1500);
+}
+}
+
+document.querySelectorAll('.share-link:not(.repo-link)').forEach(el => {
+el.addEventListener('click', function(e) {
+e.preventDefault();
+e.stopPropagation();
+const slug = this.getAttribute('data-channel');
+if (slug) copyShareLink(slug, this);
+});
+});
+
+document.querySelectorAll('.repo-link').forEach(el => {
+el.addEventListener('click', function(e) {
+e.stopPropagation();
+});
+});
+
+// Open the channel from the URL hash on load, e.g. giotv-5o0.pages.dev/#tapetime
+if (window.location.hash) {
+const slug = window.location.hash.slice(1).toLowerCase();
+if (CHANNEL_MAP[slug]) {
+setTimeout(() => openChannelBySlug(slug), 300);
+}
+}
+
+window.addEventListener('hashchange', function() {
+const slug = window.location.hash.slice(1).toLowerCase();
+if (CHANNEL_MAP[slug]) openChannelBySlug(slug);
+});
+
+// ── PRIVATE STREAM PASSWORD GATE ──
+const PRIVATE_PASSWORD = '0509';
+let pendingPrivateStream = null;
+const passwordOverlay = document.getElementById('passwordOverlay');
+const passwordInput = document.getElementById('passwordInput');
+const passwordError = document.getElementById('passwordError');
+const passwordTitle = document.getElementById('passwordTitle');
+const passwordSubmit = document.getElementById('passwordSubmit');
+const passwordCancel = document.getElementById('passwordCancel');
+
+function openPasswordGate(src, name) {
+pendingPrivateStream = { src, name };
+passwordTitle.textContent = name ? `${name} — Private Stream` : 'Private Stream';
+passwordInput.value = '';
+passwordError.textContent = '';
+passwordOverlay.classList.add('active');
+setTimeout(() => passwordInput.focus(), 50);
+}
+
+function closePasswordGate() {
+passwordOverlay.classList.remove('active');
+pendingPrivateStream = null;
+}
+
+function submitPasswordGate() {
+if (!pendingPrivateStream) return;
+if (passwordInput.value === PRIVATE_PASSWORD) {
+const { src, name } = pendingPrivateStream;
+closePasswordGate();
+openMiniPlayer(src, name);
+} else {
+passwordError.textContent = 'Incorrect password. Try again.';
+passwordInput.value = '';
+passwordInput.focus();
+}
+}
+
+passwordSubmit.addEventListener('click', submitPasswordGate);
+passwordCancel.addEventListener('click', closePasswordGate);
+passwordInput.addEventListener('keydown', (e) => {
+if (e.key === 'Enter') submitPasswordGate();
+if (e.key === 'Escape') closePasswordGate();
+});
+passwordOverlay.addEventListener('click', (e) => {
+if (e.target === passwordOverlay) closePasswordGate();
+});
+
+// ── MINI PLAYER ──
+const miniPlayerOverlay = document.getElementById('miniPlayerOverlay');
+const miniPlayerBox = document.getElementById('miniPlayerBox');
+const miniPlayerVideo = document.getElementById('miniPlayerVideo');
+const miniPlayerTitle = document.getElementById('miniPlayerTitle');
+const miniPlayerClose = document.getElementById('miniPlayerClose');
+const miniPlayerSkip = document.getElementById('miniPlayerSkip');
+const miniPlayerStatus = document.getElementById('miniPlayerStatus');
+const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
+let hlsInstance = null;
+
+// ── EAS TICKER SCALING ──
+// Scales the fixed 1170x71 ticker widget to fit whatever width the video
+// wrap actually has on the current device, so it stays full-size and
+// legible instead of shrinking down inside a tiny native viewport.
+const EAS_TICKER_NATIVE_WIDTH = 1170;
+const easTickerWrap = document.getElementById('easTickerWrap');
+const easTickerFrame = document.getElementById('easTickerFrame');
+
+function scaleEasTicker() {
+if (!easTickerWrap || !easTickerFrame) return;
+const currentWidth = easTickerWrap.offsetWidth;
+if (!currentWidth) return;
+const scale = currentWidth / EAS_TICKER_NATIVE_WIDTH;
+easTickerFrame.style.transform = `scale(${scale})`;
+}
+
+if (easTickerWrap && window.ResizeObserver) {
+new ResizeObserver(scaleEasTicker).observe(easTickerWrap);
+} else {
+window.addEventListener('resize', scaleEasTicker);
+}
+scaleEasTicker();
+
+function showMiniPlayerLoading() {
+miniPlayerStatus.style.display = 'flex';
+miniPlayerStatus.classList.remove('offline');
+miniPlayerStatusText.textContent = 'Loading stream…';
+}
+
+function showMiniPlayerOffline(src) {
+miniPlayerStatus.style.display = 'flex';
+if (src === EAS_SRC) {
+// The invisible EAS interrupt feed gets a custom text-only screen
+// instead of the generic offline.png used for regular channels.
+miniPlayerStatus.classList.remove('offline');
+miniPlayerStatusText.textContent = 'Please wait as we try to get your alert';
+} else {
+miniPlayerStatus.classList.add('offline');
+}
+}
+
+function hideMiniPlayerStatus() {
+miniPlayerStatus.style.display = 'none';
+miniPlayerStatus.classList.remove('offline');
+}
+
+let miniPlayerRetryTimer = null;
+
+function stopMiniPlayerRetry() {
+if (miniPlayerRetryTimer) {
+clearInterval(miniPlayerRetryTimer);
+miniPlayerRetryTimer = null;
+}
+}
+
+function startMiniPlayerRetry(src) {
+stopMiniPlayerRetry();
+miniPlayerRetryTimer = setInterval(function() {
+if (!miniPlayerOverlay.classList.contains('active') || currentPlayerSrc !== src) {
+stopMiniPlayerRetry();
+return;
+}
+attemptMiniPlayerPlayback(src);
+}, 1000);
+}
+
+function attemptMiniPlayerPlayback(src) {
+if (hlsInstance) {
+hlsInstance.destroy();
+hlsInstance = null;
+}
+
+if (miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
+// Native HLS support (Safari)
+miniPlayerVideo.src = src;
+miniPlayerVideo.addEventListener('loadedmetadata', function onLoaded() {
+hideMiniPlayerStatus();
+stopMiniPlayerRetry();
+miniPlayerVideo.removeEventListener('loadedmetadata', onLoaded);
+});
+miniPlayerVideo.addEventListener('error', function onError() {
+showMiniPlayerOffline(src);
+if (currentPlayerSrc === src) startMiniPlayerRetry(src);
+miniPlayerVideo.removeEventListener('error', onError);
+});
+miniPlayerVideo.play().catch(() => {});
+} else if (window.Hls && window.Hls.isSupported()) {
+hlsInstance = new Hls();
+hlsInstance.loadSource(src);
+hlsInstance.attachMedia(miniPlayerVideo);
+hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+hideMiniPlayerStatus();
+stopMiniPlayerRetry();
+miniPlayerVideo.play().catch(() => {});
+});
+hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+if (data.fatal) {
+showMiniPlayerOffline(src);
+if (currentPlayerSrc === src) startMiniPlayerRetry(src);
+}
+});
+} else {
+showMiniPlayerLoading();
+}
+}
+
+function closeMiniPlayer() {
+miniPlayerOverlay.classList.remove('active');
+miniPlayerVideo.pause();
+miniPlayerVideo.removeAttribute('src');
+miniPlayerVideo.load();
+if (hlsInstance) {
+hlsInstance.destroy();
+hlsInstance = null;
+}
+stopMiniPlayerRetry();
+easActive = false;
+preEASState = null;
+if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
+if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
+if (window.location.hash) {
+history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+}
+
+function openMiniPlayer(src, name, offlineImg) {
+currentPlayerSrc = src;
+currentPlayerName = name;
+
+miniPlayerTitle.textContent = name || 'Now Playing';
+showMiniPlayerLoading();
+miniPlayerOverlay.classList.add('active');
+stopMiniPlayerRetry();
+
+const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
+easActive = isLiveEAS;
+if (miniPlayerSkip) miniPlayerSkip.style.display = isLiveEAS ? 'flex' : 'none';
+if (miniPlayerBox) miniPlayerBox.classList.toggle('eas-live', isLiveEAS);
+
+attemptMiniPlayerPlayback(src);
+}
+
+// Routes a channel selection through the EAS takeover: if EAS is currently
+// live, any channel selection redirects to the EAS stream instead, and
+// remembers what was requested so Skip can still return to it.
+function selectChannel(src, name, offlineImg, slug) {
+if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
+preEASState = { src: src, name: name, offlineImg: offlineImg };
+history.replaceState(null, '', '#easdetails');
+openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
+return;
+}
+if (slug) {
+history.replaceState(null, '', `#${slug}`);
+}
+openMiniPlayer(src, name, offlineImg);
+}
+
+function openPlayer(channelId) {
+const channel = CHANNEL_MAP[channelId];
+if (channel) selectChannel(channel.src, channel.name, channel.offlineImg, channelId);
+}
+
+function triggerEASInterrupt() {
+// Already on the EAS Details channel — no need to interrupt, they're already there
+if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc === EAS_DETAILS_VISIBLE_SRC) {
+return;
+}
+// Remember whatever was playing (if anything) so it can be restored on skip
+if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc !== EAS_SRC) {
+preEASState = { src: currentPlayerSrc, name: currentPlayerName, offlineImg: currentPlayerOfflineImg };
+} else if (!miniPlayerOverlay.classList.contains('active')) {
+preEASState = null;
+}
+openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
+}
+
+function revertFromEAS() {
+easActive = false;
+if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
+if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
+if (preEASState) {
+openMiniPlayer(preEASState.src, preEASState.name, preEASState.offlineImg);
+} else {
+closeMiniPlayer();
+}
+preEASState = null;
+}
+
+miniPlayerSkip.addEventListener('click', revertFromEAS);
+miniPlayerClose.addEventListener('click', closeMiniPlayer);
+miniPlayerOverlay.addEventListener('click', function(e) {
+if (e.target === miniPlayerOverlay) closeMiniPlayer();
+});
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape' && miniPlayerOverlay.classList.contains('active')) closeMiniPlayer();
+});
+
+document.querySelectorAll('.watch-link, .watch-btn').forEach(el => {
+el.addEventListener('click', function(e) {
 e.preventDefault();
 const src = this.getAttribute('data-href') || this.getAttribute('href');
-if (src) {
-// Find the channel ID by matching the src URL
-let channelId = null;
-for (const [id, channel] of Object.entries(CHANNEL_MAP)) {
-if (channel.src === src) {
-channelId = id;
-break;
+if (!src) return;
+
+if (this.getAttribute('data-private') === 'true') {
+const name = this.getAttribute('data-name') || null;
+openPasswordGate(src, name);
+return;
 }
+
+const slug = this.getAttribute('data-channel') || this.closest('[data-channel]')?.getAttribute('data-channel');
+let matched = null;
+for (const channel of Object.values(CHANNEL_MAP)) {
+if (channel.src === src) { matched = channel; break; }
 }
-if (channelId) {
-openPlayer(channelId);
+if (src === EAS_SRC) {
+// Manually opened, not an auto-interrupt — skip should just close, not restore anything
+preEASState = null;
 }
+selectChannel(src, matched ? matched.name : null, matched ? matched.offlineImg : null, slug);
+});
+});
+
+function setCookie(name, value, days) {
+const expires = new Date();
+expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+}
+
+function getCookie(name) {
+const nameEQ = name + '=';
+const cookies = document.cookie.split(';');
+for (let i = 0; i < cookies.length; i++) {
+let c = cookies[i];
+while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+}
+return null;
+}
+
+function showNotificationPopup() {
+const popup = document.getElementById('notificationPopup');
+if (popup) popup.classList.add('show');
+}
+
+function hideNotificationPopup() {
+const popup = document.getElementById('notificationPopup');
+if (popup) popup.classList.remove('show');
+}
+
+function showChannelSelection() {
+const popup = document.getElementById('channelSelectionPopup');
+if (popup) { popup.classList.add('show'); populateChannelList(); }
+}
+
+function hideChannelSelection() {
+const popup = document.getElementById('channelSelectionPopup');
+if (popup) popup.classList.remove('show');
+}
+
+function getChannelPreferences() {
+const prefs = localStorage.getItem('channel_notification_prefs');
+return prefs ? JSON.parse(prefs) : {};
+}
+
+function saveChannelPreferences(prefs) {
+localStorage.setItem('channel_notification_prefs', JSON.stringify(prefs));
+}
+
+function populateChannelList() {
+const channelsList = document.getElementById('channelsList');
+if (!channelsList) return;
+const prefs = getChannelPreferences();
+channelsList.innerHTML = '';
+const channelCards = document.querySelectorAll('.channel-card, .featured-card');
+channelCards.forEach(card => {
+const nameEl = card.querySelector('.channel-name, .featured-name');
+const imgEl = card.querySelector('img');
+const streamEl = card.querySelector('[data-stream]');
+if (!nameEl || !streamEl) return;
+const channelName = nameEl.textContent.trim();
+const channelImg = imgEl ? imgEl.src : '';
+const streamUrl = streamEl.getAttribute('data-stream');
+const item = document.createElement('div');
+item.className = 'channel-item';
+item.innerHTML = `
+<div class="channel-item-thumb"><img src="${channelImg}" alt="${channelName}"></div>
+<div class="channel-item-info">
+<div class="channel-item-name">${channelName}</div>
+<div class="channel-checkboxes">
+<label class="checkbox-label"><input type="checkbox" class="notify-online" data-url="${streamUrl}" ${prefs[streamUrl]?.online ? 'checked' : ''}> Notify when online</label>
+<label class="checkbox-label"><input type="checkbox" class="notify-offline" data-url="${streamUrl}" ${prefs[streamUrl]?.offline ? 'checked' : ''}> Notify when offline</label>
+</div>
+</div>`;
+channelsList.appendChild(item);
+});
+}
+
+const notificationChoice = getCookie('notification_choice');
+if (!notificationChoice) setTimeout(showNotificationPopup, 2000);
+
+document.getElementById('popupAllowAll')?.addEventListener('click', function() {
+hideNotificationPopup();
+setCookie('notification_choice', 'yes', 365);
+if ('Notification' in window) {
+Notification.requestPermission().then(permission => {
+if (permission === 'granted') {
+const prefs = {};
+document.querySelectorAll('[data-stream]').forEach(channel => {
+prefs[channel.getAttribute('data-stream')] = { online: true, offline: true };
+});
+saveChannelPreferences(prefs);
 }
 });
+}
+});
+
+document.getElementById('popupChoose')?.addEventListener('click', function() {
+hideNotificationPopup();
+setCookie('notification_choice', 'yes', 365);
+if ('Notification' in window) {
+Notification.requestPermission().then(permission => {
+if (permission === 'granted') showChannelSelection();
+});
+} else {
+showChannelSelection();
+}
+});
+
+document.getElementById('popupNo')?.addEventListener('click', function() {
+hideNotificationPopup();
+setCookie('notification_choice', 'no', 365);
+});
+
+document.getElementById('closeSelection')?.addEventListener('click', hideChannelSelection);
+
+document.getElementById('saveSelection')?.addEventListener('click', function() {
+const prefs = {};
+document.querySelectorAll('.notify-online').forEach(cb => {
+const url = cb.getAttribute('data-url');
+if (!prefs[url]) prefs[url] = {};
+prefs[url].online = cb.checked;
+});
+document.querySelectorAll('.notify-offline').forEach(cb => {
+const url = cb.getAttribute('data-url');
+if (!prefs[url]) prefs[url] = {};
+prefs[url].offline = cb.checked;
+});
+saveChannelPreferences(prefs);
+hideChannelSelection();
 });
 </script>
 </body>
+</html>
