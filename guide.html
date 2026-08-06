@@ -624,46 +624,6 @@ height: 100%;
 display: block;
 }
 
-/* ── EAS TICKER OVERLAY ──
-Persistent crawl overlay that sits on top of every stream, at all times,
-regardless of channel or EAS interrupt state. Not triggered by anything —
-it's just always rendered above the video.
-
-The overlays.uno graphic is built for a full 16:9 canvas with the actual
-crawl bar sitting at the BOTTOM of that canvas (everything above it is
-transparent/empty). So instead of showing the whole 16:9 frame, we render
-the iframe at full video height (to keep the overlay's native scale) inside
-a short "window" that only exposes a thin band, and bottom-align the iframe
-inside that window so the crawl bar is what shows through.
-
-── TO ADJUST YOURSELF ──
-Just change these two numbers, nothing else needs to be touched:
---eas-crawl-top     → how far down from the top of the video the band sits (%)
---eas-crawl-height  → how tall the visible crawl band is (%), smaller = thinner strip
-The iframe's own height is auto-derived from --eas-crawl-height via calc(),
-so it always lines up correctly no matter what you set the band height to. */
-.eas-ticker-window {
---eas-crawl-top: 6;
---eas-crawl-height: 14;
-position: absolute;
-top: calc(var(--eas-crawl-top) * 1%);
-left: 0;
-width: 100%;
-height: calc(var(--eas-crawl-height) * 1%);
-overflow: hidden;
-z-index: 5;
-pointer-events: none;
-}
-
-.eas-ticker-frame {
-position: absolute;
-bottom: 0;
-left: 0;
-width: 100%;
-height: calc(10000% / var(--eas-crawl-height));
-border: none;
-}
-
 .mini-player-status {
 position: absolute;
 inset: 0;
@@ -2074,11 +2034,6 @@ event.preventDefault();
 </div>
 <div class="mini-player-video-wrap">
 <video id="miniPlayerVideo" controls autoplay playsinline></video>
-<!-- Persistent EAS crawl overlay: always rendered on top of the stream, no trigger needed.
-     Only the crawl band shows (see .eas-ticker-window / .eas-ticker-frame CSS to adjust position/height). -->
-<div class="eas-ticker-window">
-<iframe class="eas-ticker-frame" id="easTickerFrame" title="EAS Ticker" allowtransparency="true" scrolling="no"></iframe>
-</div>
 <div class="mini-player-status" id="miniPlayerStatus">
 <img class="mini-player-status-img" id="miniPlayerStatusImg" src="offline.png" alt="Channel offline" />
 <span class="mini-player-status-text" id="miniPlayerStatusText">Loading stream…</span>
@@ -2467,26 +2422,6 @@ const miniPlayerStatus = document.getElementById('miniPlayerStatus');
 const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
 let hlsInstance = null;
 
-// ── EAS TICKER RELOAD ──
-// The ticker iframe is only ever pointed at its real src while the mini
-// player is open. Every time a stream is opened it gets a fresh src (forcing
-// a reload, e.g. so a new EAS crawl/alert data starts clean), and every time
-// the player is closed it's pointed at blank so it effectively goes offline
-// instead of continuing to run in the background.
-const EAS_TICKER_SRC = 'https://app.overlays.uno/output/DI6m2AllpO3WUC1n0C9Vf';
-const easTickerFrame = document.getElementById('easTickerFrame');
-
-function reloadEasTicker() {
-if (!easTickerFrame) return;
-easTickerFrame.src = 'about:blank';
-requestAnimationFrame(() => { easTickerFrame.src = EAS_TICKER_SRC; });
-}
-
-function clearEasTicker() {
-if (!easTickerFrame) return;
-easTickerFrame.src = 'about:blank';
-}
-
 function showMiniPlayerLoading() {
 miniPlayerStatus.style.display = 'flex';
 miniPlayerStatus.classList.remove('offline');
@@ -2580,7 +2515,6 @@ hlsInstance.destroy();
 hlsInstance = null;
 }
 stopMiniPlayerRetry();
-clearEasTicker();
 easActive = false;
 preEASState = null;
 if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
@@ -2598,7 +2532,6 @@ miniPlayerTitle.textContent = name || 'Now Playing';
 showMiniPlayerLoading();
 miniPlayerOverlay.classList.add('active');
 stopMiniPlayerRetry();
-reloadEasTicker();
 
 const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
 easActive = isLiveEAS;
