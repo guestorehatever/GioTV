@@ -4,25 +4,25 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GioTV Player</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080808;
-      --border: #1f1f1f;
-      --accent: #e8e8e8;
-      --muted: #444;
-      --live: #ff3b3b;
-      --bar-h: 52px;
-      --schedule-bg: #0c0c0c;
+      --bg: #06070b;
+      --border: rgba(255,255,255,0.08);
+      --accent: #d7dde8;
+      --muted: #8b93a7;
+      --live: #ff2d4a;
+      --bar-h: 56px;
+      --schedule-bg: #0c0e14;
     }
 
     html, body {
       width: 100%; height: 100%;
-      background: #000;
-      font-family: 'DM Mono', monospace;
+      background: #06070b;
+      font-family: 'Outfit', sans-serif;
       overflow: hidden;
     }
 
@@ -177,7 +177,7 @@
 
     .controls {
       height: var(--bar-h);
-      background: rgba(10,10,10,0.97);
+      background: rgba(12,14,20,0.96);
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -196,7 +196,7 @@
       transition: color 0.15s, background 0.15s;
       flex-shrink: 0;
     }
-    .btn:hover { color: #ddd; background: rgba(255,255,255,0.05); }
+    .btn:hover { color: #fff; background: rgba(255,45,74,0.12); }
     .btn svg { width: 16px; height: 16px; }
     .btn.active { color: #fff; }
 
@@ -262,7 +262,7 @@
     .schedule-tab {
       flex: 1;
       padding: 12px 8px;
-      font-family: 'DM Mono', monospace;
+      font-family: 'IBM Plex Mono', 'Outfit', monospace;
       font-size: 10px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -274,8 +274,8 @@
     }
     .schedule-tab:hover { color: #888; }
     .schedule-tab.active {
-      color: #ccc;
-      border-bottom: 2px solid #ccc;
+      color: #fff;
+      border-bottom: 2px solid var(--live);
       margin-bottom: -1px;
     }
 
@@ -308,7 +308,7 @@
       transition: background 0.15s;
     }
     .schedule-item:hover { background: rgba(255,255,255,0.03); }
-    .schedule-item.now { background: rgba(255,255,255,0.04); }
+    .schedule-item.now { background: rgba(255,45,74,0.08); }
     .schedule-item.now .si-time { color: var(--live); }
 
     .si-time {
@@ -375,7 +375,7 @@
     .recording-dot {
       width: 10px;
       height: 10px;
-      background: #ff0000;
+      background: var(--live);
       border-radius: 50%;
       animation: blink 1s infinite;
     }
@@ -387,11 +387,11 @@
       font-size: 11px;
       color: #fff;
       letter-spacing: 0.05em;
-      font-family: 'DM Mono', monospace;
+      font-family: 'IBM Plex Mono', 'Outfit', monospace;
     }
 
     .btn.recording {
-      color: #ff0000 !important;
+      color: var(--live) !important;
     }
     .btn.recording svg {
       animation: pulse-record 1s infinite;
