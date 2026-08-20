@@ -301,7 +301,9 @@ nav.site-header {
 
 .home-page {
   background-color: #050206;
-  background-image: url('hero-bg.jpg');
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38)),
+    url('hero-bg.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -312,6 +314,7 @@ nav.site-header {
   position: absolute;
   inset: 0;
   background: url('hero-bg.jpg') center / cover no-repeat;
+  filter: brightness(0.62);
   z-index: 0;
 }
 
@@ -319,7 +322,7 @@ nav.site-header {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(5, 2, 6, 0.18) 0%, rgba(5, 2, 6, 0.42) 62%, var(--black) 100%);
+  background: linear-gradient(180deg, rgba(5, 2, 6, 0.32) 0%, rgba(5, 2, 6, 0.55) 62%, var(--black) 100%);
   z-index: 1;
   pointer-events: none;
 }
