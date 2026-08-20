@@ -288,13 +288,13 @@ nav.site-header {
 
 /* ── HERO ── */
 .hero {
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 120px 24px 72px;
+  padding: 120px 24px 40px;
   position: relative;
   overflow: visible;
 }
@@ -668,20 +668,17 @@ nav.site-header {
 }
 
 /* ── MEMORIAL ── */
-.memorial-toggle-wrap {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 32px 24px;
+.memorial-band {
+  position: relative;
+  z-index: 3;
+  background: var(--black);
+  padding: 8px 20px 32px;
 }
 
-.hero-memorial {
-  position: relative;
-  z-index: 2;
-  width: 100%;
+.memorial-toggle-wrap {
   max-width: 720px;
-  margin: 64px auto 0;
+  margin: 0 auto;
   padding: 0;
-  text-align: left;
 }
 
 .memorial-toggle-btn {
