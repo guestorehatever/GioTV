@@ -668,11 +668,19 @@ nav.site-header {
 }
 
 /* ── MEMORIAL ── */
+.gwp-slot {
+  position: relative;
+  z-index: 3;
+  width: min(728px, calc(100% - 32px));
+  margin: 8px auto 0;
+  padding: 0 0 8px;
+}
+
 .memorial-band {
   position: relative;
   z-index: 3;
   background: var(--black);
-  padding: 24px 20px 40px;
+  padding: 40px 20px 40px;
 }
 
 .memorial-toggle-wrap {
