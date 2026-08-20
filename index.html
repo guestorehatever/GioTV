@@ -74,16 +74,6 @@ transition: color 0.2s;
 
 .nav-links a:hover { color: var(--text); }
 
-.nav-cta {
-background: var(--red);
-color: #fff !important;
-padding: 9px 22px;
-border-radius: 3px;
-transition: background 0.2s !important;
-}
-
-.nav-cta:hover { background: var(--dark-red) !important; color: #fff !important; }
-
 /* ── HERO ── */
 .hero {
 min-height: 100vh;
@@ -430,215 +420,11 @@ color: var(--muted);
 line-height: 1.7;
 }
 
-/* ── PLUS SECTION ── */
-.plus-section {
-background: var(--off-black);
-border-top: 1px solid var(--border);
-border-bottom: 1px solid var(--border);
-position: relative;
-overflow: hidden;
-}
-
-.plus-section::before {
-content: 'PLUS';
-position: absolute;
-right: -40px;
-top: 50%;
-transform: translateY(-50%);
-font-family: 'Bebas Neue', sans-serif;
-font-size: 22rem;
-color: rgba(245,200,66,0.025);
-line-height: 1;
-pointer-events: none;
-user-select: none;
-}
-
-.plus-inner {
-max-width: 1100px;
-margin: 0 auto;
-padding: 96px 40px;
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 72px;
-align-items: center;
-}
-
 @media (max-width: 768px) {
-.plus-inner { grid-template-columns: 1fr; gap: 48px; }
-.plus-section::before { display: none; }
 nav { padding: 16px 20px; }
 .nav-links { display: none; }
 .memorial-inner { grid-template-columns: 1fr !important; gap: 40px !important; }
 .memorial-photo-wrap { max-width: 320px; margin: 0 auto; }
-}
-
-.plus-badge {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-background: rgba(245,200,66,0.12);
-border: 1px solid rgba(245,200,66,0.3);
-border-radius: 2px;
-padding: 5px 14px;
-font-family: 'Barlow Condensed', sans-serif;
-font-size: 0.72rem;
-letter-spacing: 0.25em;
-text-transform: uppercase;
-color: var(--gold);
-font-weight: 700;
-margin-bottom: 22px;
-}
-
-.plus-title {
-font-family: 'Bebas Neue', sans-serif;
-font-size: clamp(2.8rem, 5.5vw, 5rem);
-line-height: 0.95;
-margin-bottom: 22px;
-}
-
-.plus-title .plus-word {
-color: var(--gold);
-}
-
-.plus-desc {
-line-height: 1.75;
-margin-bottom: 36px;
-}
-
-.plus-perks {
-list-style: none;
-margin-bottom: 40px;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
-
-.plus-perks li {
-display: flex;
-align-items: flex-start;
-gap: 12px;
-font-size: 0.92rem;
-color: var(--muted);
-}
-
-.plus-perks li::before {
-content: '✦';
-color: var(--gold);
-font-size: 0.7rem;
-margin-top: 4px;
-flex-shrink: 0;
-}
-
-.plus-perks li strong { color: var(--text); font-weight: 600; }
-
-.plus-actions {
-display: flex;
-flex-direction: column;
-gap: 14px;
-align-items: flex-start;
-}
-
-.already-signed {
-font-size: 0.83rem;
-color: var(--muted);
-display: flex;
-align-items: center;
-gap: 10px;
-padding-top: 4px;
-}
-
-.already-signed a {
-color: var(--gold);
-text-decoration: none;
-font-weight: 600;
-border-bottom: 1px solid rgba(245,200,66,0.3);
-padding-bottom: 1px;
-transition: border-color 0.2s;
-}
-
-.already-signed a:hover { border-color: var(--gold); }
-
-/* Plus visual card */
-.plus-visual {
-position: relative;
-}
-
-.plus-card {
-background: linear-gradient(135deg, #1a1608, #120e02);
-border: 1px solid rgba(245,200,66,0.2);
-border-radius: 12px;
-padding: 44px 40px;
-text-align: center;
-position: relative;
-overflow: hidden;
-box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(245,200,66,0.06);
-}
-
-.plus-card::before {
-content: '';
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.plus-card-logo {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 2.8rem;
-color: var(--gold);
-letter-spacing: 0.06em;
-margin-bottom: 6px;
-}
-
-.plus-card-logo span { color: rgba(255,255,255,0.7); }
-
-.plus-card-tagline {
-font-size: 0.75rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: rgba(245,200,66,0.5);
-font-family: 'Barlow Condensed', sans-serif;
-font-weight: 700;
-margin-bottom: 36px;
-}
-
-.channel-count {
-font-family: 'Bebas Neue', sans-serif;
-font-size: 5rem;
-color: var(--gold);
-line-height: 1;
-text-shadow: 0 0 60px rgba(245,200,66,0.4);
-}
-
-.channel-label {
-font-size: 0.8rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: var(--muted);
-font-family: 'Barlow Condensed', sans-serif;
-font-weight: 600;
-margin-top: 4px;
-margin-bottom: 32px;
-}
-
-.network-logos {
-display: flex;
-justify-content: center;
-gap: 8px;
-flex-wrap: wrap;
-}
-
-.network-chip {
-background: rgba(255,255,255,0.06);
-border: 1px solid rgba(255,255,255,0.08);
-border-radius: 2px;
-padding: 5px 12px;
-font-size: 0.68rem;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-font-family: 'Barlow Condensed', sans-serif;
-font-weight: 700;
-color: var(--muted);
 }
 
 /* ── MEMORIAL TOGGLE ── */
@@ -1024,7 +810,6 @@ GioTV is where <strong>regular streamers become broadcasters</strong>. Whether y
 </p>
 <div class="hero-actions">
 <a href="guide.html" class="btn btn-primary btn-arrow">Go to Guide</a>
-<a href="#plus" class="btn btn-outline">Explore GioTV+</a>
 </div>
 
 <!-- ============================================================
@@ -1237,16 +1022,8 @@ HTML, Python, retro AV, console modding &amp; more.
 <div class="feature-title">Smart TV Guide</div>
 <p class="feature-desc">Navigate a full interactive programming guide updated in real time. Find your shows, mark your favorites, never miss a moment.</p>
 </div>
-<div class="feature-card">
-<span class="feature-icon">⭐</span>
-<div class="feature-title">GioTV+ Premium</div>
-<p class="feature-desc">Want even more? Upgrade to GioTV+ and unlock a massive selection of channels from top cable providers around the world.</p>
-
 </div>
 </div>
-</div>
-</div>
-</section>
 
 <!-- FOOTER -->
 <footer>
@@ -1254,8 +1031,7 @@ HTML, Python, retro AV, console modding &amp; more.
 <p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
 <ul class="footer-links">
 <li><a href="guide.html">Guide</a></li>
-<li><a href="giotv+.html">GioTV+</a></li>
-<li><a href="guide+.html">Plus Guide</a></li>
+<li><a href="radio.html">Radio</a></li>
 </ul>
 </footer>
 
