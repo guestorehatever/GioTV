@@ -299,14 +299,19 @@ nav.site-header {
   overflow: visible;
 }
 
+.home-page {
+  background-color: #050206;
+  background-image: url('hero-bg.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 .hero-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(255, 45, 74, 0.16), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(77, 232, 255, 0.08), transparent 55%),
-    url('hero-studio.jpg') center / cover no-repeat;
-  filter: brightness(0.55);
+  background: url('hero-bg.jpg') center / cover no-repeat;
   z-index: 0;
 }
 
@@ -314,7 +319,7 @@ nav.site-header {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(6, 7, 11, 0.35) 0%, rgba(6, 7, 11, 0.55) 55%, var(--black) 100%);
+  background: linear-gradient(180deg, rgba(5, 2, 6, 0.18) 0%, rgba(5, 2, 6, 0.42) 62%, var(--black) 100%);
   z-index: 1;
   pointer-events: none;
 }
