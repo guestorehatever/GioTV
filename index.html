@@ -9,8 +9,7 @@
 <body>
   <header class="site-header">
     <a class="brand" href="index.html">
-      <img src="TV.png" alt="" class="brand-mark"/>
-      <span class="brand-word">Gio<span>TV</span></span>
+      <img src="TV.png" alt="GioTV" class="brand-mark"/>
     </a>
     <input type="checkbox" id="nav-toggle"/>
     <label class="nav-burger" for="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></label>
@@ -39,17 +38,41 @@
       </div>
     </div>
 
-    <div class="rail-wrap">
-      <div class="rail-label">Tonight’s wall</div>
-      <div class="rail">
-        <a class="rail-card" href="guide.html#tapetime"><figure><img src="tapetime.jpg" alt="TapeTime Radio"/></figure><figcaption>TapeTime Radio</figcaption></a>
-        <a class="rail-card" href="guide.html#fighttv"><figure><img src="fight_tv.jpeg" alt="Fight TV"/></figure><figcaption>Fight TV</figcaption></a>
-        <a class="rail-card" href="guide.html#galaxytv"><figure><img src="galaxy_tv.png" alt="GALAXY TV"/></figure><figcaption>GALAXY TV</figcaption></a>
-        <a class="rail-card" href="guide.html#cubotv"><figure><img src="cubo_tv.png" alt="Cubo TV"/></figure><figcaption>Cubo TV</figcaption></a>
-        <a class="rail-card" href="guide.html#gustotv"><figure><img src="gusto_tv.png" alt="Gusto TV"/></figure><figcaption>Gusto TV</figcaption></a>
-        <a class="rail-card" href="guide.html#throwbacktv"><figure><img src="throwback_tv.jpeg" alt="Throwback TV"/></figure><figcaption>Throwback TV</figcaption></a>
-        <a class="rail-card" href="guide.html#hardrocktv"><figure><img src="IMG_5344.jpeg" alt="Hard Rock TV"/></figure><figcaption>Hard Rock TV</figcaption></a>
-        <a class="rail-card" href="guide.html#kpoptvplay"><figure><img src="kpop.png" alt="TV Play K-Pop"/></figure><figcaption>TV Play K-Pop</figcaption></a>
+    <div class="memorial-toggle-wrap hero-memorial">
+      <button type="button" class="memorial-toggle-btn" id="memorialToggleBtn" aria-expanded="false" aria-controls="memorialPanel">
+        <span class="memorial-toggle-icon">✦</span>
+        <span class="memorial-toggle-text">
+          <span class="memorial-toggle-title">In loving memory</span>
+          <span class="memorial-toggle-sub">This site is dedicated to Marilyn Louise Shoemake — tap to read her story</span>
+        </span>
+        <span class="memorial-toggle-chevron">▾</span>
+      </button>
+      <div class="memorial-panel" id="memorialPanel">
+        <section class="memorial-section" id="memorial">
+          <div class="memorial-inner">
+            <div class="memorial-photo-wrap">
+              <div class="memorial-photo-frame">
+                <img src="memorial.jpg" alt="Marilyn Louise Shoemake" class="memorial-photo"/>
+              </div>
+              <p class="memorial-photo-caption">Marilyn Louise Shoemake</p>
+              <p class="memorial-dates">Age 87 · Passed July 19, 2026</p>
+            </div>
+            <div class="memorial-text">
+              <div class="memorial-eyebrow">In loving memory</div>
+              <h2 class="memorial-name">Marilyn Louise (Blanford) Shoemake</h2>
+              <p class="memorial-lifespan">Patton, Missouri · Age 87</p>
+              <div class="memorial-body">
+                <p>Marilyn passed away peacefully on July 19, 2026. On June 14, 1954, she married the love of her life, <strong>Richard M. Shoemake</strong>, and together they built a life rooted in faith, family, hard work, and unconditional love.</p>
+                <p>She is lovingly remembered by her children. Her greatest joy was loving others — whether caring for her family, tending her garden, feeding her animals, or welcoming loved ones around her table with homemade meals and her famous yeast rolls. Marilyn lived a life of quiet kindness and unwavering love, and her memory will forever be a blessing to all who knew and loved her.</p>
+              </div>
+              <div class="memorial-quote">
+                <p>“Death will be no more.”</p>
+                <cite>Revelation 21:4 · <a href="https://www.jw.org" target="_blank" rel="noopener">JW.org</a></cite>
+              </div>
+              <p class="memorial-dedication">This site is dedicated to her memory <span>— Gio</span></p>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </section>
@@ -87,22 +110,6 @@
   </div>
 
   <div class="section reveal">
-    <p class="section-label">The lineup</p>
-    <h2 class="section-title">A wall of channels,<br/>not a pile of apps.</h2>
-    <p class="section-sub">Sports, anime, cooking, weather, retro TV — tap anything and you’re in.</p>
-    <div class="lineup-grid">
-      <a class="lineup-card" href="guide.html#tapetime"><div class="thumb"><img src="tapetime.jpg" alt="TapeTime Radio"/></div><div class="meta"><h3>TapeTime Radio</h3><p>Variety</p></div></a>
-      <a class="lineup-card" href="guide.html#fighttv"><div class="thumb"><img src="fight_tv.jpeg" alt="Fight TV"/></div><div class="meta"><h3>Fight TV</h3><p>Boxing</p></div></a>
-      <a class="lineup-card" href="guide.html#galaxytv"><div class="thumb"><img src="galaxy_tv.png" alt="GALAXY TV"/></div><div class="meta"><h3>GALAXY TV</h3><p>Entertainment</p></div></a>
-      <a class="lineup-card" href="guide.html#cubotv"><div class="thumb"><img src="cubo_tv.png" alt="Cubo TV"/></div><div class="meta"><h3>Cubo TV</h3><p>Anime</p></div></a>
-      <a class="lineup-card" href="guide.html#gustotv"><div class="thumb"><img src="gusto_tv.png" alt="Gusto TV"/></div><div class="meta"><h3>Gusto TV</h3><p>Cooking</p></div></a>
-      <a class="lineup-card" href="guide.html#throwbacktv"><div class="thumb"><img src="throwback_tv.jpeg" alt="Throwback TV"/></div><div class="meta"><h3>Throwback TV</h3><p>Comedy</p></div></a>
-      <a class="lineup-card" href="guide.html#younghollywood"><div class="thumb"><img src="young_hollywood.jpg" alt="Young Hollywood"/></div><div class="meta"><h3>Young Hollywood</h3><p>Lifestyle</p></div></a>
-      <a class="lineup-card" href="guide.html#easdetails"><div class="thumb"><img src="Weather.jpeg" alt="GioWeather"/></div><div class="meta"><h3>GioWeather</h3><p>Alerts</p></div></a>
-    </div>
-  </div>
-
-  <div class="section reveal" style="padding-top:0;">
     <p class="section-label">Why GioTV</p>
     <h2 class="section-title">Built like a network.<br/>Feels like home.</h2>
     <p class="section-sub">Whether you’re on-screen or on the couch, this is cable without the contract.</p>
@@ -137,44 +144,6 @@
         <div class="feature-title">Smart guide</div>
         <p class="feature-desc">Live dots, share links, manager notes, and an emergency takeover when the airwaves need it.</p>
       </div>
-    </div>
-  </div>
-
-  <div class="memorial-toggle-wrap reveal">
-    <button type="button" class="memorial-toggle-btn" id="memorialToggleBtn" aria-expanded="false" aria-controls="memorialPanel">
-      <span class="memorial-toggle-icon">✦</span>
-      <span class="memorial-toggle-text">
-        <span class="memorial-toggle-title">In loving memory</span>
-        <span class="memorial-toggle-sub">This site is dedicated to Marilyn Louise Shoemake — tap to read her story</span>
-      </span>
-      <span class="memorial-toggle-chevron">▾</span>
-    </button>
-    <div class="memorial-panel" id="memorialPanel">
-      <section class="memorial-section" id="memorial">
-        <div class="memorial-inner">
-          <div class="memorial-photo-wrap">
-            <div class="memorial-photo-frame">
-              <img src="memorial.jpg" alt="Marilyn Louise Shoemake" class="memorial-photo"/>
-            </div>
-            <p class="memorial-photo-caption">Marilyn Louise Shoemake</p>
-            <p class="memorial-dates">Age 87 · Passed July 19, 2026</p>
-          </div>
-          <div class="memorial-text">
-            <div class="memorial-eyebrow">In loving memory</div>
-            <h2 class="memorial-name">Marilyn Louise (Blanford) Shoemake</h2>
-            <p class="memorial-lifespan">Patton, Missouri · Age 87</p>
-            <div class="memorial-body">
-              <p>Marilyn passed away peacefully on July 19, 2026. On June 14, 1954, she married the love of her life, <strong>Richard M. Shoemake</strong>, and together they built a life rooted in faith, family, hard work, and unconditional love.</p>
-              <p>She is lovingly remembered by her children. Her greatest joy was loving others — whether caring for her family, tending her garden, feeding her animals, or welcoming loved ones around her table with homemade meals and her famous yeast rolls. Marilyn lived a life of quiet kindness and unwavering love, and her memory will forever be a blessing to all who knew and loved her.</p>
-            </div>
-            <div class="memorial-quote">
-              <p>“Death will be no more.”</p>
-              <cite>Revelation 21:4 · <a href="https://www.jw.org" target="_blank" rel="noopener">JW.org</a></cite>
-            </div>
-            <p class="memorial-dedication">This site is dedicated to her memory <span>— Gio</span></p>
-          </div>
-        </div>
-      </section>
     </div>
   </div>
 

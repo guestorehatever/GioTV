@@ -82,21 +82,12 @@ nav.site-header {
 
 .brand img,
 .brand-mark {
-  height: 36px;
+  height: 44px;
   width: auto;
   display: block;
   filter: drop-shadow(0 0 12px rgba(255, 45, 74, 0.25));
   pointer-events: none;
 }
-
-.brand-word {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: -0.03em;
-}
-
-.brand-word span { color: var(--red); }
 
 .nav-links {
   display: flex;
