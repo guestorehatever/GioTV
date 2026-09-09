@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GioTV – Episodes</title>
+<link rel="stylesheet" href="style.css?v=shw2"/>
+<script>
+document.addEventListener('contextmenu', event => {
+if (event.target.tagName === 'IMG') {
+event.preventDefault();
+}
+});
+</script>
+<style>
+/* ── EPISODES PAGE (page-scoped styles) ── */
+.episodes-page .page-tag { color: var(--purple); }
+
+.show-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.show-badge {
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(150deg, rgba(192, 132, 252, 0.22), rgba(255, 45, 74, 0.16));
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--purple);
+}
+
+.show-meta {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.episodes-empty {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 26px;
+  text-align: center;
+}
+
+/* episode number line: small mono caps, letter-spaced */
+.ep-number {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── CUSTOM DIVIDER between the episode number and the title ──
+   Two gradient hairlines flank a small glowing diamond; the left
+   line burns in from red, the right fades out to purple. On card
+   hover the diamond flips to purple and the lines brighten. */
+.ep-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 6px;
+}
+.ep-divider::before,
+.ep-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  transition: filter 0.25s;
+}
+.ep-divider::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 45, 74, 0.85) 100%);
+}
+.ep-divider::after {
+  background: linear-gradient(90deg, rgba(192, 132, 252, 0.85) 0%, transparent 100%);
+}
+.ep-divider i {
+  width: 7px; height: 7px;
+  transform: rotate(45deg);
+  background: var(--off-black);
+  border: 1.5px solid var(--red);
+  border-radius: 1.5px;
+  box-shadow: 0 0 8px rgba(255, 45, 74, 0.6);
+  flex-shrink: 0;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.channel-card:hover .ep-divider i {
+  border-color: var(--purple);
+  box-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
+}
+.channel-card:hover .ep-divider::before,
+.channel-card:hover .ep-divider::after { filter: brightness(1.35); }
+
+/* Fill the 16:9 frame. .thumbnail-wrapper has no sizing rules anywhere, so
+   the img's height:100% collapsed to auto and the (letterboxed) YouTube hq
+   thumb sat top-aligned with its black bar showing as a gap. */
+.episodes-page .thumbnail-wrapper {
+  position: absolute;
+  inset: 0;
+}
+.episodes-page .channel-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── EPISODE MODAL (YouTube player) ── */
+.ep-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(4, 5, 9, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.ep-modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.ep-modal-box {
+  width: min(960px, 100%);
+  background: var(--off-black);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.25s ease;
+}
+.ep-modal-overlay.open .ep-modal-box { transform: none; }
+
+.ep-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ep-modal-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--purple);
+  flex-shrink: 0;
+}
+
+.ep-modal-title {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ep-modal-yt {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+.ep-modal-yt:hover { color: var(--red); border-color: rgba(255, 45, 74, 0.5); }
+
+.ep-modal-close {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.ep-modal-close:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); }
+
+.ep-modal-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.ep-modal-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .ep-modal-eyebrow, .ep-modal-yt { display: none; }
+}
+</style>
+</head>
+<body class="episodes-page">
+
+<header class="site-header">
+<a class="brand" href="index.html">
+<img src="TV.png" alt="GioTV" class="brand-mark"/>
+</a>
+<input type="checkbox" id="nav-toggle"/>
+<label class="nav-burger" for="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></label>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="guide.html">TV Guide</a></li>
+<li><a href="radio.html">Radio</a></li>
+<li><a href="shows.html" class="active">Shows</a></li>
+</ul>
+<span class="on-air"><i></i> On air</span>
+</header>
+
+<div class="page-header">
+<div class="page-header-inner">
+<div class="show-strip">
+<div class="show-badge" id="showBadge">◈</div>
+<div class="page-tag" id="showTag">On Demand</div>
+<span class="show-meta" id="showMeta"></span>
+</div>
+<h1 class="page-title" id="showTitle">Loading&hellip;</h1>
+<div class="header-actions">
+<a href="shows.html" class="btn btn-outline">← All Shows</a>
+<a href="guide.html" class="btn btn-blue">Open TV Guide</a>
+</div>
+</div>
+</div>
+
+<div class="main-content">
+
+<p class="section-label" id="seasonLabel">All Episodes</p>
+<h2 class="section-heading">Pick an Episode</h2>
+
+<div class="channels-grid" id="episodeGrid">
+<noscript><p class="episodes-empty">JavaScript is required to browse episodes.</p></noscript>
+</div>
+
+<p class="episodes-empty" id="notFound" style="display:none;">
+That show isn't on the shelf yet.
+<a href="shows.html" style="color: var(--red);">← Back to all shows</a>
+</p>
+
+</div>
+
+<!-- EPISODE MODAL -->
+<div class="ep-modal-overlay" id="epModalOverlay" role="dialog" aria-modal="true" aria-label="Episode player">
+<div class="ep-modal-box">
+<div class="ep-modal-head">
+<span class="ep-modal-eyebrow">✦ Now Playing</span>
+<div class="ep-modal-title" id="epModalTitle">Episode</div>
+<a class="ep-modal-yt" id="epModalLink" href="#" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+<button class="ep-modal-close" id="epModalClose" aria-label="Close player">✕</button>
+</div>
+<div class="ep-modal-frame">
+<iframe id="epModalFrame" src="about:blank" title="Episode player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+</div>
+</div>
+</div>
+
+<footer>
+<div class="footer-logo">Gio<span>TV</span></div>
+<p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
+<ul class="footer-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="guide.html">Guide</a></li>
+<li><a href="radio.html">Radio</a></li>
+<li><a href="shows.html">Shows</a></li>
+</ul>
+</footer>
+
+<script src="shows-data.js?v=1"></script>
+<script>
+// ── EPISODE GRID ──
+// Reads ?show=<slug>, pulls that show out of GIOTV_SHOWS (shows-data.js),
+// and renders one card per episode. Card click opens the modal player below;
+// the raw href still points at YouTube for middle-click / no-JS.
+(function () {
+  const grid = document.getElementById('episodeGrid');
+  const shows = window.GIOTV_SHOWS || {};
+  const slug = new URLSearchParams(location.search).get('show') || Object.keys(shows)[0];
+  const show = shows[slug];
+
+  if (!show) {
+    document.getElementById('showTitle').textContent = 'Show not found';
+    document.getElementById('notFound').style.display = '';
+    grid.style.display = 'none';
+    return;
+  }
+
+  // Fill the header
+  document.title = 'GioTV – ' + show.title;
+  document.getElementById('showBadge').textContent = show.badge || 'TV';
+  document.getElementById('showTag').textContent = 'On Demand' + (show.tagline ? ' · ' + show.tagline : '');
+  const n = (show.episodes || []).length;
+  document.getElementById('showMeta').textContent = n + (n === 1 ? ' Episode' : ' Episodes');
+  document.getElementById('showTitle').innerHTML = '';
+  document.getElementById('showTitle').appendChild(document.createTextNode(show.title));
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  // "Season 1 · Episode 1A" built from ep.season / ep.code (either may be omitted)
+  function epLabel(ep) {
+    const parts = [];
+    if (ep.season) parts.push('Season ' + ep.season);
+    if (ep.code) parts.push('Episode ' + ep.code);
+    return parts.join(' \u00b7 ');
+  }
+
+  (show.episodes || []).forEach(ep => {
+    const card = el('a', 'channel-card episode-card');
+    card.href = ep.watch;
+
+    const thumb = el('div', 'channel-thumb');
+    const wrap = el('div', 'thumbnail-wrapper');
+    const img = el('img');
+    img.alt = (epLabel(ep) ? epLabel(ep) + ': ' : '') + ep.title + ' thumbnail';
+    img.loading = 'lazy';
+    // Thumbnail: prefer an explicit ep.thumb (local file or inline data URI)
+    // so it renders in any context (even network-sandboxed previews);
+    // otherwise fetch YouTube's hq thumbnail, then mq as a last resort.
+    if (ep.thumb) {
+      img.src = ep.thumb;
+    } else {
+      img.src = 'https://i.ytimg.com/vi/' + ep.videoId + '/hqdefault.jpg';
+      img.addEventListener('error', () => {
+        img.src = 'https://i.ytimg.com/vi/' + ep.videoId + '/mqdefault.jpg';
+      }, { once: true });
+    }
+    wrap.appendChild(img);
+    thumb.appendChild(wrap);
+
+    const overlay = el('div', 'thumb-overlay');
+    const play = el('div', 'thumb-play', '▶');
+    overlay.appendChild(play);
+    thumb.appendChild(overlay);
+    card.appendChild(thumb);
+
+    const info = el('div', 'channel-info');
+    // "Season 1 · Episode 1A" → custom divider → episode name
+    if (epLabel(ep)) {
+      info.appendChild(el('div', 'ep-number', epLabel(ep)));
+      const divider = el('div', 'ep-divider');
+      divider.appendChild(el('i'));
+      info.appendChild(divider);
+    }
+    info.appendChild(el('div', 'channel-name', ep.title));
+    card.appendChild(info);
+
+    card.addEventListener('click', e => {
+      e.preventDefault();
+      openEp(card, ep);
+    });
+
+    grid.appendChild(card);
+  });
+
+  // ── MODAL PLAYER ──
+  const overlay = document.getElementById('epModalOverlay');
+  const frame = document.getElementById('epModalFrame');
+  const titleEl = document.getElementById('epModalTitle');
+  const linkEl = document.getElementById('epModalLink');
+
+  function openEp(card, ep) {
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + ep.videoId + '?autoplay=1&rel=0';
+    titleEl.textContent = (epLabel(ep) ? epLabel(ep) + ' \u2014 ' : '') + ep.title;
+    linkEl.href = ep.watch;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeEp() {
+    overlay.classList.remove('open');
+    frame.src = 'about:blank'; // stop playback
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('epModalClose').addEventListener('click', closeEp);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeEp(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeEp();
+  });
+})();
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

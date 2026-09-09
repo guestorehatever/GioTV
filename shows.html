@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GioTV – Shows</title>
+<link rel="stylesheet" href="style.css?v=shw2"/>
+<script>
+document.addEventListener('contextmenu', event => {
+if (event.target.tagName === 'IMG') {
+event.preventDefault();
+}
+});
+</script>
+<style>
+/* ── SHOWS PAGE (page-scoped styles) ── */
+.shows-page .page-tag { color: var(--purple); }
+
+/* Show boxes: wider tiles than the channel grid so a show reads as a show */
+#showGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.show-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+  position: relative;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+.show-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--purple), transparent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.show-card:hover {
+  border-color: rgba(192, 132, 252, 0.45);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.show-card:hover::after { opacity: 1; }
+
+.show-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--off-black);
+  overflow: hidden;
+}
+
+.show-poster img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.4s ease;
+}
+.show-card:hover .show-poster img { transform: scale(1.06); }
+
+.show-count-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  z-index: 10;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(6, 7, 11, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  backdrop-filter: blur(4px);
+}
+
+.show-open {
+  position: absolute;
+  right: 12px; bottom: 12px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: var(--red);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: 0 0 24px rgba(255, 45, 74, 0.45);
+  transform: translateY(6px);
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.show-card:hover .show-open { opacity: 1; transform: none; }
+
+.show-info { padding: 14px 16px 16px; }
+
+.show-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.show-name em { font-style: normal; color: var(--red); }
+
+.show-tagline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.shows-empty {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 26px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  #showGrid { grid-template-columns: 1fr; }
+  .show-open { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body class="shows-page">
+
+<header class="site-header">
+<a class="brand" href="index.html">
+<img src="TV.png" alt="GioTV" class="brand-mark"/>
+</a>
+<input type="checkbox" id="nav-toggle"/>
+<label class="nav-burger" for="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></label>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="guide.html">TV Guide</a></li>
+<li><a href="radio.html">Radio</a></li>
+<li><a href="shows.html" class="active">Shows</a></li>
+</ul>
+<span class="on-air"><i></i> On air</span>
+</header>
+
+<div class="page-header">
+<div class="page-header-inner">
+<div class="page-tag">On Demand</div>
+<h1 class="page-title">Shows &amp; <em>Episodes</em></h1>
+<p class="page-sub">The original GioTV shelf. Pick a show box and you'll step inside its episodes.</p>
+<div class="header-actions">
+<a href="index.html" class="btn btn-outline">← Back to Home</a>
+<a href="guide.html" class="btn btn-blue">Open TV Guide</a>
+</div>
+</div>
+</div>
+
+<div class="ticker-wrap" aria-hidden="true">
+<div class="ticker">
+<div class="ticker-item">On Demand<span class="ticker-dot"></span></div>
+<div class="ticker-item">The Spongy Technician<span class="ticker-dot"></span></div>
+<div class="ticker-item">Retro Tech<span class="ticker-dot"></span></div>
+<div class="ticker-item">Repair<span class="ticker-dot"></span></div>
+<div class="ticker-item">Custom ROMs<span class="ticker-dot"></span></div>
+<div class="ticker-item">How-To<span class="ticker-dot"></span></div>
+<div class="ticker-item">On Demand<span class="ticker-dot"></span></div>
+<div class="ticker-item">The Spongy Technician<span class="ticker-dot"></span></div>
+<div class="ticker-item">Retro Tech<span class="ticker-dot"></span></div>
+<div class="ticker-item">Repair<span class="ticker-dot"></span></div>
+<div class="ticker-item">Custom ROMs<span class="ticker-dot"></span></div>
+<div class="ticker-item">How-To<span class="ticker-dot"></span></div>
+</div>
+</div>
+
+<div class="main-content">
+
+<p class="section-label">All Shows</p>
+<h2 class="section-heading">Browse the Shelf</h2>
+
+<div id="showGrid">
+<noscript><p class="shows-empty">JavaScript is required to browse the shelf.</p></noscript>
+</div>
+
+<p class="shows-empty">More shows are in the works — this shelf gets stocked soon. 👷🧽</p>
+
+</div>
+
+<footer>
+<div class="footer-logo">Gio<span>TV</span></div>
+<p class="footer-copy">© 2026 GioTV. All rights reserved.</p>
+<ul class="footer-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="guide.html">Guide</a></li>
+<li><a href="radio.html">Radio</a></li>
+<li><a href="shows.html">Shows</a></li>
+</ul>
+</footer>
+
+<script src="shows-data.js?v=1"></script>
+<script>
+// ── SHELF: render one box per show from GIOTV_SHOWS ──
+// Each box links to episodes.html?show=<slug>; the episode grid lives there.
+(function () {
+  const grid = document.getElementById('showGrid');
+  const shows = window.GIOTV_SHOWS || {};
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function ytThumb(videoId, quality) {
+    return 'https://i.ytimg.com/vi/' + videoId + '/' + (quality || 'hqdefault') + '.jpg';
+  }
+
+  Object.keys(shows).forEach(slug => {
+    const s = shows[slug];
+    const first = s.episodes && s.episodes[0];
+
+    const card = el('a', 'show-card');
+    card.href = 'episodes.html?show=' + encodeURIComponent(slug);
+
+    const poster = el('div', 'show-poster');
+    const img = el('img');
+    img.alt = s.title + ' — show art';
+    img.loading = 'lazy';
+    // Source chain: poster (string or array, tried in order) → first
+    // episode's thumb/YouTube thumbnail. e.g. poster: ["file.jpg", dataURI]
+    // keeps the site fast AND renders in network-less contexts.
+    const sources = [];
+    if (s.poster) {
+      (Array.isArray(s.poster) ? s.poster : [s.poster]).forEach(src => sources.push(src));
+    }
+    if (!sources.length && first && first.thumb) sources.push(first.thumb);
+    if (!sources.length && first) {
+      sources.push(ytThumb(first.videoId), ytThumb(first.videoId, 'mqdefault'));
+    }
+    if (sources.length) {
+      let srcIdx = 0;
+      img.src = sources[0];
+      if (sources.length > 1) {
+        img.addEventListener('error', () => {
+          srcIdx++;
+          if (srcIdx < sources.length) img.src = sources[srcIdx];
+        });
+      }
+    }
+    poster.appendChild(img);
+    poster.appendChild(el('span', 'show-count-badge',
+      (s.episodes ? s.episodes.length : 0) + (s.episodes && s.episodes.length === 1 ? ' Episode' : ' Episodes')));
+    const open = el('span', 'show-open');
+    open.appendChild(el('span', null, 'View Episodes'));
+    open.appendChild(el('span', null, '→'));
+    poster.appendChild(open);
+    card.appendChild(poster);
+
+    const info = el('div', 'show-info');
+    info.appendChild(el('div', 'show-name', s.title));
+    if (s.tagline) info.appendChild(el('span', 'show-tagline', s.tagline));
+    card.appendChild(info);
+
+    grid.appendChild(card);
+  });
+})();
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
