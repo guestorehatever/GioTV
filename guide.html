@@ -164,7 +164,7 @@ event.preventDefault();
 <p>An EAS alert is currently active on this network.</p>
 </div>
 </div>
-<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
+<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
 </div>
 
 <section class="channels-section reveal">
@@ -191,21 +191,19 @@ event.preventDefault();
 </div>
 </div>
 
-<!-- rAIbot News (formerly GioWeather / EAS Details) -->
-<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8" data-channel="easdetails">
+<!-- EAS Details Channel (replaces rAIbot News) -->
+<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="easdetails">
 <div class="channel-thumb">
-<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8">
-<img src="raibot.png" alt="rAIbot News" />
+<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8">
+<img src="eas.png" alt="EAS Details Channel" />
 <div class="status-dot offline"></div>
-<button class="note-badge" data-note-target="raibot-note" title="Note from Channel Manager" aria-label="Note from Channel Manager">❗</button>
 </div>
 <div class="thumb-overlay">
 <div class="thumb-play"><span class="play-icon">▶</span></div>
 </div>
 </div>
 <div class="channel-info">
-<div class="channel-name">rAIbot News</div>
-<div class="channel-tag">Comedy</div>
+<div class="channel-name">EAS Details Channel</div>
 <div class="last-seen"></div>
 <div class="channel-actions">
 <button class="share-link" data-channel="easdetails">🔗 Share</button>
@@ -542,11 +540,11 @@ return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
 }
 
 const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
-const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-easde/easde/playlist.m3u8'; // visible rAIbot News channel, no interrupt
+const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // visible EAS Details Channel, no interrupt
 const EAS_OFFLINE_IMG = 'eas_offline.png';
 
 const CHANNEL_MAP = {
-'easdetails': { name: 'rAIbot News', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+'easdetails': { name: 'EAS Details Channel', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
 'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
 'spongebobmarathon': { name: 'SpongeBob Marathon', src: 'https://183.bozztv.com/giatv/giatv-spongebob/spongebob/playlist.m3u8' },
 'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
@@ -663,7 +661,7 @@ easInterruptShown = false;
 if (easActive) revertFromEAS();
 }
 
-// Glowing outline on the visible rAIbot News tile while the invisible interrupt feed is live
+// Glowing outline on the visible EAS Details Channel tile while the invisible interrupt feed is live
 const easDetailsCard = document.querySelector('.eas-card');
 if (easDetailsCard) {
 easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
@@ -707,12 +705,8 @@ setInterval(checkStatus, 10000);
 checkStatus();
 
 // ── CHANNEL MANAGER NOTES ──
-const CHANNEL_NOTES = {
-'raibot-note': {
-label: '✦ Note from Channel Manager',
-text: "This channel does not cover real news and everything (Scripts, Design, Code) is all made by artificial intelligence."
-}
-};
+// Add entries here and a matching <button class="note-badge" data-note-target="key"> on a channel tile.
+const CHANNEL_NOTES = {};
 
 const noteModalOverlay = document.getElementById('noteModalOverlay');
 const noteModalLabel = document.getElementById('noteModalLabel');
