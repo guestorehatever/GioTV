@@ -164,7 +164,7 @@ event.preventDefault();
 <p>An EAS alert is currently active on this network.</p>
 </div>
 </div>
-<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="easdetails">View EAS Details</a>
+<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="kgiotv6">View EAS Details</a>
 </div>
 
 <section class="channels-section reveal">
@@ -191,11 +191,11 @@ event.preventDefault();
 </div>
 </div>
 
-<!-- EAS Details Channel (replaces rAIbot News) -->
-<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="easdetails">
+<!-- KGIO-TV Channel 6 (replaces rAIbot News) -->
+<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="kgiotv6">
 <div class="channel-thumb">
 <div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8">
-<img src="eas.png" alt="EAS Details Channel" />
+<img src="eas.png" alt="KGIO-TV Channel 6" />
 <div class="status-dot offline"></div>
 </div>
 <div class="thumb-overlay">
@@ -203,10 +203,10 @@ event.preventDefault();
 </div>
 </div>
 <div class="channel-info">
-<div class="channel-name">EAS Details Channel</div>
+<div class="channel-name">KGIO-TV Channel 6</div>
 <div class="last-seen"></div>
 <div class="channel-actions">
-<button class="share-link" data-channel="easdetails">🔗 Share</button>
+<button class="share-link" data-channel="kgiotv6">🔗 Share</button>
 </div>
 </div>
 </div>
@@ -540,11 +540,11 @@ return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
 }
 
 const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
-const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // visible EAS Details Channel, no interrupt
+const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // visible KGIO-TV Channel 6, no interrupt
 const EAS_OFFLINE_IMG = 'eas_offline.png';
 
 const CHANNEL_MAP = {
-'easdetails': { name: 'EAS Details Channel', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+'kgiotv6': { name: 'KGIO-TV Channel 6', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
 'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
 'spongebobmarathon': { name: 'SpongeBob Marathon', src: 'https://183.bozztv.com/giatv/giatv-spongebob/spongebob/playlist.m3u8' },
 'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
@@ -661,7 +661,7 @@ easInterruptShown = false;
 if (easActive) revertFromEAS();
 }
 
-// Glowing outline on the visible EAS Details Channel tile while the invisible interrupt feed is live
+// Glowing outline on the visible KGIO-TV Channel 6 tile while the invisible interrupt feed is live
 const easDetailsCard = document.querySelector('.eas-card');
 if (easDetailsCard) {
 easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
@@ -985,7 +985,7 @@ attemptMiniPlayerPlayback(src);
 function selectChannel(src, name, offlineImg, slug) {
 if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
 preEASState = { src: src, name: name, offlineImg: offlineImg };
-history.replaceState(null, '', '#easdetails');
+history.replaceState(null, '', '#kgiotv6');
 openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
 return;
 }
