@@ -173,11 +173,11 @@ event.preventDefault();
 
 <div class="channels-grid">
 
-<!-- TapeTime Radio (pinned to top) -->
-<div class="channel-card watch-link" data-href="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8" data-channel="tapetime" data-pinned="true">
+<!-- GioWeather (Rumble, plays in the browser's video player) -->
+<div class="channel-card watch-link" data-href="rumble:v7fy0gg" data-channel="gioweather">
 <div class="channel-thumb">
-<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8">
-<img src="tapetime.jpg" alt="TapeTime Radio" />
+<div class="thumbnail-wrapper" data-stream="https://rumble.com/embedJS/u4qz2kc/?request=video&ver=2&v=v7fy0gg">
+<div style="width:100%;height:100%;min-height:96px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;box-sizing:border-box;background:#111;color:#fff;font-weight:700;font-size:14px;">Rebrand in progress</div>
 <div class="status-dot offline"></div>
 </div>
 <div class="thumb-overlay">
@@ -185,29 +185,10 @@ event.preventDefault();
 </div>
 </div>
 <div class="channel-info">
-<div class="channel-name">TapeTime Radio <span class="pin-icon" title="Pinned channel">📌</span></div>
+<div class="channel-name">GioWeather</div>
+<div class="channel-tag">Weather</div>
 <div class="last-seen"></div>
-<button class="share-link" data-channel="tapetime">🔗 Share</button>
-</div>
-</div>
-
-<!-- KGIO-TV Channel 6 (replaces rAIbot News) -->
-<div class="channel-card watch-link eas-card" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="kgiotv6">
-<div class="channel-thumb">
-<div class="thumbnail-wrapper" data-stream="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8">
-<img src="eas.png" alt="KGIO-TV Channel 6" />
-<div class="status-dot offline"></div>
-</div>
-<div class="thumb-overlay">
-<div class="thumb-play"><span class="play-icon">▶</span></div>
-</div>
-</div>
-<div class="channel-info">
-<div class="channel-name">KGIO-TV Channel 6</div>
-<div class="last-seen"></div>
-<div class="channel-actions">
-<button class="share-link" data-channel="kgiotv6">🔗 Share</button>
-</div>
+<button class="share-link" data-channel="gioweather">🔗 Share</button>
 </div>
 </div>
 
@@ -540,11 +521,11 @@ return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
 }
 
 const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
-const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // visible KGIO-TV Channel 6, no interrupt
+const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // KGIO-TV Channel 6 feed (tile removed, kept for EAS banner button)
 const EAS_OFFLINE_IMG = 'eas_offline.png';
 
 const CHANNEL_MAP = {
-'kgiotv6': { name: 'KGIO-TV Channel 6', src: EAS_DETAILS_VISIBLE_SRC, offlineImg: EAS_OFFLINE_IMG },
+'gioweather': { name: 'GioWeather', src: 'rumble:v7fy0gg' },
 'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
 'spongebobmarathon': { name: 'SpongeBob Marathon', src: 'https://183.bozztv.com/giatv/giatv-spongebob/spongebob/playlist.m3u8' },
 'galaxytv': { name: 'GALAXY TV', src: 'https://183.bozztv.com/giatv/giatv-GalaxyTV/GalaxyTV/playlist.m3u8' },
@@ -554,7 +535,6 @@ const CHANNEL_MAP = {
 'hardrocktv': { name: 'Hard Rock TV', src: 'https://rpn.bozztv.com/gusa/gusa-hotrock/tracks-v1a1/index.m3u8' },
 'younghollywood': { name: 'Young Hollywood', src: 'https://younghollywood-rakuten-samsung.amagi.tv/playlist.m3u8' },
 'gigabytetv': { name: 'GigabyteTV', src: 'https://183.bozztv.com/giatv/giatv-giotvaccess/giotvaccess/playlist.m3u8' },
-'tapetime': { name: 'TapeTime Radio', src: 'https://183.bozztv.com/giatv/giatv-gionetwork/gionetwork/playlist.m3u8' },
 'kpoptvplay': { name: 'TV Play K-Pop', src: 'https://183.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/chunks.m3u8' },
 'highlandweather': { name: 'Highland Weather (Tennessee, South and North Carolina)', src: 'https://watch.mistweather.com/hls/highland-networks-ch1/2_1/index.m3u8' }
 };
@@ -661,7 +641,7 @@ easInterruptShown = false;
 if (easActive) revertFromEAS();
 }
 
-// Glowing outline on the visible KGIO-TV Channel 6 tile while the invisible interrupt feed is live
+// Glowing outline on the EAS tile (if one exists) while the invisible interrupt feed is live
 const easDetailsCard = document.querySelector('.eas-card');
 if (easDetailsCard) {
 easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
@@ -788,7 +768,7 @@ e.stopPropagation();
 });
 });
 
-// Open the channel from the URL hash on load, e.g. giotv-5o0.pages.dev/#tapetime
+// Open the channel from the URL hash on load, e.g. giotv-5o0.pages.dev/#gioweather
 if (window.location.hash) {
 const slug = window.location.hash.slice(1).toLowerCase();
 if (CHANNEL_MAP[slug]) {
@@ -902,15 +882,18 @@ attemptMiniPlayerPlayback(src);
 }, 1000);
 }
 
-function attemptMiniPlayerPlayback(src) {
+// Plays a resolved media URL in the browser's own video player.
+// `src` is the channel's identifier (used for state checks), `mediaSrc` is the real file/stream URL.
+function playMedia(src, mediaSrc) {
 if (hlsInstance) {
 hlsInstance.destroy();
 hlsInstance = null;
 }
+const isHls = /m3u8/i.test(mediaSrc);
 
-if (miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
-// Native HLS support (Safari)
-miniPlayerVideo.src = src;
+if (!isHls || miniPlayerVideo.canPlayType('application/vnd.apple.mpegurl')) {
+// Plain MP4/WebM, or native HLS (Safari): the browser's built-in player
+miniPlayerVideo.src = mediaSrc;
 miniPlayerVideo.addEventListener('loadedmetadata', function onLoaded() {
 hideMiniPlayerStatus();
 stopMiniPlayerRetry();
@@ -924,7 +907,7 @@ miniPlayerVideo.removeEventListener('error', onError);
 miniPlayerVideo.play().catch(() => {});
 } else if (window.Hls && window.Hls.isSupported()) {
 hlsInstance = new Hls();
-hlsInstance.loadSource(src);
+hlsInstance.loadSource(mediaSrc);
 hlsInstance.attachMedia(miniPlayerVideo);
 hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
 hideMiniPlayerStatus();
@@ -939,6 +922,42 @@ if (currentPlayerSrc === src) startMiniPlayerRetry(src);
 });
 } else {
 showMiniPlayerLoading();
+}
+}
+
+// Finds a playable URL inside Rumble's JSON (walks nested quality groups, highest first)
+function pickRumbleUrl(obj) {
+if (!obj || typeof obj !== 'object') return null;
+if (typeof obj.url === 'string') return obj.url;
+const keys = Object.keys(obj).sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0));
+for (const k of keys) {
+const found = pickRumbleUrl(obj[k]);
+if (found) return found;
+}
+return null;
+}
+
+async function resolveRumble(id) {
+const res = await fetch(`https://rumble.com/embedJS/u4qz2kc/?request=video&ver=2&v=${id}`, { cache: 'no-cache' });
+const data = await res.json();
+for (const group of [data.u, data.ua]) {
+if (!group) continue;
+const url = pickRumbleUrl(group.hls) || pickRumbleUrl(group.mp4) || pickRumbleUrl(group.webm);
+if (url) return url;
+}
+throw new Error('No playable Rumble source');
+}
+
+function attemptMiniPlayerPlayback(src) {
+if (src.startsWith('rumble:')) {
+resolveRumble(src.slice(7))
+.then(url => { if (currentPlayerSrc === src) playMedia(src, url); })
+.catch(() => {
+showMiniPlayerOffline(src);
+if (currentPlayerSrc === src) startMiniPlayerRetry(src);
+});
+} else {
+playMedia(src, src);
 }
 }
 
