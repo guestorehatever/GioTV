@@ -156,17 +156,6 @@ event.preventDefault();
 </div>
 </div>
 
-<div id="easAlertBanner" class="eas-alert-banner">
-<div class="eas-alert-content">
-<span class="eas-alert-icon">🚨</span>
-<div class="eas-alert-text">
-<strong>Emergency Alert in Effect</strong>
-<p>An EAS alert is currently active on this network.</p>
-</div>
-</div>
-<a href="#" class="btn btn-red eas-alert-btn watch-link" data-href="https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8" data-channel="kgiotv6">View EAS Details</a>
-</div>
-
 <section class="channels-section reveal">
 <p class="section-label">All Channels</p>
 <h2 class="section-heading">Browse the Lineup</h2>
@@ -190,11 +179,6 @@ event.preventDefault();
 <div class="last-seen"></div>
 <button class="share-link" data-channel="gioweather">🔗 Share</button>
 </div>
-</div>
-
-<!-- Invisible EAS interrupt monitor (not shown in channel list, polled for takeover) -->
-<div style="display:none;" aria-hidden="true" data-stream="https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8">
-<div class="status-dot offline"></div>
 </div>
 
 <!-- Fight TV -->
@@ -449,7 +433,6 @@ event.preventDefault();
 <div class="mini-player-header">
 <div class="mini-player-title" id="miniPlayerTitle">Now Playing</div>
 <div class="mini-player-header-actions">
-<button class="mini-player-skip" id="miniPlayerSkip" aria-label="Skip EAS alert">Skip alert</button>
 <button class="mini-player-close" id="miniPlayerClose" aria-label="Close player">✕</button>
 </div>
 </div>
@@ -520,10 +503,6 @@ hh = hh ? hh : 12;
 return `last seen ${mm}/${dd}/${yy} ${hh}:${min} ${ampm}`;
 }
 
-const EAS_SRC = 'https://183.bozztv.com/giatv/giatv-giotveasdetails/giotveasdetails/chunks.m3u8'; // invisible, interrupt-only feed
-const EAS_DETAILS_VISIBLE_SRC = 'https://183.bozztv.com/giatv/giatv-giotveas/giotveas/playlist.m3u8'; // KGIO-TV Channel 6 feed (tile removed, kept for EAS banner button)
-const EAS_OFFLINE_IMG = 'eas_offline.png';
-
 const CHANNEL_MAP = {
 'gioweather': { name: 'GioWeather', src: 'rumble:v7fy0gg' },
 'fighttv': { name: 'Fight TV', src: 'https://rpn.bozztv.com/gusa/gusa-fighttvplus/index.m3u8' },
@@ -567,10 +546,6 @@ initLastSeen();
 
 let previousChannelStates = {};
 
-// ── EAS INTERRUPT STATE ──
-let easActive = false;
-let easInterruptShown = false;
-let preEASState = null;
 let currentPlayerSrc = null;
 let currentPlayerName = null;
 let currentPlayerOfflineImg = 'offline.png';
@@ -631,28 +606,6 @@ new Notification('📴 Channel Offline', { body: `${channelName} has gone offlin
 }
 
 previousChannelStates[url] = isOnline;
-
-if (url === EAS_SRC) {
-if (isOnline && !easInterruptShown) {
-easInterruptShown = true;
-triggerEASInterrupt();
-} else if (!isOnline) {
-easInterruptShown = false;
-if (easActive) revertFromEAS();
-}
-
-// Glowing outline on the EAS tile (if one exists) while the invisible interrupt feed is live
-const easDetailsCard = document.querySelector('.eas-card');
-if (easDetailsCard) {
-easDetailsCard.classList.toggle('eas-interrupt-live', isOnline);
-}
-
-// Alert banner above the channel lineup
-const easAlertBanner = document.getElementById('easAlertBanner');
-if (easAlertBanner) {
-easAlertBanner.classList.toggle('eas-alert-banner-show', isOnline);
-}
-}
 
 if (isOnline) {
 dot.classList.remove('offline');
@@ -834,7 +787,6 @@ const miniPlayerBox = document.getElementById('miniPlayerBox');
 const miniPlayerVideo = document.getElementById('miniPlayerVideo');
 const miniPlayerTitle = document.getElementById('miniPlayerTitle');
 const miniPlayerClose = document.getElementById('miniPlayerClose');
-const miniPlayerSkip = document.getElementById('miniPlayerSkip');
 const miniPlayerStatus = document.getElementById('miniPlayerStatus');
 const miniPlayerStatusText = document.getElementById('miniPlayerStatusText');
 let hlsInstance = null;
@@ -847,14 +799,7 @@ miniPlayerStatusText.textContent = 'Loading stream…';
 
 function showMiniPlayerOffline(src) {
 miniPlayerStatus.style.display = 'flex';
-if (src === EAS_SRC) {
-// The invisible EAS interrupt feed gets a custom text-only screen
-// instead of the generic offline.png used for regular channels.
-miniPlayerStatus.classList.remove('offline');
-miniPlayerStatusText.textContent = 'Please wait as we try to get your alert';
-} else {
 miniPlayerStatus.classList.add('offline');
-}
 }
 
 function hideMiniPlayerStatus() {
@@ -971,10 +916,6 @@ hlsInstance.destroy();
 hlsInstance = null;
 }
 stopMiniPlayerRetry();
-easActive = false;
-preEASState = null;
-if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
-if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
 if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
 if (window.location.hash) {
 history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -990,24 +931,10 @@ showMiniPlayerLoading();
 miniPlayerOverlay.classList.add('active');
 stopMiniPlayerRetry();
 
-const isLiveEAS = src === EAS_SRC && previousChannelStates[EAS_SRC] === true;
-easActive = isLiveEAS;
-if (miniPlayerSkip) miniPlayerSkip.style.display = isLiveEAS ? 'flex' : 'none';
-if (miniPlayerBox) miniPlayerBox.classList.toggle('eas-live', isLiveEAS);
-
 attemptMiniPlayerPlayback(src);
 }
 
-// Routes a channel selection through the EAS takeover: if EAS is currently
-// live, any channel selection redirects to the EAS stream instead, and
-// remembers what was requested so Skip can still return to it.
 function selectChannel(src, name, offlineImg, slug) {
-if (previousChannelStates[EAS_SRC] === true && src !== EAS_SRC && src !== EAS_DETAILS_VISIBLE_SRC) {
-preEASState = { src: src, name: name, offlineImg: offlineImg };
-history.replaceState(null, '', '#kgiotv6');
-openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
-return;
-}
 if (slug) {
 history.replaceState(null, '', `#${slug}`);
 }
@@ -1019,33 +946,6 @@ const channel = CHANNEL_MAP[channelId];
 if (channel) selectChannel(channel.src, channel.name, channel.offlineImg, channelId);
 }
 
-function triggerEASInterrupt() {
-// Already on the EAS Details channel — no need to interrupt, they're already there
-if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc === EAS_DETAILS_VISIBLE_SRC) {
-return;
-}
-// Remember whatever was playing (if anything) so it can be restored on skip
-if (miniPlayerOverlay.classList.contains('active') && currentPlayerSrc !== EAS_SRC) {
-preEASState = { src: currentPlayerSrc, name: currentPlayerName, offlineImg: currentPlayerOfflineImg };
-} else if (!miniPlayerOverlay.classList.contains('active')) {
-preEASState = null;
-}
-openMiniPlayer(EAS_SRC, 'EAS Details Channel', EAS_OFFLINE_IMG);
-}
-
-function revertFromEAS() {
-easActive = false;
-if (miniPlayerSkip) miniPlayerSkip.style.display = 'none';
-if (miniPlayerBox) miniPlayerBox.classList.remove('eas-live');
-if (preEASState) {
-openMiniPlayer(preEASState.src, preEASState.name, preEASState.offlineImg);
-} else {
-closeMiniPlayer();
-}
-preEASState = null;
-}
-
-miniPlayerSkip.addEventListener('click', revertFromEAS);
 miniPlayerClose.addEventListener('click', closeMiniPlayer);
 miniPlayerOverlay.addEventListener('click', function(e) {
 if (e.target === miniPlayerOverlay) closeMiniPlayer();
@@ -1081,10 +981,6 @@ const slug = this.getAttribute('data-channel') || this.closest('[data-channel]')
 let matched = null;
 for (const channel of Object.values(CHANNEL_MAP)) {
 if (channel.src === src) { matched = channel; break; }
-}
-if (src === EAS_SRC) {
-// Manually opened, not an auto-interrupt — skip should just close, not restore anything
-preEASState = null;
 }
 selectChannel(src, matched ? matched.name : null, matched ? matched.offlineImg : null, slug);
 });
